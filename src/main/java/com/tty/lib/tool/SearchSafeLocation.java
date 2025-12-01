@@ -13,104 +13,131 @@ public record SearchSafeLocation(JavaPlugin plugin) {
 
     public CompletableFuture<Location> search(World world, int x, int z) {
         CompletableFuture<Location> future = new CompletableFuture<>();
-        long startTime = System.currentTimeMillis();
+        final long l = System.currentTimeMillis();
 
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
-        int localX = x & 0xF;
-        int localZ = z & 0xF;
+        int relativeX = x & 0xF;
+        int relativeZ = z & 0xF;
 
-        world.getChunkAtAsync(chunkX, chunkZ, true, true)
-            .orTimeout(3, TimeUnit.SECONDS)
-            .thenAccept(chunk ->
-                Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, task -> {
-                    Integer safeY = findSafeY(world, chunk, localX, localZ);
-                    if (safeY == null) {
+        boolean isNether = world.getEnvironment().equals(World.Environment.NETHER);
+
+        world.getChunkAtAsync(chunkX, chunkZ)
+                .orTimeout(3, TimeUnit.SECONDS)
+                .thenAccept(chunk -> {
+                    int highestBlockYAt = isNether ?
+                            this.getSafeNetherY(world, chunk, relativeX, relativeZ) :
+                            chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
+                    if (highestBlockYAt == -1) {
                         future.complete(null);
                         return;
                     }
-                    Location loc = new Location(world, x + 0.5, safeY, z + 0.5);
-                    Log.debug("Found safe location at %s (took %sms)", loc, System.currentTimeMillis() - startTime);
-                    future.complete(loc);
-            }))
-            .exceptionally(ex -> {
-                Log.error("Chunk load error", ex);
-                future.completeExceptionally(ex);
-                return null;
-            });
-
+                    Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
+                        if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
+                            Log.debug("random location x: %s, y: %s, z: %s. search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
+                            future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
+                        } else {
+                            future.complete(null);
+                        }
+                });
+        }).exceptionally(i -> {
+            Log.error("search error", i);
+            future.completeExceptionally(i);
+            return null;
+        });
         return future;
     }
 
-    private Integer findSafeY(World world, Chunk chunk, int x, int z) {
+    //下界特殊处理
+    public int getSafeNetherY(World world, Chunk chunk, int localX, int localZ) {
+        final int minHeight = world.getMinHeight();
+        final int maxHeight = world.getMaxHeight();
 
-        int minY = world.getMinHeight();
-        boolean isNether = world.getEnvironment() == World.Environment.NETHER;
+        for (int y = maxHeight - 1; y >= minHeight; y--) {
+            Block block = chunk.getBlock(localX, y, localZ);
+            Material type = block.getType();
 
-        ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false, true);
-        int startY = snapshot.getHighestBlockYAt(x, z);
+            if (!type.isSolid() || block.isPassable()) continue;
 
-        if (isNether) {
-            while (startY > minY && chunk.getBlock(x, startY, z).getType() == Material.BEDROCK) {
-                startY--;
+            if (type == Material.LAVA || type == Material.WATER) continue;
+
+            if (type == Material.BEDROCK) continue;
+
+            Block above1 = chunk.getBlock(localX, y + 1, localZ);
+            Block above2 = chunk.getBlock(localX, y + 2, localZ);
+
+            if ((above1.isPassable() || !above1.getType().isSolid()) &&
+                    (above2.isPassable() || !above2.getType().isSolid())) {
+                return y;
             }
         }
+        return -1;
+    }
 
-        for (int y = startY; y >= minY; y--) {
-            Block feet = chunk.getBlock(x, y, z);
-            Block body = chunk.getBlock(x, y + 1, z);
-            Block head = chunk.getBlock(x, y + 2, z);
-            Block below = chunk.getBlock(x, y - 1, z);
+    private boolean isLocationSafe(Chunk chunk, int chunkX, int chunkY, int chunkZ) {
 
-            if (!isSafeStandingBlock(below.getType())) continue;
-            if (isSolid(feet.getType()) || isSolid(body.getType()) || isSolid(head.getType())) continue;
-            if (isDangerous(feet.getType()) || isDangerous(body.getType()) || isDangerous(head.getType())) continue;
-            if (isNearDangerous(feet)) continue;
-
-            return y;
+        //判断Y轴高度合不合法
+        if (chunkY < chunk.getWorld().getMinHeight()) {
+            Log.debug("rtp: illegal Y-axis height.");
+            return false;
         }
 
-        return null;
+        Block block = chunk.getBlock(chunkX, chunkY, chunkZ);
+
+        //身体检查
+        Material head = chunk.getBlock(chunkX, chunkY + 2, chunkZ).getType();
+        Material body = chunk.getBlock(chunkX, chunkY + 1, chunkZ).getType();
+        Material feet = block.getType();
+
+        //周围检查
+        Material left = block.getRelative(1, 0, 0).getType();
+        Material right = block.getRelative(-1, 0, 0).getType();
+        Material front = block.getRelative(0, 1, 0).getType();
+        Material behind = block.getRelative(0, -1, 0).getType();
+
+        if (!isSafeStandingBlock(feet)) {
+            Log.debug("standing block illegal.");
+            return false;
+        }
+
+        if (isSolid(body) || isSolid(head) ||
+                isDangerous(body) || isDangerous(head) ||
+                isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
+            Log.debug("the blocks around the player are illegal.");
+            return false;
+        }
+
+        if (isDangerous(feet)) {
+            Log.debug("feet block is dangerous.");
+            return false;
+        }
+        if (chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir()) {
+            Log.debug("feet block illegal.");
+            return false;
+        }
+
+        return true;
+
     }
 
-    /**
-     * 四方向危险检测
-     */
-    private boolean isNearDangerous(Block block) {
-        return isDangerous(block.getRelative(1, 0, 0).getType()) ||
-                isDangerous(block.getRelative(-1, 0, 0).getType()) ||
-                isDangerous(block.getRelative(0, 0, 1).getType()) ||
-                isDangerous(block.getRelative(0, 0, -1).getType());
+    private boolean isSafeStandingBlock(Material material) {
+        return material.isSolid() &&
+                !material.name().contains("LEAVES") &&
+                !material.name().contains("GLASS") &&
+                material != Material.SLIME_BLOCK;
     }
 
-    /**
-     * 脚下可站立方块
-     */
-    private boolean isSafeStandingBlock(Material m) {
-        return m.isSolid() &&
-                !m.name().contains("LEAVES") &&
-                !m.name().contains("GLASS") &&
-                m != Material.SLIME_BLOCK &&
-                m != Material.MAGMA_BLOCK &&
-                m != Material.CACTUS &&
-                m != Material.FIRE &&
-                m != Material.SOUL_FIRE;
-    }
-
-    /**
-     * 危险方块
-     */
-    private boolean isDangerous(Material m) {
-        return switch (m) {
-            case LAVA, FIRE, SOUL_FIRE, MAGMA_BLOCK, CACTUS, SWEET_BERRY_BUSH -> true;
-            default -> false;
+    private boolean isSolid(Material material) {
+        return switch (material) {
+            case AIR, CAVE_AIR, VOID_AIR, WATER, LAVA -> false;
+            default -> material.isSolid();
         };
     }
 
-    /**
-     * 是否固体方块
-     */
-    private boolean isSolid(Material m) {
-        return m.isSolid();
+    private boolean isDangerous(Material material) {
+        return switch (material) {
+            case LAVA, FIRE, SOUL_FIRE, MAGMA_BLOCK, CACTUS, SWEET_BERRY_BUSH -> true;
+            default -> false;
+        };
     }
 }
