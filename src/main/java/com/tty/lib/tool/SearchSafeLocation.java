@@ -7,119 +7,110 @@ import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public record SearchSafeLocation(JavaPlugin plugin) {
 
     public CompletableFuture<Location> search(World world, int x, int z) {
         CompletableFuture<Location> future = new CompletableFuture<>();
-        final long l = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
-        int relativeX = x & 0xF;
-        int relativeZ = z & 0xF;
+        int localX = x & 0xF;
+        int localZ = z & 0xF;
 
-        boolean isNether = world.getEnvironment().equals(World.Environment.NETHER);
-
-        world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
-            int highestBlockYAt = isNether ?
-                    this.getHighestBlockYAtNether(world, chunk, relativeX, relativeZ) :
-                    chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
-            Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
-                if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
-                    Log.debug("random location x: %s, y: %s, z: %s. search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
-                    future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
-                } else {
-                    future.complete(null);
-                }
+        world.getChunkAtAsync(chunkX, chunkZ, true, true)
+            .orTimeout(3, TimeUnit.SECONDS)
+            .thenAccept(chunk ->
+                Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, task -> {
+                    Integer safeY = findSafeY(world, chunk, localX, localZ);
+                    if (safeY == null) {
+                        future.complete(null);
+                        return;
+                    }
+                    Location loc = new Location(world, x + 0.5, safeY, z + 0.5);
+                    Log.debug("Found safe location at %s (took %sms)", loc, System.currentTimeMillis() - startTime);
+                    future.complete(loc);
+            }))
+            .exceptionally(ex -> {
+                Log.error("Chunk load error", ex);
+                future.completeExceptionally(ex);
+                return null;
             });
-        }).exceptionally(i -> {
-            Log.error("search error", i);
-            future.completeExceptionally(i);
-            return null;
-        });
+
         return future;
     }
 
-    //下界特殊处理
-    private int getHighestBlockYAtNether(World world, Chunk chunk, int chunkX, int chunkZ) {
-        final int minHeight = world.getMinHeight();
+    private Integer findSafeY(World world, Chunk chunk, int x, int z) {
 
-        int value = 0;
-        for (int y = 80; y >= minHeight; y--) {
-            Block block = chunk.getBlock(chunkX, y, chunkZ);
-            if (block.isLiquid()) break;
-            if (block.isEmpty() || block.isPassable()) continue;
-            value = y;
-            break;
+        int minY = world.getMinHeight();
+        boolean isNether = world.getEnvironment() == World.Environment.NETHER;
+
+        ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false, true);
+        int startY = snapshot.getHighestBlockYAt(x, z);
+
+        if (isNether) {
+            while (startY > minY && chunk.getBlock(x, startY, z).getType() == Material.BEDROCK) {
+                startY--;
+            }
         }
-        return value;
+
+        for (int y = startY; y >= minY; y--) {
+            Block feet = chunk.getBlock(x, y, z);
+            Block body = chunk.getBlock(x, y + 1, z);
+            Block head = chunk.getBlock(x, y + 2, z);
+            Block below = chunk.getBlock(x, y - 1, z);
+
+            if (!isSafeStandingBlock(below.getType())) continue;
+            if (isSolid(feet.getType()) || isSolid(body.getType()) || isSolid(head.getType())) continue;
+            if (isDangerous(feet.getType()) || isDangerous(body.getType()) || isDangerous(head.getType())) continue;
+            if (isNearDangerous(feet)) continue;
+
+            return y;
+        }
+
+        return null;
     }
 
-    private boolean isLocationSafe(Chunk chunk, int chunkX, int chunkY, int chunkZ) {
-
-        //判断Y轴高度合不合法
-        if (chunkY < chunk.getWorld().getMinHeight()) {
-            Log.debug("rtp: illegal Y-axis height.");
-            return false;
-        }
-
-        Block block = chunk.getBlock(chunkX, chunkY, chunkZ);
-
-        //身体检查
-        Material head = chunk.getBlock(chunkX, chunkY + 2, chunkZ).getType();
-        Material body = chunk.getBlock(chunkX, chunkY + 1, chunkZ).getType();
-        Material feet = block.getType();
-
-        //周围检查
-        Material left = block.getRelative(1, 0, 0).getType();
-        Material right = block.getRelative(-1, 0, 0).getType();
-        Material front = block.getRelative(0, 1, 0).getType();
-        Material behind = block.getRelative(0, -1, 0).getType();
-
-        if (!isSafeStandingBlock(feet)) {
-            Log.debug("standing block illegal.");
-            return false;
-        }
-
-        if (isSolid(body) || isSolid(head) ||
-                isDangerous(body) || isDangerous(head) ||
-                isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
-            Log.debug("the blocks around the player are illegal.");
-            return false;
-        }
-
-        if (isDangerous(feet)) {
-            Log.debug("feet block is dangerous.");
-            return false;
-        }
-        if (chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir()) {
-            Log.debug("feet block illegal.");
-            return false;
-        }
-
-        return true;
-
+    /**
+     * 四方向危险检测
+     */
+    private boolean isNearDangerous(Block block) {
+        return isDangerous(block.getRelative(1, 0, 0).getType()) ||
+                isDangerous(block.getRelative(-1, 0, 0).getType()) ||
+                isDangerous(block.getRelative(0, 0, 1).getType()) ||
+                isDangerous(block.getRelative(0, 0, -1).getType());
     }
 
-    private boolean isSafeStandingBlock(Material material) {
-        return material.isSolid() &&
-                !material.name().contains("LEAVES") &&
-                !material.name().contains("GLASS") &&
-                material != Material.SLIME_BLOCK;
+    /**
+     * 脚下可站立方块
+     */
+    private boolean isSafeStandingBlock(Material m) {
+        return m.isSolid() &&
+                !m.name().contains("LEAVES") &&
+                !m.name().contains("GLASS") &&
+                m != Material.SLIME_BLOCK &&
+                m != Material.MAGMA_BLOCK &&
+                m != Material.CACTUS &&
+                m != Material.FIRE &&
+                m != Material.SOUL_FIRE;
     }
 
-    private boolean isSolid(Material material) {
-        return switch (material) {
-            case AIR, CAVE_AIR, VOID_AIR, WATER, LAVA -> false;
-            default -> material.isSolid();
-        };
-    }
-
-    private boolean isDangerous(Material material) {
-        return switch (material) {
+    /**
+     * 危险方块
+     */
+    private boolean isDangerous(Material m) {
+        return switch (m) {
             case LAVA, FIRE, SOUL_FIRE, MAGMA_BLOCK, CACTUS, SWEET_BERRY_BUSH -> true;
             default -> false;
         };
+    }
+
+    /**
+     * 是否固体方块
+     */
+    private boolean isSolid(Material m) {
+        return m.isSolid();
     }
 }
