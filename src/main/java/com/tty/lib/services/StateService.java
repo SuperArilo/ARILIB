@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class StateService<T extends State> {
@@ -56,26 +57,32 @@ public abstract class StateService<T extends State> {
             return;
         }
 
-        for (T state : new ArrayList<>(this.STATE_LIST)) {
-            if (state.isOver()) {
-                STATE_LIST.remove(state);
-                this.onEarlyExit(state);
-                continue;
-            }
+        synchronized (STATE_LIST) {
+            Iterator<T> iterator = STATE_LIST.iterator();
+            while (iterator.hasNext()) {
+                T state = iterator.next();
 
-            if (state.isDone()) {
-                STATE_LIST.remove(state);
-                this.onFinished(state);
-                continue;
-            }
+                if (state.isOver()) {
+                    iterator.remove();
+                    this.onEarlyExit(state);
+                    continue;
+                }
 
-            if (!state.isPending()) {
-                state.setPending(true);
-                state.increment();
-                this.loopExecution(state);
+                if (state.isDone()) {
+                    iterator.remove();
+                    this.onFinished(state);
+                    continue;
+                }
+
+                if (!state.isPending()) {
+                    state.setPending(true);
+                    state.increment();
+                    this.loopExecution(state);
+                }
             }
         }
     }
+
 
     public void abort() {
         if (this.task != null) {
