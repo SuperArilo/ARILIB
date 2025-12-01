@@ -1,4 +1,4 @@
 lang: cn
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false
