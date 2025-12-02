@@ -85,12 +85,15 @@ public abstract class StateService<T extends State> {
 
 
     public void abort() {
-        if (this.task != null) {
-            this.task.cancel();
-            this.STATE_LIST.clear();
-            this.task = null;
-            Log.debug("state service abort.");
+        if (this.task == null) return;
+        this.task.cancel();
+        this.task = null;
+
+        for (T i : this.STATE_LIST) {
+            this.onServiceAbort(i);
         }
+        this.STATE_LIST.clear();
+        Log.debug("state service abort.");
     }
 
     public boolean addState(T state) {
@@ -165,5 +168,11 @@ public abstract class StateService<T extends State> {
      * @param state 检查通过的状态
      */
     protected abstract void onFinished(T state);
+
+    /**
+     * 当状态服务器被终止运行时候的回调
+     * @param state 被通知的每个状态
+     */
+    protected abstract void onServiceAbort(T state);
 
 }
