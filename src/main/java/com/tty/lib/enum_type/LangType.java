@@ -1,41 +1,31 @@
 package com.tty.lib.enum_type;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum LangType implements LangTypeEnum {
-    TPASENDER("[TpaSender]"),
-    TPAHERESENDER("[TpaHereSender]"),
-    TPABESENDER("[TpaBeSender]"),
-    COSTED("[Costed]"),
-    TIME("[Time]"),
-    DEATHLOCATION("[DeathLocation]"),
-    PERIOD("[Period]"),
-    SLEEPPLAYERS("[SleepPlayers]"),
-    SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]"),
-    SPAWNLOCATION("[SpawnLocation]"),
-    SOURCEDISPLAYNAME("[SourceDisplayNane]"),
-    CHATMESSAGE("[Message]"),
-    RTPSEARCHCOUNT("[RtpSearchCount]"),
-    TELEPORTDELAY("[TeleportDelay]"),
-    PLAYERNAME("[PlayerName]"),
-    FIRSTLOGINSERVERTIME("[FirstLoginServerTime]"),
-    LASTLOGINSERVERTIME("[LastLoginServerTime]"),
-    TOTALONSERVER("[TotalOnServer]"),
-    PLAYERWORLD("[PlayerWorld]"),
-    PLAYERLOCATION("[PlayerLocation]"),
-    KILLER("[Killer]"),
-    VICTIM("[Victim]"),
-    KILLER_ITEM("[Killer_Item]");
+    TPA_SENDER("tpa_sender"),
+    TPAHERE_SENDER("tpahere_sender"),
+    TPA_BE_SENDER("tpa_be_sender"),
+    COSTED("costed"),
+    TIME("time"),
+    DEATH_LOCATION("death_location"),
+    PERIOD("period"),
+    SLEEP_PLAYERS("sleep_players"),
+    SKIP_NIGHT_TICK_INCREMENT("skip_night_tick_increment"),
+    SPAWN_LOCATION("spawn_location"),
+    SOURCE_DISPLAY_NAME("source_display_name"),
+    CHAT_MESSAGE("message"),
+    RTP_SEARCH_COUNT("rtp_search_count"),
+    TELEPORT_DELAY("teleport_delay"),
+    PLAYER_NAME("player_name"),
+    FIRST_LOGIN_SERVER_TIME("first_login_server_time"),
+    LAST_LOGIN_SERVER_TIME("last_login_server_time"),
+    TOTAL_ON_SERVER("total_on_server"),
+    PLAYER_WORLD("player_world"),
+    PLAYER_LOCATION("player_location"),
+    KILLER("killer"),
+    VICTIM("victim"),
+    KILLER_ITEM("killer_item");
 
     private final String type;
-    private static final Map<String, LangType> TYPE_MAP = new HashMap<>();
-
-    static {
-        for (LangType lt : values()) {
-            TYPE_MAP.put(lt.getType(), lt);
-        }
-    }
 
     LangType(String type) {
         this.type = type;
@@ -44,9 +34,5 @@ public enum LangType implements LangTypeEnum {
     @Override
     public String getType() {
         return this.type;
-    }
-
-    public static LangType fromType(String type) {
-        return TYPE_MAP.get(type);
     }
 }

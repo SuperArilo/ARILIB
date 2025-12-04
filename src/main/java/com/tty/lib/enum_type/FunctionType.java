@@ -7,7 +7,7 @@ public enum FunctionType {
     BACK("返回"),
     REBACK("返回"),
     ICON("图标"),
-    MASKICON("遮罩图标"),
+    MASK_ICON("遮罩图标"),
     LOCATION("位置"),
     TOP_SLOT("置顶"),
     DATA("数据"),
