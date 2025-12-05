@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class PublicFunctionUtils {
 
@@ -65,6 +66,29 @@ public class PublicFunctionUtils {
             throw new IllegalArgumentException("The maximum value must be greater than the minimum value");
         }
         return ThreadLocalRandom.current().nextInt(min, max + 1);
+    }
+
+    public static boolean checkServerVersion() {
+        boolean versionAtLeast = isVersionAtLeast(Bukkit.getServer().getBukkitVersion().split("-")[0]);
+        if (!versionAtLeast) {
+            Bukkit.getLogger().log(Level.SEVERE, "Server version is too low. This plugin requires at least 1.21.3. Disabling plugin...");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isVersionAtLeast(String current) {
+        String[] c = current.split("\\.");
+        String[] r = "1.21.3".split("\\.");
+
+        for (int i = 0; i < Math.max(c.length, r.length); i++) {
+            int cv = (i < c.length) ? Integer.parseInt(c[i]) : 0;
+            int rv = (i < r.length) ? Integer.parseInt(r[i]) : 0;
+
+            if (cv > rv) return true;
+            if (cv < rv) return false;
+        }
+        return true;
     }
 
 }
