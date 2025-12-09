@@ -10,6 +10,35 @@ base:
     disabled: "&c当前指令已经被禁用！"
   permission:
     no-permission: '&4你当前没有权限来执行此命令'
+  page-change:
+    none-prev: '&e这已经是第一页了哦'
+    none-next: '&e这已经是最后一页了哦'
+  on-error: '&c服务器执行过程发生错误，请联系管理员'
+  yes_re: '&a是'
+  no_re: '&c否'
+  free: '&a免费'
+  no-record: '&c无记录'
+  on-edit:
+    cancel: '&e已取消操作！'
+    timeout-cancel: '&7编辑超时，已自动取消！'
+    title: '&f请输入新内容'
+    sub-title: '&6cancel &7取消'
+    input-error: '&c输入有错误，请检查！'
+    rename:
+      name-error: '&c名称不满足'
+      name-too-long: '&c名称过长'
+    permission:
+      permission-error: '&c权限节点不满足'
+    cost:
+      format-error: '&c不是有效的数字'
+  save:
+    done: '&a✔ 保存成功'
+    ing: '&e⏳ 保存中...'
+    error: '&c✖ 保存失败，请联系管理员'
+  on-player:
+    hand-no-item: '&c当前手上并没有物品'
+    unable-player: '&c该玩家离线或者不存在！'
+    data-changed: '&a你的数据发生更变，请重新登录服务器!'
 function:
   public:
     not-player: '这个指令只能在游戏里使用！'
