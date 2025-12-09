@@ -19,7 +19,7 @@ public class PublicFunctionUtils {
             if (registration != null) {
                 consumer.accept(registration.getProvider());
             } else {
-                Log.warn("failed to load plugin: %s. because %s is null", pluginName);
+                Log.warn("failed to load plugin: %s. because %s is null", pluginName, pluginName);
             }
         } else {
             Log.warn("failed to load plugin: %s.", pluginName);
