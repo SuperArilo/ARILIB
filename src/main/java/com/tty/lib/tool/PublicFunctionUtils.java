@@ -1,5 +1,6 @@
 package com.tty.lib.tool;
 
+import com.tty.lib.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -12,16 +13,16 @@ import java.util.logging.Level;
 
 public class PublicFunctionUtils {
 
-    public static <T> void loadPlugin(String pluginName, Class<T> tClass, Consumer<T> consumer, Runnable runnable) {
+    public static <T> void loadPlugin(String pluginName, Class<T> tClass, Consumer<T> consumer) {
         if (Bukkit.getPluginManager().isPluginEnabled(pluginName)) {
             RegisteredServiceProvider<T> registration = Bukkit.getServer().getServicesManager().getRegistration(tClass);
             if (registration != null) {
                 consumer.accept(registration.getProvider());
             } else {
-                runnable.run();
+                Log.warn("failed to load plugin: %s. because %s is null", pluginName);
             }
         } else {
-            runnable.run();
+            Log.warn("failed to load plugin: %s.", pluginName);
         }
     }
 
