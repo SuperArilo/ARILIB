@@ -1,12 +1,13 @@
 package com.tty.lib.tool;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.tty.lib.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.io.*;
-import java.util.*;
+import java.lang.reflect.Type;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -26,22 +27,9 @@ public class PublicFunctionUtils {
         }
     }
 
-    public static <K, V> Map<K, V> deepCopyBySerialization(Map<K, V> original) {
-        if (original.isEmpty()) {
-            return new HashMap<>();
-        }
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(original);
-            oos.flush();
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                 ObjectInputStream ois = new ObjectInputStream(bais)) {
-                @SuppressWarnings("unchecked")
-                Map<K, V> copy = (Map<K, V>) ois.readObject();
-                return copy;
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            throw new IllegalArgumentException("Deep copy failed: " + e.getMessage(), e);
-        }
+    public static <T> T deepCopy(T obj, Type typeOfT) {
+        Gson gson = new GsonBuilder().create();
+        return gson.fromJson(gson.toJson(obj), typeOfT);
     }
 
     /**
