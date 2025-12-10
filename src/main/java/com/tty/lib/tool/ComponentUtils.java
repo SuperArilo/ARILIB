@@ -10,6 +10,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -89,7 +90,7 @@ public class ComponentUtils {
 
     private static TextComponent build(Player player, String template, Map<String, Component> placeholders) {
         Objects.requireNonNull(template, "template cannot be null");
-        if (player != null) {
+        if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             template = PlaceholderAPI.setPlaceholders(player, template);
         }
         template = ColorConverterLegacy.convert(template);
