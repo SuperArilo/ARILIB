@@ -12,21 +12,10 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FormatUtils {
-
-    private static final ThreadLocal<DecimalFormat> DECIMAL_FORMAT =
-            ThreadLocal.withInitial(() -> new DecimalFormat("#.00"));
-
-    private static final String ID_NAME_REGEX = "^[a-zA-Z0-9_]+$";
-    private static final String NAME_REGEX = "^[a-zA-Z0-9\\u4e00-\\u9fa5]+$";
-    private static final String PERMISSION_NODE_REGEX = "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$";
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\[(\\w+)]");
 
     /**
      * 格式化数字保留两位小数
@@ -35,7 +24,7 @@ public class FormatUtils {
      */
     public static String formatTwoDecimalPlaces(Number number) {
         if (number == null) return "0.00";
-        return DECIMAL_FORMAT.get().format(number);
+        return ThreadLocal.withInitial(() -> new DecimalFormat("#.00")).get().format(number);
     }
 
     /**
@@ -44,7 +33,7 @@ public class FormatUtils {
      * @return 空值或不符合格式返回false
      */
     public static boolean checkIdName(String content) {
-        return content != null && content.matches(ID_NAME_REGEX);
+        return content != null && content.matches("^[a-zA-Z0-9_]+$");
     }
 
     /**
@@ -53,7 +42,7 @@ public class FormatUtils {
      * @return 空值或不符合格式返回false
      */
     public static boolean checkName(String content) {
-        return content != null && content.matches(NAME_REGEX);
+        return content != null && content.matches("^[a-zA-Z0-9\\u4e00-\\u9fa5]+$");
     }
 
     /**
@@ -62,7 +51,7 @@ public class FormatUtils {
      * @return 空值或不符合格式返回false
      */
     public static boolean isValidPermissionNode(String node) {
-        return node != null && node.matches(PERMISSION_NODE_REGEX);
+        return node != null && node.matches("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$");
     }
 
     /**
@@ -100,61 +89,68 @@ public class FormatUtils {
         if (locString == null || locString.isEmpty()) {
             throw new IllegalArgumentException("Location string is null or empty!");
         }
+
+        // 去掉 Location{...} 外层
         if (locString.startsWith("Location{") && locString.endsWith("}")) {
-            locString = locString.substring("Location{".length(), locString.length() - 1);
-        }
-        int worldIndex = locString.indexOf("world=");
-        if (worldIndex < 0) {
-            throw new IllegalArgumentException("Missing 'world' in location string: " + locString);
-        }
-        int worldStart = worldIndex + 6;
-        int worldEnd = locString.indexOf(',', worldStart);
-        if (worldEnd < 0) {
-            throw new IllegalArgumentException("Invalid world format: " + locString);
-        }
-        String worldPart = locString.substring(worldStart, worldEnd).trim();
-        if (worldPart.startsWith("CraftWorld{") && worldPart.contains("name=")) {
-            int nameStart = worldPart.indexOf("name=") + 5;
-            int nameEnd = worldPart.indexOf('}', nameStart);
-            worldPart = worldPart.substring(nameStart, nameEnd);
+            locString = locString.substring(9, locString.length() - 1);
         }
 
-        int xIndex = locString.indexOf("x=", worldEnd);
-        int xStart = xIndex + 2;
-        int xEnd = locString.indexOf(',', xStart);
-        double x = Double.parseDouble(locString.substring(xStart, xEnd).trim());
+        String worldName = null;
+        double x = 0, y = 0, z = 0;
+        float pitch = 0, yaw = 0;
 
-        int yIndex = locString.indexOf("y=", xEnd);
-        int yStart = yIndex + 2;
-        int yEnd = locString.indexOf(',', yStart);
-        double y = Double.parseDouble(locString.substring(yStart, yEnd).trim());
+        int len = locString.length();
+        int i = 0;
 
-        int zIndex = locString.indexOf("z=", yEnd);
-        int zStart = zIndex + 2;
-        int zEnd = locString.indexOf(',', zStart);
-        double z = Double.parseDouble(locString.substring(zStart, zEnd).trim());
+        while (i < len) {
+            // 找 key
+            int eqIdx = locString.indexOf('=', i);
+            if (eqIdx < 0) break;
 
-        int pitchIndex = locString.indexOf("pitch=", zEnd);
-        int pitchStart = pitchIndex + 6;
-        int pitchEnd = locString.indexOf(',', pitchStart);
-        float pitch;
-        if (pitchEnd > 0) {
-            pitch = Float.parseFloat(locString.substring(pitchStart, pitchEnd).trim());
-        } else {
-            throw new IllegalArgumentException("Incomplete location string, missing yaw: " + locString);
+            String key = locString.substring(i, eqIdx).trim();
+
+            // 找 value 结束位置
+            int valEnd = locString.indexOf(',', eqIdx + 1);
+            if (valEnd < 0) valEnd = len;
+
+            String value = locString.substring(eqIdx + 1, valEnd).trim();
+
+            switch (key) {
+                case "world":
+                    // 支持 CraftWorld{name=world}
+                    if (value.startsWith("CraftWorld")) {
+                        int nameIdx = value.indexOf("name=");
+                        if (nameIdx >= 0) {
+                            int nameStart = nameIdx + 5;
+                            int nameEnd = value.indexOf('}', nameStart);
+                            if (nameEnd < 0) nameEnd = value.length();
+                            worldName = value.substring(nameStart, nameEnd);
+                        } else {
+                            worldName = value;
+                        }
+                    } else {
+                        worldName = value;
+                    }
+                    break;
+                case "x": x = Double.parseDouble(value); break;
+                case "y": y = Double.parseDouble(value); break;
+                case "z": z = Double.parseDouble(value); break;
+                case "pitch": pitch = Float.parseFloat(value); break;
+                case "yaw": yaw = Float.parseFloat(value); break;
+            }
+
+            i = valEnd + 1;
         }
 
-        int yawIndex = locString.indexOf("yaw=", pitchEnd);
-        if (yawIndex < 0) {
-            throw new IllegalArgumentException("Missing yaw in location string: " + locString);
+        if (worldName == null) {
+            throw new IllegalArgumentException("World not found in location string: " + locString);
         }
-        int yawStart = yawIndex + 4;
-        float yaw = Float.parseFloat(locString.substring(yawStart).trim());
 
-        World world = Bukkit.getWorld(worldPart);
+        World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            throw new IllegalArgumentException("World not found: " + worldPart);
+            throw new IllegalArgumentException("World not found on server: " + worldName);
         }
+
         return new Location(world, x, y, z, yaw, pitch);
     }
 
@@ -213,19 +209,6 @@ public class FormatUtils {
             Log.debug(e, "Function type %s error", rawType);
             return null;
         }
-    }
-
-    /**
-     * 提取文本中所有匹配 LangType 枚举的占位符
-     * 只返回枚举名称，不包含其他文本
-     */
-    public static List<String> extractLangPlaceholders(String text) {
-        List<String> result = new ArrayList<>();
-        Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
-        while (matcher.find()) {
-            result.add(matcher.group(0));
-        }
-        return result;
     }
 
 }
