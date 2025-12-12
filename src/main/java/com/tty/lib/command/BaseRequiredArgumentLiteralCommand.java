@@ -13,13 +13,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.List;
 
 
-public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseRequiredCommand implements SuperHandsomeCommand {
+public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand implements SuperHandsomeCommand {
 
     private final ArgumentType<T> type;
     private final boolean isSuggests;
 
-    public BaseRequiredArgumentLiteralCommand(ArgumentType<T> type, boolean isSuggests) {
-        super();
+    public BaseRequiredArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength, ArgumentType<T> type, boolean isSuggests) {
+        super(allowConsole, correctArgsLength);
         this.type = type;
         this.isSuggests = isSuggests;
     }
@@ -28,14 +28,10 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseRequired
     public CommandNode<CommandSourceStack> toBrigadier() {
         RequiredArgumentBuilder<CommandSourceStack, T> builder = Commands.argument(this.name(), this.type);
         builder.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
-        builder.executes(ctx -> {
-            String input = ctx.getInput().replace("ari ", "").trim();
-            this.execute(ctx.getSource().getSender(), input.isEmpty() ? new String[0] : input.split(" "));
-            return 1;
-        });
+        builder.executes(this::preExecute);
         if (this.isSuggests) {
             builder.suggests((ctx, b) -> {
-                for (String s : this.tabSuggestions()) {
+                for (String s : this.tabSuggestions(ctx.getSource().getSender())) {
                     b.suggest(s);
                 }
                 return b.buildFuture();
@@ -57,6 +53,6 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseRequired
         return b;
     }
 
-    public abstract List<String> tabSuggestions();
+    public abstract List<String> tabSuggestions(CommandSender sender);
 
 }

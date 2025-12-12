@@ -11,7 +11,23 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("SameReturnValue")
-public abstract class BaseLiteralArgumentLiteralCommand extends BaseLiteralCommand implements SuperHandsomeCommand {
+public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand implements SuperHandsomeCommand {
+
+    private boolean twiceDo = false;
+
+    public BaseLiteralArgumentLiteralCommand(boolean allowConsole) {
+        super(allowConsole);
+    }
+
+
+    public BaseLiteralArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength) {
+        super(allowConsole, correctArgsLength);
+    }
+
+    public BaseLiteralArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength, boolean twiceDo) {
+        super(allowConsole, correctArgsLength);
+        this.twiceDo = twiceDo;
+    }
 
     @Override
     public boolean isDisabledInGame(CommandSender sender, @NonNull YamlConfiguration configuration) {
@@ -22,16 +38,12 @@ public abstract class BaseLiteralArgumentLiteralCommand extends BaseLiteralComma
         return b;
     }
 
-    protected BaseLiteralArgumentLiteralCommand(boolean allowConsole, int correctArgsLength) {
-        super(allowConsole, correctArgsLength);
-    }
-
     @Override
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
         LiteralArgumentBuilder<CommandSourceStack> top_mian = Commands.literal(this.name());
         top_mian.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
-        if (this.thenCommands().isEmpty()) {
-            top_mian.executes(this::baseExecute);
+        if (this.twiceDo) {
+            top_mian.executes(this::preExecute);
         }
         for (SuperHandsomeCommand subCommand : this.thenCommands()) {
             top_mian.then(subCommand.toBrigadier());
