@@ -19,8 +19,8 @@ public class Lib extends JavaPlugin {
 
     public static Lib instance;
     public static Boolean DEBUG = false;
-    public static Scheduler Scheduler = ServerPlatform.isFolia() ? new FoliaScheduler():new BukkitScheduler();
-    public static ConfigInstance C_INSTANCE = new ConfigInstance();
+    public static final Scheduler Scheduler = ServerPlatform.isFolia() ? new FoliaScheduler():new BukkitScheduler();
+    public static final ConfigInstance C_INSTANCE = new ConfigInstance();
     public static ConfigDataService CONFIG_DATA_SERVICE;
 
     @Override
