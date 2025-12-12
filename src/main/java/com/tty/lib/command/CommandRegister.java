@@ -1,7 +1,9 @@
 package com.tty.lib.command;
 
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.tty.lib.Log;
 import com.tty.lib.dto.AliasItem;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,7 +34,7 @@ public class CommandRegister {
                     return;
                 }
                 if (executorInstance instanceof SuperHandsomeCommand cmd) {
-                    commands.register(cmd.toBrigadier(), v.getUsage());
+                    commands.register((LiteralCommandNode<CommandSourceStack>) cmd.toBrigadier(), v.getUsage());
                     Log.debug((v.isEnable() ? "":"un" ) + "register command: %s", k);
                 }
             });
