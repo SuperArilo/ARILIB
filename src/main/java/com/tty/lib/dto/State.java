@@ -24,7 +24,7 @@ public class State {
     /**
      * 当前的次数是否在进行中
      */
-    private boolean pending = false;
+    private volatile boolean pending = false;
 
     public State(Entity owner, int max_count) {
         this.owner = owner;
