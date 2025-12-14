@@ -63,7 +63,7 @@ public class ConfigInstance {
 
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
-            Log.error("Value not found for path: %s in file: %s", keyPath, filePath.name());
+            Log.warn("Value not found for path: %s in file: %s", keyPath, filePath.name());
             return defaultValue;
         }
         if (value instanceof MemorySection) {
