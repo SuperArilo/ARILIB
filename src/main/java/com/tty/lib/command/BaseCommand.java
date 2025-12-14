@@ -24,10 +24,6 @@ public abstract class BaseCommand {
         this.correctArgsLength = correctArgsLength;
     }
 
-    protected BaseCommand() {
-
-    }
-
     protected BaseCommand(boolean allowConsole) {
         this.allowConsole = allowConsole;
     }
