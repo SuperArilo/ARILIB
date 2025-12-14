@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -78,6 +79,15 @@ public class PublicFunctionUtils {
             if (cv < rv) return false;
         }
         return true;
+    }
+
+    public static List<String> tabList(String input, List<String> raw) {
+        if (input == null) input = "";
+
+        String lowerInput = input.toLowerCase();
+        return raw.stream()
+                .filter(s -> s.toLowerCase().startsWith(lowerInput))
+                .toList();
     }
 
 }
