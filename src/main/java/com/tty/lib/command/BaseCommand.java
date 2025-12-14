@@ -1,7 +1,6 @@
 package com.tty.lib.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.tty.lib.Log;
 import com.tty.lib.tool.LibConfigUtils;
 import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -50,8 +49,7 @@ public abstract class BaseCommand {
         AtomicReference<UUID> uuid = new AtomicReference<>(null);
         try {
             uuid.set(UUID.fromString(value));
-        } catch (Exception e) {
-            Log.debug(e, "not a uuid: %s", value);
+        } catch (Exception ignored) {
         }
         if (uuid.get() == null) {
             try {
