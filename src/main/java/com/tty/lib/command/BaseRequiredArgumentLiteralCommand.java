@@ -31,7 +31,9 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
         builder.executes(this::preExecute);
         if (this.isSuggests) {
             builder.suggests((ctx, b) -> {
-                for (String s : this.tabSuggestions(ctx.getSource().getSender())) {
+                String input = ctx.getInput().replace("ari ", "").trim();
+                String[] args = input.isEmpty() ? new String[0] : input.split(" ");
+                for (String s : this.tabSuggestions(ctx.getSource().getSender(), args)) {
                     b.suggest(s);
                 }
                 return b.buildFuture();
@@ -53,6 +55,6 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
         return b;
     }
 
-    public abstract List<String> tabSuggestions(CommandSender sender);
+    public abstract List<String> tabSuggestions(CommandSender sender, String[] args);
 
 }
