@@ -16,7 +16,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public abstract class BaseCommand {
 
-    private boolean allowConsole = false;
+    private final boolean allowConsole;
     private Integer correctArgsLength = Integer.MAX_VALUE;
 
     protected BaseCommand(boolean allowConsole, Integer correctArgsLength) {
