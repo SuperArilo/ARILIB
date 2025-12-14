@@ -78,6 +78,10 @@ public abstract class StateService<T extends State> {
                     state.setPending(true);
                     state.increment();
                     this.loopExecution(state);
+                    if (state.isDone()) {
+                        iterator.remove();
+                        this.onFinished(state);
+                    }
                 }
             }
         }
