@@ -18,10 +18,40 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
     private final ArgumentType<T> type;
     private final boolean isSuggests;
 
+    /**
+     * 基本构造函数
+     * @param allowConsole 是否允许控制台补全执行
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     * @param type 参数类型
+     * @param isSuggests 是否允许进行自定义 Tab 补全列表
+     */
     public BaseRequiredArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength, ArgumentType<T> type, boolean isSuggests) {
         super(allowConsole, correctArgsLength);
         this.type = type;
         this.isSuggests = isSuggests;
+    }
+
+    /**
+     * 不允许控制台补全执行
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     * @param type 参数类型
+     * @param isSuggests 是否允许进行自定义 Tab 补全列表
+     */
+    public BaseRequiredArgumentLiteralCommand(int correctArgsLength, ArgumentType<T> type, boolean isSuggests) {
+        super(false, correctArgsLength);
+        this.type = type;
+        this.isSuggests = isSuggests;
+    }
+
+    /**
+     * 不允许控制台补全执行，不允许自定义 Tab 补全列表
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     * @param type 参数类型
+     */
+    public BaseRequiredArgumentLiteralCommand(int correctArgsLength, ArgumentType<T> type) {
+        super(false, correctArgsLength);
+        this.isSuggests = false;
+        this.type = type;
     }
 
     @Override

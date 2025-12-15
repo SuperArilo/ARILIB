@@ -4,13 +4,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.tty.lib.tool.LibConfigUtils;
 import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
@@ -31,27 +28,6 @@ public abstract class BaseCommand {
     public abstract String permission();
 
     public abstract void execute(CommandSender sender, String[] args);
-
-    /**
-     * 根据输入参数解析 UUID
-     * @param value 玩家名字或 UUID
-     * @return 玩家 UUID，如果不存在则返回 null
-     */
-    protected UUID parseUUID(String value) {
-        AtomicReference<UUID> uuid = new AtomicReference<>(null);
-        try {
-            uuid.set(UUID.fromString(value));
-        } catch (Exception ignored) {
-        }
-        if (uuid.get() == null) {
-            try {
-                uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
-            } catch (Exception e) {
-                return null;
-            }
-        }
-        return uuid.get();
-    }
 
     int preExecute(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();

@@ -27,7 +27,7 @@ public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand impl
     }
 
     /**
-     * 默认狗仔函数，不允许直接执行
+     * 不允许直接执行
      * @param allowConsole 是否允许控制台执行
      * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
      */
@@ -36,7 +36,7 @@ public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand impl
     }
 
     /**
-     * 默认狗仔函数
+     * 默认构造函数
      * @param allowConsole 是否允许控制台执行
      * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
      * @param direct_execute 是否允许直接执行
