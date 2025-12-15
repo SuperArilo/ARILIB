@@ -84,4 +84,14 @@ public class TimeFormatUtils {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         return dateTime.format(formatter);
     }
+
+    /**
+     * 将指定格式转成时间戳（毫秒
+     * @param value 传入的值
+     * @param unit 时间单位
+     * @return 时间戳（毫秒
+     */
+    public static long toTimestamp(int value, TimeUnit unit) {
+        return unit.toMillis(value);
+    }
 }
