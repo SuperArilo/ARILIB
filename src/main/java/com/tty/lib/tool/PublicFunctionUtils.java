@@ -81,6 +81,12 @@ public class PublicFunctionUtils {
         return true;
     }
 
+    /**
+     * 根据输入的字符串来匹配和返回对应的列表
+     * @param input 输入
+     * @param raw 需要匹配的列表
+     * @return 返回的匹配列表
+     */
     public static List<String> tabList(String input, List<String> raw) {
         if (input == null) input = "";
 
