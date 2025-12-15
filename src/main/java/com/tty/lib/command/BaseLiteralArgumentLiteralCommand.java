@@ -13,20 +13,37 @@ import org.jspecify.annotations.NonNull;
 @SuppressWarnings("SameReturnValue")
 public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand implements SuperHandsomeCommand {
 
-    private boolean twiceDo = false;
+    /**
+     * 是否直接执行
+     */
+    private boolean direct_execute = false;
 
-    public BaseLiteralArgumentLiteralCommand(boolean allowConsole) {
-        super(allowConsole);
+    /**
+     * 不允许控制台执行, 也不允许直接执行
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     */
+    public BaseLiteralArgumentLiteralCommand(int correctArgsLength) {
+        super(false, correctArgsLength);
     }
 
-
+    /**
+     * 默认狗仔函数，不允许直接执行
+     * @param allowConsole 是否允许控制台执行
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     */
     public BaseLiteralArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength) {
         super(allowConsole, correctArgsLength);
     }
 
-    public BaseLiteralArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength, boolean twiceDo) {
+    /**
+     * 默认狗仔函数
+     * @param allowConsole 是否允许控制台执行
+     * @param correctArgsLength 有效指令 args 携带参数长度。例如 /test ai (长度为 2
+     * @param direct_execute 是否允许直接执行
+     */
+    public BaseLiteralArgumentLiteralCommand(boolean allowConsole, Integer correctArgsLength, boolean direct_execute) {
         super(allowConsole, correctArgsLength);
-        this.twiceDo = twiceDo;
+        this.direct_execute = direct_execute;
     }
 
     @Override
@@ -42,7 +59,7 @@ public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand impl
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
         LiteralArgumentBuilder<CommandSourceStack> top_mian = Commands.literal(this.name());
         top_mian.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
-        if (this.twiceDo) {
+        if (this.direct_execute) {
             top_mian.executes(this::preExecute);
         }
         for (SuperHandsomeCommand subCommand : this.thenCommands()) {

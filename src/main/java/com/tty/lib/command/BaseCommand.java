@@ -17,15 +17,11 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 public abstract class BaseCommand {
 
     private final boolean allowConsole;
-    private Integer correctArgsLength = Integer.MAX_VALUE;
+    private final Integer correctArgsLength;
 
     protected BaseCommand(boolean allowConsole, Integer correctArgsLength) {
         this.allowConsole = allowConsole;
         this.correctArgsLength = correctArgsLength;
-    }
-
-    protected BaseCommand(boolean allowConsole) {
-        this.allowConsole = allowConsole;
     }
 
     public abstract List<SuperHandsomeCommand> thenCommands();
