@@ -2,6 +2,7 @@ package com.tty.lib.tool;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,6 +41,15 @@ public class ComponentUtils {
     public static TextComponent text(String content, Player player, Map<String, Component> placeholders) {
         return build(player, content, placeholders);
     }
+
+    public static Component textList(List<String> list, Map<String, Component> placeholders) {
+        return Component.join(JoinConfiguration.separator(Component.newline()), list.stream().map(s -> text(s, placeholders)).toList());
+    }
+
+    public static Component textList(List<String> list) {
+        return textList(list, null);
+    }
+
 
     /**
      * 设置MC的全屏通知效果(Title
