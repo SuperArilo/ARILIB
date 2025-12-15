@@ -23,7 +23,10 @@ public enum LangType implements LangTypeEnum {
     PLAYER_LOCATION("player_location"),
     KILLER("killer"),
     VICTIM("victim"),
-    KILLER_ITEM("killer_item");
+    KILLER_ITEM("killer_item"),
+    BAN_T0TAL_TIME("ban_total_time"),
+    BAN_REASON("ban_reason"),
+    BAN_END_TIME("ban_end_time");
 
     private final String type;
 
