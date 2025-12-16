@@ -99,6 +99,7 @@ public class ComponentUtils {
         return Component.empty().append(entity.name()).hoverEvent(HoverEvent.showText(text));
     }
 
+    @SuppressWarnings("PatternValidation")
     private static TextComponent build(Player player, String template, Map<String, Component> placeholders) {
         Objects.requireNonNull(template, "template cannot be null");
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
