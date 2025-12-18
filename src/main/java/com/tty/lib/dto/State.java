@@ -19,7 +19,7 @@ public class State {
     /**
      * 是否提前结束
      */
-    private boolean isOver = false;
+    private volatile boolean isOver = false;
 
     /**
      * 当前的次数是否在进行中
