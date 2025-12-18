@@ -64,7 +64,11 @@ public class Lib extends JavaPlugin {
             if (!file.exists()) {
                 Lib.instance.saveResource(path, true);
             } else if (instanceConfig.getBoolean("debug.overwrite-file", false)) {
-                Lib.instance.saveResource(path, true);
+                try {
+                    Lib.instance.saveResource(path, true);
+                } catch (Exception e) {
+                    Log.error("can not find file path %s .", path);
+                }
             }
             C_INSTANCE.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));
         }
