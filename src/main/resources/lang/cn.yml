@@ -11,8 +11,8 @@ base:
   permission:
     no-permission: '&4你当前没有权限来执行此命令'
   page-change:
-    none-prev: '&e这已经是第一页了哦'
-    none-next: '&e这已经是最后一页了哦'
+    none-prev: '&c这已经是第一页了哦'
+    none-next: '&c这已经是最后一页了哦'
   on-error: '&c服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&c否'
