@@ -27,7 +27,7 @@ public class Lib extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.init(this.getComponentLogger(), DEBUG);
+        Log.init(this.getLogger(), DEBUG);
 
         this.registerServices();
     }
