@@ -63,7 +63,7 @@ public class Log {
 
     public static void warn(Throwable throwable, String msg, Object... args) {
         if (isLoggerNotReady()) return;
-        LOGGER.warn(formatMessage(NamedTextColor.YELLOW, msg, args), throwable);
+        LOGGER.warn(formatMessage(NamedTextColor.YELLOW, msg, args).appendSpace(), throwable);
     }
 
     public static void error(String msg, Object... args) {
@@ -73,7 +73,7 @@ public class Log {
 
     public static void error(Throwable throwable, String msg, Object... args) {
         if (isLoggerNotReady()) return;
-        LOGGER.error(formatMessage(NamedTextColor.RED, msg, args), throwable);
+        LOGGER.error(formatMessage(NamedTextColor.RED, msg, args).appendSpace(), throwable);
     }
 
     public static void debug(String msg, Object... args) {
@@ -93,7 +93,7 @@ public class Log {
                 .append(Component.text("[" + getCallerClassName() + "] ", NamedTextColor.BLUE))
                 .append(formatMessage(NamedTextColor.BLUE, msg, args));
 
-        LOGGER.info(builder.build(), throwable);
+        LOGGER.info(builder.build().appendSpace(), throwable);
     }
 
     private static String getCallerClassName() {
