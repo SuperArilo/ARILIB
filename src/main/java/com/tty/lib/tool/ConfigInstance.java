@@ -107,14 +107,14 @@ public class ConfigInstance {
 
     /**
      * 将特定对象写入指定的文件
-     * @param keyPath key路径
+     * @param topKeyPath key路径
      * @param filePath 文件路径
-     * @param value 写入的值
+     * @param values 写入的值
      */
-    public <T extends Enum<T> & FilePathEnum> void setValue(JavaPlugin plugin, String keyPath, T filePath, Object value) {
+    public <T extends Enum<T> & FilePathEnum> void setValue(JavaPlugin plugin, String topKeyPath, T filePath, Map<String, Object> values) {
         YamlConfiguration configuration = this.checkConfiguration(filePath);
         if (configuration == null) throw new RuntimeException("Config file not found: " + filePath.name());
-        configuration.set(keyPath, value);
+        values.forEach((k, v) -> configuration.set(topKeyPath + "." + k, v));
         setConfig(filePath.name(), configuration);
         File file = new File(plugin.getDataFolder(), filePath.getPath());
         try {
@@ -136,10 +136,6 @@ public class ConfigInstance {
             return null;
         }
         return configuration;
-    }
-
-    public void setConfigs(Map<String, YamlConfiguration> configs) {
-        CONFIGS.putAll(configs);
     }
 
     public void setConfig(String name, YamlConfiguration instance) {
