@@ -1,5 +1,8 @@
 package com.tty.lib;
 
+import org.bukkit.Bukkit;
+
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,13 +12,53 @@ public class Log {
     private static volatile boolean DEBUG;
     private static final String PREFIX_DEBUG = "[DEBUG] ";
 
+    private static final String[] ANSI_COLORS = {
+            "\u001B[31m",
+            "\u001B[32m",
+            "\u001B[33m",
+            "\u001B[34m",
+            "\u001B[35m",
+            "\u001B[36m",
+            "\u001B[91m",
+            "\u001B[92m",
+            "\u001B[93m",
+            "\u001B[94m"
+    };
+
+    private static final String ANSI_RESET = "\u001B[0m";
+
+    private static volatile boolean ENABLE_COLOR = true;
+
     public static void init(Logger logger, boolean isDebug) {
+        if (logger == null) {
+            //noinspection UnstableApiUsage
+            Bukkit.getLogger().log(Level.SEVERE, "init logger error.");
+            return;
+        }
         LOGGER = logger;
         DEBUG = isDebug;
     }
 
+    public static void setEnableColor(boolean enable) {
+        ENABLE_COLOR = enable;
+    }
+
     private static boolean isLoggerNotReady() {
         return LOGGER == null;
+    }
+
+    private static String randomColor() {
+        return ANSI_COLORS[ThreadLocalRandom.current().nextInt(ANSI_COLORS.length)];
+    }
+
+    /**
+     * 将文本按当前配置着色（如果 ENABLE_COLOR=false 则直接返回原文）
+     */
+    private static String colorize(String text) {
+        if (!ENABLE_COLOR || text == null || text.isEmpty()) {
+            return text;
+        }
+        return randomColor() + text + ANSI_RESET;
     }
 
     private static String formatMessage(String msg, Object... args) {
@@ -30,7 +73,12 @@ public class Log {
         for (int i = 0; i < len; i++) {
             sb.append(parts[i]);
             if (i < args.length) {
-                sb.append(args[i]);
+                String argStr = String.valueOf(args[i]);
+                if (ENABLE_COLOR) {
+                    sb.append(randomColor()).append(argStr).append(ANSI_RESET);
+                } else {
+                    sb.append(argStr);
+                }
             }
         }
 
@@ -84,12 +132,10 @@ public class Log {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : stack) {
             String className = element.getClassName();
-            if (!className.equals(Log.class.getName())
-                    && !className.startsWith("java.lang.Thread")) {
-                int idx = className.lastIndexOf('.');
-                return idx >= 0 ? className.substring(idx + 1) : className;
+            if (!className.equals(Log.class.getName()) && !className.startsWith("java.lang.Thread")) {
+                return colorize(className);
             }
         }
-        return "Unknown";
+        return colorize("Unknown");
     }
 }
