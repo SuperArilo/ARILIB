@@ -113,7 +113,7 @@ public class ComponentUtils {
             TagResolver.Builder builder = TagResolver.builder();
             for (Map.Entry<String, Component> e : placeholders.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
-                    builder.tag(e.getKey(), Tag.inserting(e.getValue()));
+                    builder.tag(e.getKey(), Tag.selfClosingInserting(e.getValue()));
                 }
             }
             resolver = builder.build();
