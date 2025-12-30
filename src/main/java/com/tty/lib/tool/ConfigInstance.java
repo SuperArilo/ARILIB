@@ -22,25 +22,13 @@ import static com.tty.lib.tool.FormatUtils.yamlConvertToObj;
 public class ConfigInstance {
 
     protected final Map<String, YamlConfiguration> CONFIGS = new ConcurrentHashMap<>();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
+    private final Map<String, Object> objectCache = new ConcurrentHashMap<>();
 
-    /**
-     * 根据指定的文件和路径获取指定的值 String
-     * @param keyPath 值的路径
-     * @param filePath 文件名字
-     * @return 返回字符串类型
-     */
     public <E extends Enum<E> & FilePathEnum> String getValue(String keyPath, E filePath) {
         return getValue(keyPath, filePath, String.class, "null");
     }
 
-    /**
-     * 根据指定的文件和路径获取指定的对象
-     * @param keyPath key 路径
-     * @param filePath 文件路径
-     * @param tClass 类型
-     * @return 返回 T
-     * @param <T> 指定的类型
-     */
     public <T, E extends Enum<E> & FilePathEnum> T getValue(String keyPath, E filePath, Class<T> tClass) {
         if(checkPath(keyPath)) return null;
         YamlConfiguration configuration = checkConfiguration(filePath);
@@ -48,74 +36,67 @@ public class ConfigInstance {
         return configuration.getObject(keyPath, tClass);
     }
 
-    /**
-     * 根据指定的文件和路径获取指定的值
-     * @param keyPath 值的路径
-     * @param filePath 文件名字
-     * @param type 值的类型
-     * @return 返回指定类型
-     */
+
+    @SuppressWarnings("unchecked")
     public <T, E extends Enum<E> & FilePathEnum> T getValue(String keyPath, E filePath, Type type, T defaultValue) {
         if (checkPath(keyPath)) return defaultValue;
 
         YamlConfiguration fileConfiguration = checkConfiguration(filePath);
         if (fileConfiguration == null) return defaultValue;
 
+        String cacheKey = filePath.name() + ":" + keyPath;
+        if (this.objectCache.containsKey(cacheKey)) {
+            try {
+                return (T) this.objectCache.get(cacheKey);
+            } catch (ClassCastException e) {
+                Log.warn("Cached object type mismatch for key: %s in file: %s", keyPath, filePath.name());
+            }
+        }
+
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
             Log.warn("Value not found for path: %s in file: %s", keyPath, filePath.name());
             return defaultValue;
         }
-        if (value instanceof MemorySection) {
-            YamlConfiguration tempConfig = new YamlConfiguration();
-            copySectionToYamlConfiguration((ConfigurationSection) value, tempConfig);
-            return yamlConvertToObj(tempConfig.saveToString(), type);
-        }
-        Gson gson = new GsonBuilder().setPrettyPrinting()
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
+
+        T result;
         try {
-            return gson.fromJson(gson.toJsonTree(value), type);
+            if (value instanceof MemorySection) {
+                YamlConfiguration tempConfig = new YamlConfiguration();
+                copySectionToYamlConfiguration((ConfigurationSection) value, tempConfig);
+                result = yamlConvertToObj(tempConfig.saveToString(), type);
+            } else {
+                result = this.gson.fromJson(this.gson.toJsonTree(value), type);
+            }
         } catch (JsonSyntaxException e) {
             Log.error(e, "Failed to convert value at path: %s in file: %s to type: %s", keyPath, filePath.name(), type.getTypeName());
             return defaultValue;
         }
+
+        objectCache.put(cacheKey, result);
+        return result;
     }
 
-    /**
-     *
-     * 获取指定文件名的yaml配置文件对象
-     * @param fileName 文件名
-     * @return 返回 YamlConfiguration
-     */
     public YamlConfiguration getObject(String fileName) {
         return CONFIGS.get(fileName);
     }
 
-    /**
-     * 检查 key 的路径是否存在
-     * @param path 路径
-     * @return 返回布尔值
-     */
-    private  boolean checkPath(String path) {
-        boolean empty = path.isEmpty();
-        if (empty) {
-            Log.error("file path %s is empty", path);
+    private boolean checkPath(String path) {
+        if (path == null || path.isEmpty()) {
+            Log.error("file path %s is empty or null", path);
+            return true;
         }
-        return empty;
+        return false;
     }
 
-    /**
-     * 将特定对象写入指定的文件
-     * @param topKeyPath key路径
-     * @param filePath 文件路径
-     * @param values 写入的值
-     */
     public <T extends Enum<T> & FilePathEnum> void setValue(JavaPlugin plugin, String topKeyPath, T filePath, Map<String, Object> values) {
         YamlConfiguration configuration = this.checkConfiguration(filePath);
         if (configuration == null) throw new RuntimeException("Config file not found: " + filePath.name());
         values.forEach((k, v) -> configuration.set(topKeyPath + "." + k, v));
         setConfig(filePath.name(), configuration);
+
+        values.keySet().forEach(k -> objectCache.remove(filePath.name() + ":" + topKeyPath + "." + k));
+
         File file = new File(plugin.getDataFolder(), filePath.getPath());
         try {
             configuration.save(file);
@@ -124,13 +105,8 @@ public class ConfigInstance {
         }
     }
 
-    /**
-     * 检查根据 FilePath 的文件是否存在于内存中
-     * @param filePath 文件名
-     * @return 返回Yaml对象
-     */
     private <T extends Enum<T> & FilePathEnum> YamlConfiguration checkConfiguration(T filePath) {
-        YamlConfiguration configuration = this.getObject((filePath.name()));
+        YamlConfiguration configuration = this.getObject(filePath.name());
         if (configuration == null) {
             Log.error("Config file not found: %s", filePath.name());
             return null;
@@ -144,5 +120,6 @@ public class ConfigInstance {
 
     public void clearConfigs() {
         CONFIGS.clear();
+        objectCache.clear();
     }
 }
