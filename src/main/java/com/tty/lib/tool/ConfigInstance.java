@@ -23,35 +23,24 @@ public class ConfigInstance {
 
     protected final Map<String, YamlConfiguration> CONFIGS = new ConcurrentHashMap<>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-    private final Map<String, Object> objectCache = new ConcurrentHashMap<>();
 
     public <E extends Enum<E> & FilePathEnum> String getValue(String keyPath, E filePath) {
         return getValue(keyPath, filePath, String.class, "null");
     }
 
+
     public <T, E extends Enum<E> & FilePathEnum> T getValue(String keyPath, E filePath, Class<T> tClass) {
-        if(checkPath(keyPath)) return null;
+        if (checkPath(keyPath)) return null;
         YamlConfiguration configuration = checkConfiguration(filePath);
         if (configuration == null) return null;
         return configuration.getObject(keyPath, tClass);
     }
 
-
-    @SuppressWarnings("unchecked")
     public <T, E extends Enum<E> & FilePathEnum> T getValue(String keyPath, E filePath, Type type, T defaultValue) {
         if (checkPath(keyPath)) return defaultValue;
 
         YamlConfiguration fileConfiguration = checkConfiguration(filePath);
         if (fileConfiguration == null) return defaultValue;
-
-        String cacheKey = filePath.name() + ":" + keyPath;
-        if (this.objectCache.containsKey(cacheKey)) {
-            try {
-                return (T) this.objectCache.get(cacheKey);
-            } catch (ClassCastException e) {
-                Log.warn("Cached object type mismatch for key: %s in file: %s", keyPath, filePath.name());
-            }
-        }
 
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
@@ -59,22 +48,18 @@ public class ConfigInstance {
             return defaultValue;
         }
 
-        T result;
         try {
             if (value instanceof MemorySection) {
                 YamlConfiguration tempConfig = new YamlConfiguration();
                 copySectionToYamlConfiguration((ConfigurationSection) value, tempConfig);
-                result = yamlConvertToObj(tempConfig.saveToString(), type);
+                return yamlConvertToObj(tempConfig.saveToString(), type);
             } else {
-                result = this.gson.fromJson(this.gson.toJsonTree(value), type);
+                return this.gson.fromJson(this.gson.toJsonTree(value), type);
             }
         } catch (JsonSyntaxException e) {
             Log.error(e, "Failed to convert value at path: %s in file: %s to type: %s", keyPath, filePath.name(), type.getTypeName());
             return defaultValue;
         }
-
-        objectCache.put(cacheKey, result);
-        return result;
     }
 
     public YamlConfiguration getObject(String fileName) {
@@ -92,10 +77,9 @@ public class ConfigInstance {
     public <T extends Enum<T> & FilePathEnum> void setValue(JavaPlugin plugin, String topKeyPath, T filePath, Map<String, Object> values) {
         YamlConfiguration configuration = this.checkConfiguration(filePath);
         if (configuration == null) throw new RuntimeException("Config file not found: " + filePath.name());
+
         values.forEach((k, v) -> configuration.set(topKeyPath + "." + k, v));
         setConfig(filePath.name(), configuration);
-
-        values.keySet().forEach(k -> objectCache.remove(filePath.name() + ":" + topKeyPath + "." + k));
 
         File file = new File(plugin.getDataFolder(), filePath.getPath());
         try {
@@ -120,6 +104,5 @@ public class ConfigInstance {
 
     public void clearConfigs() {
         CONFIGS.clear();
-        objectCache.clear();
     }
 }
