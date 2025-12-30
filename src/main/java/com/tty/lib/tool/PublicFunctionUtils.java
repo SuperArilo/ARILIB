@@ -55,7 +55,7 @@ public class PublicFunctionUtils {
         if (min > max) {
             throw new IllegalArgumentException("The maximum value must be greater than the minimum value");
         }
-        return ThreadLocalRandom.current().nextInt(min, max);
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public static boolean checkServerVersion() {
