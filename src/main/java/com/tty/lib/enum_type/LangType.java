@@ -26,7 +26,10 @@ public enum LangType implements LangTypeEnum {
     KILLER_ITEM("killer_item"),
     BAN_T0TAL_TIME("ban_total_time"),
     BAN_REASON("ban_reason"),
-    BAN_END_TIME("ban_end_time");
+    BAN_END_TIME("ban_end_time"),
+    MOB("mob"),
+    MOB_CURRENT_HEALTH("mob_current_health"),
+    MOB_MAX_HEALTH("mob_max_health");
 
     private final String type;
 
