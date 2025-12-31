@@ -24,8 +24,9 @@ public class FormatUtils {
      */
     public static String formatTwoDecimalPlaces(Number number) {
         if (number == null) return "0.00";
-        return ThreadLocal.withInitial(() -> new DecimalFormat("#.00")).get().format(number);
+        return ThreadLocal.withInitial(() -> new DecimalFormat("0.00")).get().format(number);
     }
+
 
     /**
      * 检查ID名称合法性（字母数字下划线）
