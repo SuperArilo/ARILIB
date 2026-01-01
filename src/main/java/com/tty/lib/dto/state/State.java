@@ -1,4 +1,4 @@
-package com.tty.lib.dto;
+package com.tty.lib.dto.state;
 
 import lombok.Data;
 import org.bukkit.entity.Entity;

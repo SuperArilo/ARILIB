@@ -1,4 +1,4 @@
-package com.tty.lib.dto;
+package com.tty.lib.dto.state;
 
 import com.tty.lib.Lib;
 import com.tty.lib.Log;

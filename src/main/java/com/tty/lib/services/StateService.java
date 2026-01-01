@@ -1,7 +1,7 @@
 package com.tty.lib.services;
 
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
+import com.tty.lib.dto.state.State;
 import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import lombok.Getter;

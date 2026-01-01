@@ -1,4 +1,4 @@
-package com.tty.lib.dto;
+package com.tty.lib.dto.state;
 
 import com.tty.lib.enum_type.TeleportType;
 import lombok.Getter;
