@@ -1,4 +1,7 @@
 lang: cn
+server:
+  # 对于带编辑功能的gui，无操作时候的超时取消时间
+  gui-edit-timeout: 10
 debug:
   enable: false
   overwrite-file: false
