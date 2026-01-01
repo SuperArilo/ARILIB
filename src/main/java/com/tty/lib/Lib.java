@@ -1,14 +1,19 @@
 package com.tty.lib;
 
+import com.tty.lib.command.AriLib;
 import com.tty.lib.enum_type.FilePath;
+import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.scheduler.BukkitScheduler;
 import com.tty.lib.scheduler.FoliaScheduler;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.services.impl.ConfigDataServiceImpl;
 import com.tty.lib.tool.ConfigInstance;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +39,13 @@ public class Lib extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new OnPluginReloadListener(), this);
 
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, i -> {
+            Commands registrar = i.registrar();
+            registrar.register(new AriLib().toBrigadier());
+        });
     }
 
     @Override

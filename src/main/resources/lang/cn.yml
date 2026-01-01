@@ -40,6 +40,9 @@ base:
     unable-player: '&c该玩家离线或者不存在！'
     data-changed: '&a你的数据发生更变，请重新登录服务器!'
 function:
+  reload:
+    doing: '&e重载插件中...'
+    success: '&a✔ 重载插件成功！'
   public:
     agree: '&a✔ [同意]'
     center: '&f或者'
