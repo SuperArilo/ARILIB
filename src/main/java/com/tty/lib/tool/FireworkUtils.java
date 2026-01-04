@@ -18,8 +18,8 @@ public record FireworkUtils(JavaPlugin plugin) {
      */
     public void spawnFireworks(Location center, int count) {
         for (int i = 0; i < count; i++) {
-            int delay = i * 2;
-            Lib.Scheduler.runLater(this.plugin, t -> spawnSingleFirework(center), delay);
+            int delay = Math.max(1, i * 2);
+            Lib.Scheduler.runAtRegionLater(this.plugin, center, t -> spawnSingleFirework(center), delay);
         }
     }
 
