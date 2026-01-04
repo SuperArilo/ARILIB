@@ -60,7 +60,7 @@ public abstract class BaseInventory implements InventoryHolder {
         }
         List<TextComponent> collect = mask.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
-            ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
+            ItemStack itemStack = ItemStack.of(Material.valueOf(mask.getMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(mask.getName(), this.player));
             itemMeta.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, FunctionType.MASK_ICON.name());
@@ -78,7 +78,7 @@ public abstract class BaseInventory implements InventoryHolder {
             functionItems = this.baseInstance.getFunctionItems();
         }
         functionItems.forEach((k, v) -> {
-            ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
+            ItemStack o = ItemStack.of(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
             mo.displayName(ComponentUtils.text(v.getName(), this.player));
             mo.lore(v.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList());

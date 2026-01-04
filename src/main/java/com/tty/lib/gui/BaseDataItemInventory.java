@@ -124,7 +124,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
         if (showMaterial == null) return null;
         ItemStack itemStack;
         try {
-            itemStack = new ItemStack(Material.valueOf(showMaterial.toUpperCase()));
+            itemStack = ItemStack.of(Material.valueOf(showMaterial.toUpperCase()));
             return itemStack;
         } catch (Exception e) {
             Log.error(e, "create ItemStack error. material %s", showMaterial);
