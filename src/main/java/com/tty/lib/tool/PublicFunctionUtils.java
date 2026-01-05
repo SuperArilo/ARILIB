@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
