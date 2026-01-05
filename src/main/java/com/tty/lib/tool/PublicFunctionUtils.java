@@ -9,9 +9,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class PublicFunctionUtils {
 
@@ -87,13 +89,13 @@ public class PublicFunctionUtils {
      * @param raw 需要匹配的列表
      * @return 返回的匹配列表
      */
-    public static List<String> tabList(String input, List<String> raw) {
+    public static Set<String> tabList(String input, Set<String> raw) {
         if (input == null) input = "";
 
         String lowerInput = input.toLowerCase();
         return raw.stream()
                 .filter(s -> s.toLowerCase().startsWith(lowerInput))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
 }

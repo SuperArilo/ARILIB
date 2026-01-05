@@ -10,7 +10,8 @@ import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 
 public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand implements SuperHandsomeCommand {
@@ -63,10 +64,10 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
             builder.suggests((ctx, b) -> {
                 String input = ctx.getInput().replace("ari ", "").trim();
                 String[] args = input.isEmpty() ? new String[0] : input.split(" ");
-                for (String s : this.tabSuggestions(ctx.getSource().getSender(), args)) {
-                    b.suggest(s);
-                }
-                return b.buildFuture();
+                return this.tabSuggestions(ctx.getSource().getSender(), args).thenApply(list -> {
+                    for (String s : list) {  b.suggest(s); }
+                    return b.build();
+                });
             });
         }
         for (SuperHandsomeCommand command : this.thenCommands()) {
@@ -85,6 +86,6 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
         return b;
     }
 
-    public abstract List<String> tabSuggestions(CommandSender sender, String[] args);
+    public abstract CompletableFuture<Set<String>> tabSuggestions(CommandSender sender, String[] args);
 
 }
