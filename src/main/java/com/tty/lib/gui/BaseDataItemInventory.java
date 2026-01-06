@@ -1,5 +1,6 @@
 package com.tty.lib.gui;
 
+import com.tty.lib.dto.PageResult;
 import com.tty.lib.entity.gui.BaseDataMenu;
 import com.tty.lib.enum_type.GuiType;
 import com.tty.lib.Lib;
@@ -27,12 +28,19 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
     public final BaseDataMenu baseDataInstance;
     protected List<T> data;
 
+    protected PageResult<T> lastPageResult = null;
+
+    // 防止重复并发请求
+    protected volatile boolean loading = false;
+
     public BaseDataItemInventory(JavaPlugin plugin, BaseDataMenu baseDataInstance, Player player, GuiType type) {
         super(plugin, baseDataInstance, player, type);
         this.baseDataInstance = baseDataInstance;
         this.pageSize = baseDataInstance.getDataItems().getSlot().size();
-        this.requestAndAccept(list -> {
-            this.data = list;
+
+        this.requestAndAccept(result -> {
+            this.lastPageResult = result;
+            this.data = result.getRecords();
             this.renderDataItem();
         });
     }
@@ -41,14 +49,15 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
      * 上一页
      */
     public void prev() {
-        this.pageNum--;
-        if(this.pageNum <= 0) {
+        if (this.loading) return; // 正在加载则忽略
+        if (this.pageNum <= 1) {
             this.player.sendMessage(LibConfigUtils.t("base.page-change.none-prev"));
-            this.pageNum = 1;
             return;
         }
-        this.requestAndAccept(list -> {
-            this.data = list;
+        this.pageNum--;
+        this.requestAndAccept(result -> {
+            this.lastPageResult = result;
+            this.data = result.getRecords();
             this.renderDataItem();
         });
     }
@@ -57,15 +66,23 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
      * 下一页
      */
     public void next() {
+        if (this.loading) return;
+        if (this.lastPageResult != null && this.pageNum >= this.lastPageResult.getTotalPages()) {
+            this.player.sendMessage(LibConfigUtils.t("base.page-change.none-next"));
+            return;
+        }
+
         this.pageNum++;
-        this.requestAndAccept(list -> {
-            if (list.isEmpty()) {
+        this.requestAndAccept(result -> {
+            if (result == null || (result.getTotalPages() > 0 && this.pageNum > result.getTotalPages())) {
                 this.player.sendMessage(LibConfigUtils.t("base.page-change.none-next"));
-                this.pageNum--;
-            } else {
-                this.data = list;
-                this.renderDataItem();
+                this.pageNum = Math.max(1, (int)Math.min(this.pageNum - 1, Math.max(1, result != null ? result.getTotalPages() : 1)));
+                return;
             }
+
+            this.lastPageResult = result;
+            this.data = result.getRecords();
+            this.renderDataItem();
         });
     }
 
@@ -73,18 +90,34 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
      * 请求数据的方法
      * @return 返回数据 CompletableFuture
      */
-    protected abstract CompletableFuture<List<T>> requestData();
+    protected abstract CompletableFuture<PageResult<T>> requestData();
 
     protected abstract Map<Integer, ItemStack> getRenderItem();
 
-    private void requestAndAccept(Consumer<List<T>> onSuccess) {
-        CompletableFuture<List<T>> future = this.requestData();
+    private void requestAndAccept(Consumer<PageResult<T>> onSuccess) {
+        CompletableFuture<PageResult<T>> future = this.requestData();
         if (future == null) {
-            onSuccess.accept(List.of());
+            // 返回空页的标准 PageResult（避免 NullPointer）
+            PageResult<T> empty = PageResult.build(List.of(), 0, 0, this.pageNum);
+            this.lastPageResult = empty;
+            onSuccess.accept(empty);
             return;
         }
-        future.thenAccept(onSuccess).exceptionally(ex -> {
+
+        this.loading = true;
+        future.thenAccept(result -> {
+            try {
+                // 先保存分页信息
+                if (result != null) this.lastPageResult = result;
+                onSuccess.accept(result != null ? result : PageResult.build(List.of(), 0, 0, this.pageNum));
+            } catch (Exception e) {
+                Log.error(e, "%s: processing request result error!", this.type.name());
+            } finally {
+                this.loading = false;
+            }
+        }).exceptionally(ex -> {
             Log.error(ex, "%s: request data error!", this.type.name());
+            this.loading = false;
             return null;
         });
     }
@@ -145,5 +178,6 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
     @Override
     protected void onCleanup() {
         this.data = null;
+        this.lastPageResult = null;
     }
 }
