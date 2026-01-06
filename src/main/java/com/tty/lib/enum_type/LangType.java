@@ -33,7 +33,9 @@ public enum LangType implements LangTypeEnum {
     MAINTENANCE_KICK_DEALY("maintenance_kick_delay"),
     PAGE_TITLE("page_title"),
     PAGE_PREV("page_prev"),
-    PAGE_NEXT("page_next");
+    PAGE_NEXT("page_next"),
+    CURRENT_PAGE("current_page"),
+    TOTAL_PAGE("total_page");
 
     private final String type;
 
