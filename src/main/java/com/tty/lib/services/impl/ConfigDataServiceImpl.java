@@ -38,8 +38,8 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
 
         HashMap<String, Component> map = new HashMap<>();
-        map.put(LangType.PAGE_PREV.getType(), prev);
-        map.put(LangType.PAGE_NEXT.getType(), next);
+        map.put(LangType.PAGE_PREV_TEXT.getType(), prev);
+        map.put(LangType.PAGE_NEXT_TEXT.getType(), next);
         map.put(LangType.CURRENT_PAGE.getType(), Component.text(currentPage));
         map.put(LangType.TOTAL_PAGE.getType(), Component.text(totalPage));
 

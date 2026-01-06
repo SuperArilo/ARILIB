@@ -17,7 +17,7 @@ base:
     prev: "&f[&b上一页&f]"
     next: "&f[&b下一页&f]"
     line-start: "&a----- <page_title> -----"
-    line-end: "&a----<page_prev><page_next>&a----&6<current_page>&f/&9<total_page>&a--"
+    line-end: "&a----<page_prev_text><page_next_text>&a----&6<current_page>&f/&9<total_page>&a--"
   on-error: '&c服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&c否'

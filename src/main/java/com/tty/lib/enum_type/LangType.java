@@ -32,8 +32,8 @@ public enum LangType implements LangTypeEnum {
     MOB_MAX_HEALTH("mob_max_health"),
     MAINTENANCE_KICK_DEALY("maintenance_kick_delay"),
     PAGE_TITLE("page_title"),
-    PAGE_PREV("page_prev"),
-    PAGE_NEXT("page_next"),
+    PAGE_PREV_TEXT("page_prev_text"),
+    PAGE_NEXT_TEXT("page_next_text"),
     CURRENT_PAGE("current_page"),
     TOTAL_PAGE("total_page");
 
