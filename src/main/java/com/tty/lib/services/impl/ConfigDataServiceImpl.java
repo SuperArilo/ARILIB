@@ -21,7 +21,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
     }
 
     @Override
-    public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction) {
+    public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage) {
         ComponentListPage page = new ComponentListPage();
         TextComponent title = ComponentUtils.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangType.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
@@ -40,6 +40,8 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         HashMap<String, Component> map = new HashMap<>();
         map.put(LangType.PAGE_PREV.getType(), prev);
         map.put(LangType.PAGE_NEXT.getType(), next);
+        map.put(LangType.CURRENT_PAGE.getType(), Component.text(currentPage));
+        map.put(LangType.TOTAL_PAGE.getType(), Component.text(totalPage));
 
         TextComponent end = ComponentUtils.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 

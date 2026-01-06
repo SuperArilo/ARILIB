@@ -7,5 +7,5 @@ import javax.annotation.Nullable;
 
 public interface ConfigDataService extends BaseDataService {
     String getValue(String keyPath);
-    ComponentListPage createComponentDataPage(Component titleName, @Nullable String prevAction, @Nullable String nextAction);
+    ComponentListPage createComponentDataPage(Component titleName, @Nullable String prevAction, @Nullable String nextAction, Integer currentPage, Integer totalPage);
 }
