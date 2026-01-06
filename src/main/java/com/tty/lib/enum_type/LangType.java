@@ -30,7 +30,10 @@ public enum LangType implements LangTypeEnum {
     MOB("mob"),
     MOB_CURRENT_HEALTH("mob_current_health"),
     MOB_MAX_HEALTH("mob_max_health"),
-    MAINTENANCE_KICK_DEALY("maintenance_kick_delay");
+    MAINTENANCE_KICK_DEALY("maintenance_kick_delay"),
+    PAGE_TITLE("page_title"),
+    PAGE_PREV("page_prev"),
+    PAGE_NEXT("page_next");
 
     private final String type;
 

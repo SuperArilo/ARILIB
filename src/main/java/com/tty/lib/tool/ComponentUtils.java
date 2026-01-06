@@ -18,9 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ComponentUtils {
 
@@ -49,7 +47,6 @@ public class ComponentUtils {
     public static Component textList(List<String> list) {
         return textList(list, null);
     }
-
 
     /**
      * 设置MC的全屏通知效果(Title
@@ -112,17 +109,20 @@ public class ComponentUtils {
         } else {
             TagResolver.Builder builder = TagResolver.builder();
             for (Map.Entry<String, Component> e : placeholders.entrySet()) {
-                if (e.getKey() != null && e.getValue() != null) {
-                    builder.tag(e.getKey(), Tag.selfClosingInserting(e.getValue()));
-                }
+                String key = e.getKey();
+                if (key == null) continue;
+                Component value = e.getValue();
+                builder.tag(key, Tag.selfClosingInserting(Objects.requireNonNullElseGet(value, Component::empty)));
             }
             resolver = builder.build();
         }
+
         Component comp = MM.deserialize(template, resolver);
         if (comp instanceof TextComponent tc) {
             return tc.decoration(TextDecoration.ITALIC, false);
         }
         return Component.empty().append(comp.decoration(TextDecoration.ITALIC, false));
     }
+
 
 }
