@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -95,6 +97,34 @@ public class PublicFunctionUtils {
         return raw.stream()
                 .filter(s -> s.toLowerCase().startsWith(lowerInput))
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * 将字符串列表转换为枚举列表的通用方法
+     *
+     * @param <T>         枚举类型，必须是Enum的子类
+     * @param stringList  待转换的字符串列表
+     * @param enumClass   目标枚举类的Class对象
+     * @param caseSensitive true 小写，false 大写
+     * @return 转换成功的枚举值列表，忽略无法转换的项
+     */
+    public static  <T extends Enum<T>> List<T> convertStringListToEnumList(List<String> stringList, Class<T> enumClass, boolean caseSensitive) {
+        List<T> result = new ArrayList<>();
+        for (String item : stringList) {
+            if (item == null || item.trim().isEmpty()) {
+                continue;
+            }
+            String cleanName = item.trim();
+            try {
+                String enumName = caseSensitive ? cleanName.toLowerCase() : cleanName.toUpperCase();
+                T enumValue = Enum.valueOf(enumClass, enumName);
+                result.add(enumValue);
+                Log.debug("Successfully converted %s to enum.", cleanName);
+            } catch (IllegalArgumentException e) {
+                Log.error("Invalid enum value: %s for enum class %s", cleanName, enumClass.getSimpleName());
+            }
+        }
+        return result;
     }
 
 }
