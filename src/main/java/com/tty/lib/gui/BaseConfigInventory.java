@@ -101,12 +101,7 @@ public abstract class BaseConfigInventory extends BaseInventory {
     }
 
     @Override
-    public void cleanup() {
-        super.cleanup();
-        this.onCleanup();
-    }
-
-    protected void onCleanup() {
+    public void clean() {
         this.baseInstance = null;
     }
 

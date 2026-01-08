@@ -176,8 +176,10 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
     }
 
     @Override
-    protected void onCleanup() {
+    public void clean() {
+        super.clean();
         this.data = null;
         this.lastPageResult = null;
     }
+
 }

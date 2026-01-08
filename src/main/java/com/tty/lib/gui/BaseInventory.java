@@ -20,7 +20,7 @@ public abstract class BaseInventory implements InventoryHolder {
         this.type = type;
     }
 
-    protected void open() {
+    public void open() {
         this.inventory = this.create();
         this.player.openInventory(this.inventory);
     }
@@ -32,11 +32,14 @@ public abstract class BaseInventory implements InventoryHolder {
 
     protected abstract Inventory create();
 
+    public abstract void clean();
+
     public void cleanup() {
         if (this.inventory != null) {
             this.inventory.clear();
         }
         this.inventory = null;
+        this.clean();
     }
 
 }
