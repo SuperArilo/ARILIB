@@ -6,7 +6,9 @@ import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.scheduler.BukkitScheduler;
 import com.tty.lib.scheduler.FoliaScheduler;
 import com.tty.lib.services.ConfigDataService;
+import com.tty.lib.services.NBTDataService;
 import com.tty.lib.services.impl.ConfigDataServiceImpl;
+import com.tty.lib.services.impl.NBTDataServiceImpl;
 import com.tty.lib.tool.ConfigInstance;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -27,6 +29,7 @@ public class Lib extends JavaPlugin {
     public static final Scheduler Scheduler = ServerPlatform.isFolia() ? new FoliaScheduler():new BukkitScheduler();
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
     public static ConfigDataService CONFIG_DATA_SERVICE;
+    public static NBTDataService NBT_DATA_SERVICE;
 
     @Override
     public void onLoad() {
@@ -57,7 +60,9 @@ public class Lib extends JavaPlugin {
     private void registerServices () {
         ServicesManager servicesManager = Bukkit.getServicesManager();
         CONFIG_DATA_SERVICE = new ConfigDataServiceImpl();
+        NBT_DATA_SERVICE = new NBTDataServiceImpl();
         servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(NBTDataService.class, NBT_DATA_SERVICE, this, ServicePriority.Normal);
     }
 
     public static void reloadAllConfig() {

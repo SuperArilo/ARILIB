@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
 
-public interface ConfigDataService extends BaseDataService {
+public interface ConfigDataService {
     String getValue(String keyPath);
     ComponentListPage createComponentDataPage(Component titleName, @Nullable String prevAction, @Nullable String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords);
 }

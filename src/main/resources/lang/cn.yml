@@ -40,7 +40,9 @@ base:
     done: '&a✔ 保存成功'
     ing: '&e⏳ 保存中...'
     error: '&c✖ 保存失败，请联系管理员'
+  task-occupied: '&6当前的任务已被其他人占用，请稍后重试'
   on-player:
+    not-exist: '&c✖ 玩家不存在'
     hand-no-item: '&c当前手上并没有物品'
     unable-player: '&c该玩家离线或者不存在！'
     data-changed: '&a你的数据发生更变，请重新登录服务器!'
