@@ -38,7 +38,9 @@ public enum LangType implements LangTypeEnum {
     PAGE_NEXT_TEXT("page_next_text"),
     CURRENT_PAGE("current_page"),
     TOTAL_PAGE("total_page"),
-    TOTAL_DATA_RECORDS("total_data_records");
+    TOTAL_DATA_RECORDS("total_data_records"),
+    ENCHANT_NAME("enchant_name"),
+    ENCHANT_LEVEL("enchant_level");
 
     private final String type;
 
