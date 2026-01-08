@@ -11,7 +11,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -125,6 +127,27 @@ public class PublicFunctionUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 根据输入参数解析 UUID
+     * @param value 玩家名字或 UUID
+     * @return 玩家 UUID，如果不存在则返回 null
+     */
+    public static UUID parseUUID(String value) {
+        AtomicReference<UUID> uuid = new AtomicReference<>(null);
+        try {
+            uuid.set(UUID.fromString(value));
+        } catch (Exception ignored) {
+        }
+        if (uuid.get() == null) {
+            try {
+                uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return uuid.get();
     }
 
 }
