@@ -1,5 +1,6 @@
 package com.tty.lib.gui;
 
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.GuiType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -22,6 +23,10 @@ public abstract class BaseInventory implements InventoryHolder {
 
     public void open() {
         this.inventory = this.create();
+        if (this.inventory == null) {
+            Log.error("player %s open inventory error. because inventory is null.");
+            return;
+        }
         this.player.openInventory(this.inventory);
     }
 
