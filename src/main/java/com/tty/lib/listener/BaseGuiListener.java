@@ -1,7 +1,7 @@
 package com.tty.lib.listener;
 
 import com.tty.lib.enum_type.GuiType;
-import com.tty.lib.gui.BaseInventory;
+import com.tty.lib.gui.BaseConfigInventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
@@ -27,8 +27,8 @@ public abstract class BaseGuiListener implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) return;
 
-        BaseInventory topHolder = topInventory.getHolder() instanceof BaseInventory t ? t : null;
-        BaseInventory clickedHolder = clickedInventory.getHolder() instanceof BaseInventory c ? c : null;
+        BaseConfigInventory topHolder = topInventory.getHolder() instanceof BaseConfigInventory t ? t : null;
+        BaseConfigInventory clickedHolder = clickedInventory.getHolder() instanceof BaseConfigInventory c ? c : null;
 
         if (topHolder != null && event.isShiftClick()) {
             if (clickedInventory.equals(topInventory) || clickedInventory.equals(bottomInventory)) {
@@ -59,7 +59,7 @@ public abstract class BaseGuiListener implements Listener {
         InventoryView view = event.getView();
         Inventory topInventory = view.getTopInventory();
 
-        if (!(topInventory.getHolder() instanceof BaseInventory holder &&
+        if (!(topInventory.getHolder() instanceof BaseConfigInventory holder &&
                 holder.type.equals(this.guiType))) {
             return;
         }

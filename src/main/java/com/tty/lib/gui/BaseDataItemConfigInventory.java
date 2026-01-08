@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public abstract class BaseDataItemInventory<T> extends BaseInventory {
+public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory {
 
     protected int pageNum = 1;
     protected final int pageSize;
@@ -33,7 +33,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
     // 防止重复并发请求
     protected volatile boolean loading = false;
 
-    public BaseDataItemInventory(JavaPlugin plugin, BaseDataMenu baseDataInstance, Player player, GuiType type) {
+    public BaseDataItemConfigInventory(JavaPlugin plugin, BaseDataMenu baseDataInstance, Player player, GuiType type) {
         super(plugin, baseDataInstance, player, type);
         this.baseDataInstance = baseDataInstance;
         this.pageSize = baseDataInstance.getDataItems().getSlot().size();

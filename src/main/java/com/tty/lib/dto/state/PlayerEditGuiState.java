@@ -1,8 +1,9 @@
 package com.tty.lib.dto.state;
 
 import com.tty.lib.Lib;
-import com.tty.lib.gui.BaseInventory;
+import com.tty.lib.gui.BaseConfigInventory;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.gui.BaseInventory;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 
