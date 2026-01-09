@@ -23,25 +23,24 @@ public record SearchSafeLocation(JavaPlugin plugin) {
         boolean isNether = world.getEnvironment().equals(World.Environment.NETHER);
 
         world.getChunkAtAsync(chunkX, chunkZ)
-                .orTimeout(3, TimeUnit.SECONDS)
-                .thenAccept(chunk -> {
-                    int highestBlockYAt = isNether ?
-                            this.getSafeNetherY(world, chunk, relativeX, relativeZ) :
-                            chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
-                    if (highestBlockYAt == -1) {
+            .orTimeout(3, TimeUnit.SECONDS)
+            .thenAccept(chunk -> {
+                int highestBlockYAt = isNether ?
+                        this.getSafeNetherY(world, chunk, relativeX, relativeZ) :
+                        chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
+                if (highestBlockYAt == -1) {
+                    future.complete(null);
+                    return;
+                }
+                Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
+                    if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
+                        Log.debug("random location x: %s, y: %s, z: %s, search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
+                        future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
+                    } else {
                         future.complete(null);
-                        return;
                     }
-                    Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
-                        if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
-                            Log.debug("random location x: %s, y: %s, z: %s, search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
-                            future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
-                        } else {
-                            future.complete(null);
-                        }
-                });
+            });
         }).exceptionally(i -> {
-            Log.error("search error", i);
             future.completeExceptionally(i);
             return null;
         });

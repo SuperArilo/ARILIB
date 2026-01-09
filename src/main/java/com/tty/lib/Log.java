@@ -101,9 +101,21 @@ public class Log {
         LOGGER.log(Level.WARNING, formatMessage(msg, args));
     }
 
+    public static void warn(Throwable throwable) {
+        if (isLoggerNotReady()) return;
+        String msg = "[" + getCallerClassName() + "] " + throwable.getMessage();
+        LOGGER.log(Level.WARNING, msg, throwable);
+    }
+
     public static void warn(Throwable throwable, String msg, Object... args) {
         if (isLoggerNotReady()) return;
         LOGGER.log(Level.WARNING, formatMessage(msg, args), throwable);
+    }
+
+    public static void error(Throwable throwable) {
+        if (isLoggerNotReady()) return;
+        String msg = "[" + getCallerClassName() + "] " + throwable.getMessage();
+        LOGGER.log(Level.SEVERE, msg, throwable);
     }
 
     public static void error(String msg, Object... args) {
