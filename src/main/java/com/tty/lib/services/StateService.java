@@ -33,8 +33,7 @@ public abstract class StateService<T extends State> {
     private final boolean isAsync;
     private CancellableTask task;
 
-    @Getter
-    private final List<T> STATE_LIST = Collections.synchronizedList(new ArrayList<>());
+    protected final List<T> stateList = Collections.synchronizedList(new ArrayList<>());
 
     public StateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         this.rate = rate;
@@ -52,13 +51,13 @@ public abstract class StateService<T extends State> {
     }
 
     private void execute() {
-        if (STATE_LIST.isEmpty()) {
+        if (stateList.isEmpty()) {
             this.abort();
             return;
         }
 
-        synchronized (STATE_LIST) {
-            Iterator<T> iterator = STATE_LIST.iterator();
+        synchronized (stateList) {
+            Iterator<T> iterator = stateList.iterator();
             while (iterator.hasNext()) {
                 T state = iterator.next();
 
@@ -96,26 +95,25 @@ public abstract class StateService<T extends State> {
         }
     }
 
-
     public void abort() {
         if (this.task == null) return;
         this.task.cancel();
         this.task = null;
 
-        for (T i : this.STATE_LIST) {
+        for (T i : this.stateList) {
             this.onServiceAbort(i);
         }
-        this.STATE_LIST.clear();
+        this.stateList.clear();
         Log.debug("state service abort.");
     }
 
     public boolean addState(T state) {
-        synchronized (this.STATE_LIST) {
+        synchronized (this.stateList) {
             if (!this.canAddState(state)) {
                 this.abortAddState(state);
                 return false;
             }
-            this.STATE_LIST.add(state);
+            this.stateList.add(state);
             this.passAddState(state);
             if (task == null) {
                 this.task = createTask(rate, c, isAsync, this.plugin);
@@ -126,23 +124,31 @@ public abstract class StateService<T extends State> {
     }
 
     public boolean isNotHaveState(Entity owner) {
-        synchronized (this.STATE_LIST) {
+        synchronized (this.stateList) {
             return this.getStates(owner).isEmpty();
         }
     }
 
     public List<T> getStates(Entity owner) {
-        synchronized (this.STATE_LIST) {
-            return STATE_LIST.stream()
+        synchronized (this.stateList) {
+            return stateList.stream()
                     .filter(i -> i.getOwner().equals(owner))
                     .toList();
         }
     }
 
     public boolean removeState(T state) {
-        synchronized (this.STATE_LIST) {
-            return STATE_LIST.remove(state);
+        synchronized (this.stateList) {
+            return stateList.remove(state);
         }
+    }
+
+    /**
+     * 当前状态列表是否为空
+     * @return 空 true
+     */
+    public boolean stateIsEmpty() {
+        return this.stateList.isEmpty();
     }
     /**
      * 检查是否允许添加状态
