@@ -23,22 +23,22 @@ public class CommandRegister {
                 try {
                     executorClass = Class.forName(packagePath + "." + k);
                 } catch (ClassNotFoundException e) {
-                    Log.error(e, "Error while constructing instruction. %s class not found!", k);
+                    Log.error(e, "Error while constructing instruction. {} class not found!", k);
                     return;
                 }
                 Object executorInstance;
                 try {
                     executorInstance = executorClass.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-                    Log.error(e, "Error while constructing executor for instruction: %s", k);
+                    Log.error(e, "Error while constructing executor for instruction: {}", k);
                     return;
                 }
                 if (executorInstance instanceof SuperHandsomeCommand cmd) {
                     commands.register((LiteralCommandNode<CommandSourceStack>) cmd.toBrigadier(), v.getUsage());
-                    Log.debug((v.isEnable() ? "":"un" ) + "register command: %s", k);
+                    Log.debug((v.isEnable() ? "":"un" ) + "register command: {}", k);
                 }
             });
-            Log.debug("register commands time: %sms", (System.currentTimeMillis() - start));
+            Log.debug("register commands time: {}ms", (System.currentTimeMillis() - start));
         });
     }
 

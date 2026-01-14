@@ -64,7 +64,7 @@ public abstract class BaseConfigInventory extends BaseInventory {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
-        Log.debug("%s: render masks: %sms", this.type.name(), (System.currentTimeMillis() - l));
+        Log.debug("{}: render masks: {}ms", this.type.name(), (System.currentTimeMillis() - l));
     }
 
     private void renderFunctionItems() {
@@ -84,7 +84,7 @@ public abstract class BaseConfigInventory extends BaseInventory {
                 this.inventory.setItem(integer, o);
             }
         });
-        Log.debug("%s: render function items: %sms", this.type.name(), (System.currentTimeMillis() - l));
+        Log.debug("{}: render function items: {}ms", this.type.name(), (System.currentTimeMillis() - l));
     }
 
     protected String replaceKey(String content, Map<String, String> map) {

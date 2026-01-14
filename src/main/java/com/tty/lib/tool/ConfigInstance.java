@@ -44,7 +44,7 @@ public class ConfigInstance {
 
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
-            Log.warn("Value not found for path: %s in file: %s", keyPath, filePath.name());
+            Log.warn("Value not found for path: {} in file: {}", keyPath, filePath.name());
             return defaultValue;
         }
 
@@ -57,7 +57,7 @@ public class ConfigInstance {
                 return this.gson.fromJson(this.gson.toJsonTree(value), type);
             }
         } catch (JsonSyntaxException e) {
-            Log.error(e, "Failed to convert value at path: %s in file: %s to type: %s", keyPath, filePath.name(), type.getTypeName());
+            Log.error(e, "Failed to convert value at path: {} in file: {} to type: {}", keyPath, filePath.name(), type.getTypeName());
             return defaultValue;
         }
     }
@@ -68,7 +68,7 @@ public class ConfigInstance {
 
     private boolean checkPath(String path) {
         if (path == null || path.isEmpty()) {
-            Log.error("file path %s is empty or null", path);
+            Log.error("file path {} is empty or null", path);
             return true;
         }
         return false;
@@ -92,7 +92,7 @@ public class ConfigInstance {
     private <T extends Enum<T> & FilePathEnum> YamlConfiguration checkConfiguration(T filePath) {
         YamlConfiguration configuration = this.getObject(filePath.name());
         if (configuration == null) {
-            Log.error("Config file not found: %s", filePath.name());
+            Log.error("Config file not found: {}", filePath.name());
             return null;
         }
         return configuration;

@@ -114,12 +114,12 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
                 if (result != null) this.lastPageResult = result;
                 onSuccess.accept(result != null ? result : PageResult.build(List.of(), 0, 0, this.pageNum));
             } catch (Exception e) {
-                Log.error(e, "%s: processing request result error!", this.type.name());
+                Log.error(e, "{}: processing request result error!", this.type.name());
             } finally {
                 this.loading = false;
             }
         }).exceptionally(ex -> {
-            Log.error(ex, "%s: request data error!", this.type.name());
+            Log.error(ex, "{}: request data error!", this.type.name());
             this.loading = false;
             return null;
         });
@@ -148,7 +148,7 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
                     },
                     null);
         }
-        Log.debug("%s: submit render task time: %sms", this.type.name(), (System.currentTimeMillis() - l));
+        Log.debug("{}: submit render task time: {}ms", this.type.name(), (System.currentTimeMillis() - l));
     }
 
     /**
@@ -163,7 +163,7 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
             itemStack = ItemStack.of(Material.valueOf(showMaterial.toUpperCase()));
             return itemStack;
         } catch (Exception e) {
-            Log.error(e, "create ItemStack error. material %s", showMaterial);
+            Log.error(e, "create ItemStack error. material {}", showMaterial);
             return null;
         }
     }

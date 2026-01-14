@@ -25,7 +25,7 @@ public abstract class BaseInventory implements InventoryHolder {
         this.inventory = this.createInventory();
         this.beforeOpen();
         if (this.inventory == null) {
-            Log.error("player %s open inventory error. because inventory is null.");
+            Log.error("player {} open inventory error. because inventory is null.");
             return;
         }
         this.player.openInventory(this.inventory);

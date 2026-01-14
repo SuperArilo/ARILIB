@@ -104,7 +104,7 @@ public abstract class StateService<T extends State> {
             this.onServiceAbort(i);
         }
         this.stateList.clear();
-        Log.debug("[%s] state service abort.", this.getClass().getSimpleName());
+        Log.debug("[{}] state service abort.", this.getClass().getSimpleName());
     }
 
     public boolean addState(T state) {
@@ -117,7 +117,7 @@ public abstract class StateService<T extends State> {
             this.passAddState(state);
             if (task == null) {
                 this.task = createTask(rate, c, isAsync, this.plugin);
-                Log.debug("[%s] create state service.", this.getClass().getSimpleName());
+                Log.debug("[{}] create state service.", this.getClass().getSimpleName());
             }
             return true;
         }

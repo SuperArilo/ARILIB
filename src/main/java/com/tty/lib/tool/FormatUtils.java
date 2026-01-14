@@ -207,7 +207,7 @@ public class FormatUtils {
             type = FunctionType.valueOf(rawType.toUpperCase());
             return type;
         } catch (Exception e) {
-            Log.debug(e, "Function type %s error", rawType);
+            Log.debug(e, "Function type {} error", rawType);
             return null;
         }
     }

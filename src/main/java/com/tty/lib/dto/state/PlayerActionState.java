@@ -31,7 +31,7 @@ public class PlayerActionState extends State {
     public void createToolEntity(@NotNull World world, @NotNull Location location, Consumer<AreaEffectCloud> i) {
         if (this.tool_entity != null) {
             Location l = tool_entity.getLocation();
-            Log.error("tool_entity already exists. location %s", FormatUtils.XYZText(l.getX(), l.getY(), l.getZ()));
+            Log.error("tool_entity already exists. location {}", FormatUtils.XYZText(l.getX(), l.getY(), l.getZ()));
             Log.warn("removing...");
             this.tool_entity.remove();
             this.tool_entity = null;
@@ -62,7 +62,7 @@ public class PlayerActionState extends State {
                 this.tool_entity.remove();
                 this.tool_entity = null;
                 this.setOver(true);
-                Log.debug("player %s ejected, remove tool entity", this.getOwner().getName());
+                Log.debug("player {} ejected, remove tool entity", this.getOwner().getName());
             },
             () -> Log.error("remove tool_entity error."));
     }

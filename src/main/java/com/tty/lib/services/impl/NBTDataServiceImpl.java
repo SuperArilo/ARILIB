@@ -17,7 +17,7 @@ public class NBTDataServiceImpl implements NBTDataService {
         try {
            return NBT.getFileHandle(playerDataFile);
         } catch (IOException e) {
-            Log.error(e, "load file data %s error. ", playerUUID);
+            Log.error(e, "load file data {} error. ", playerUUID);
             return null;
         }
     }

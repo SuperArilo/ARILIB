@@ -83,7 +83,7 @@ public class Lib extends JavaPlugin {
                 try {
                     Lib.instance.saveResource(path, true);
                 } catch (Exception e) {
-                    Log.error("can not find file path %s .", path);
+                    Log.error("can not find file path {} .", path);
                 }
             }
             C_INSTANCE.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));

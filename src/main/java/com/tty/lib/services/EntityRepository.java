@@ -30,7 +30,7 @@ public abstract class EntityRepository<K, T> {
 
     public EntityRepository(BaseDataManager<K, T> manager) {
         this.manager = manager;
-        debug("EntityRepository initialized with manager: %s", manager.getClass().getSimpleName());
+        debug("EntityRepository initialized with manager: {}", manager.getClass().getSimpleName());
     }
 
     /**
@@ -48,32 +48,34 @@ public abstract class EntityRepository<K, T> {
      */
     protected abstract K extractPageQueryKey(T entity);
 
-    private void debug(String format, Object... args) {
-        String className = this.getClass().getSimpleName();
-        String message = String.format(format, args);
-        Log.debug("[%s] %s", className, message);
+    protected final void debug(String format, Object... args) {
+        Object[] merged = new Object[args.length + 1];
+        merged[0] = getClass().getSimpleName();
+        System.arraycopy(args, 0, merged, 1, args.length);
+
+        Log.debug("[{}] " + format, merged);
     }
 
     public CompletableFuture<T> get(K key) {
         T cached = this.entityCache.get(key);
         if (cached != null) {
-            debug("Entity cache hit for key: %s", key);
+            debug("Entity cache hit for key: {}", key);
             return CompletableFuture.completedFuture(cached);
         }
 
-        debug("Entity cache miss for key: %s, querying from DB", key);
+        debug("Entity cache miss for key: {}, querying from DB", key);
 
         if (this.manager == null) {
-            debug("Manager is null, returning null for key: %s", key);
+            debug("Manager is null, returning null for key: {}", key);
             return CompletableFuture.completedFuture(null);
         }
 
         return this.manager.getInstance(key).thenApply(entity -> {
             if (entity != null) {
                 this.entityCache.put(key, entity);
-                debug("Entity cached for key: %s", key);
+                debug("Entity cached for key: {}", key);
             } else {
-                debug("Entity not found for key: %s", key);
+                debug("Entity not found for key: {}", key);
             }
             return entity;
         });
@@ -81,16 +83,16 @@ public abstract class EntityRepository<K, T> {
 
     /** 创建新实体 */
     public CompletableFuture<T> create(T entity) {
-        debug("Creating new entity: %s", entity);
+        debug("Creating new entity: {}", entity);
         return this.manager.createInstance(entity).thenApply(createdEntity -> {
             if (createdEntity != null) {
                 K cacheKey = this.extractCacheKey(createdEntity);
                 this.entityCache.put(cacheKey, createdEntity);
-                debug("New entity cached with key: %s", cacheKey);
+                debug("New entity cached with key: {}", cacheKey);
                 this.handleCreateForAscendingOrder(createdEntity);
-                debug("Entity created and cached successfully: %s", cacheKey);
+                debug("Entity created and cached successfully: {}", cacheKey);
             } else {
-                debug("Entity creation failed for: %s", entity);
+                debug("Entity creation failed for: {}", entity);
             }
             return createdEntity;
         });
@@ -98,14 +100,14 @@ public abstract class EntityRepository<K, T> {
 
     public CompletableFuture<Boolean> update(T entity) {
         K cacheKey = this.extractCacheKey(entity);
-        debug("updating entity with key: %s", cacheKey);
+        debug("updating entity with key: {}", cacheKey);
         return this.manager.modify(entity).thenApply(success -> {
             if (success) {
                 this.entityCache.put(cacheKey, entity);
-                debug("entity updated in cache: %s", cacheKey);
+                debug("entity updated in cache: {}", cacheKey);
                 this.invalidateRelatedPages(entity);
             } else {
-                debug("entity update failed for key: %s", cacheKey);
+                debug("entity update failed for key: {}", cacheKey);
             }
             return success;
         });
@@ -115,17 +117,17 @@ public abstract class EntityRepository<K, T> {
         K cacheKey = this.extractCacheKey(entity);
         return this.manager.getInstance(cacheKey).thenCompose(e -> {
             if (e == null) {
-                debug("entity not found for deletion, key: %s", cacheKey);
+                debug("entity not found for deletion, key: {}", cacheKey);
                 return CompletableFuture.completedFuture(false);
             }
 
             return this.manager.deleteInstance(e).thenApply(success -> {
                 if (success) {
                     this.entityCache.remove(cacheKey);
-                    debug("entity removed from cache: %s", cacheKey);
+                    debug("entity removed from cache: {}", cacheKey);
                     this.invalidateRelatedPages(e);
                 } else {
-                    debug("entity deletion failed for key: %s", cacheKey);
+                    debug("entity deletion failed for key: {}", cacheKey);
                 }
                 return success;
             });
@@ -137,11 +139,11 @@ public abstract class EntityRepository<K, T> {
 
         PageResult<T> cached = this.pageCache.get(pageKey);
         if (cached != null) {
-            debug("page cache hit for pageKey: %s, page: %s, size: %s, condition: %s", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
+            debug("page cache hit for pageKey: {}, page: {}, size: {}, condition: {}", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
             return CompletableFuture.completedFuture(cached);
         }
 
-        debug("page cache miss for pageKey: %s, page: %s, size: %s, condition: %s, querying from DB", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
+        debug("page cache miss for pageKey: {}, page: {}, size: {}, condition: {}, querying from DB", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
 
         if (this.manager == null) {
             debug("manager is null, returning empty page result");
@@ -150,15 +152,15 @@ public abstract class EntityRepository<K, T> {
 
         return this.manager.getList(pageNum, pageSize, queryCondition).thenApply(result -> {
             if (result == null) {
-                debug("query returned null result for pageKey: %s", pageKey);
+                debug("query returned null result for pageKey: {}", pageKey);
                 return null;
             }
 
             this.pageCache.put(pageKey, result);
-            debug("page cached for pageKey: %s, record count: %s", pageKey, String.valueOf(result.getRecords().size()));
+            debug("page cached for pageKey: {}, record count: {}", pageKey, String.valueOf(result.getRecords().size()));
 
             this.queryToPages.computeIfAbsent(queryCondition, k -> ConcurrentHashMap.newKeySet()).add(pageKey);
-            debug("added pageKey mapping for query condition: %s -> %s", queryCondition, pageKey);
+            debug("added pageKey mapping for query condition: {} -> {}", queryCondition, pageKey);
 
             int entityCachedCount = 0;
             for (T entity : result.getRecords()) {
@@ -168,7 +170,7 @@ public abstract class EntityRepository<K, T> {
             }
 
             if (entityCachedCount > 0) {
-                debug("cached %s entities from page result", String.valueOf(entityCachedCount));
+                debug("cached {} entities from page result", String.valueOf(entityCachedCount));
             }
 
             return result;
@@ -190,7 +192,7 @@ public abstract class EntityRepository<K, T> {
             return;
         }
 
-        debug("invalidating pages related to entity with query key: %s", pageQueryKey);
+        debug("invalidating pages related to entity with query key: {}", pageQueryKey);
         this.invalidatePagesByQueryKey(pageQueryKey);
     }
 
@@ -198,7 +200,7 @@ public abstract class EntityRepository<K, T> {
     private void invalidatePagesByQueryKey(K pageQueryKey) {
         Set<PageKey<K>> relatedPages = this.queryToPages.get(pageQueryKey);
         if (relatedPages == null || relatedPages.isEmpty()) {
-            debug("No related pages found for query key: %s", pageQueryKey);
+            debug("No related pages found for query key: {}", pageQueryKey);
             return;
         }
 
@@ -210,7 +212,7 @@ public abstract class EntityRepository<K, T> {
         }
         relatedPages.clear();
 
-        debug("invalidated %s pages for query key: %s", String.valueOf(invalidatedCount), pageQueryKey);
+        debug("invalidated {} pages for query key: {}", String.valueOf(invalidatedCount), pageQueryKey);
     }
 
     /** 处理自增ID升序排列时的创建操作 */
@@ -219,7 +221,7 @@ public abstract class EntityRepository<K, T> {
         Set<PageKey<K>> relatedPages = this.queryToPages.get(pageQueryKey);
 
         if (relatedPages == null || relatedPages.isEmpty()) {
-            debug("no cached pages found for new entity, query key: %s", pageQueryKey);
+            debug("no cached pages found for new entity, query key: {}", pageQueryKey);
             return;
         }
 
@@ -249,16 +251,16 @@ public abstract class EntityRepository<K, T> {
                 if (recordCount < pageSize) {
                     this.pageCache.remove(lastPageKey);
                     relatedPages.remove(lastPageKey);
-                    debug("last page not full (%s/%s), invalidated only last page: %s", String.valueOf(recordCount), String.valueOf(pageSize), lastPageKey);
+                    debug("last page not full ({}/{}), invalidated only last page: {}", String.valueOf(recordCount), String.valueOf(pageSize), lastPageKey);
                 } else {
                     this.invalidatePagesByQueryKey(pageQueryKey);
-                    debug("last page is full (%s/%s), invalidated all pages for query: %s", String.valueOf(recordCount), String.valueOf(pageSize), pageQueryKey);
+                    debug("last page is full ({}/{}), invalidated all pages for query: {}", String.valueOf(recordCount), String.valueOf(pageSize), pageQueryKey);
                 }
             } else {
-                debug("last page cache entry not found for pageKey: %s", lastPageKey);
+                debug("last page cache entry not found for pageKey: {}", lastPageKey);
             }
         } else {
-            debug("no last page key found for query: %s", pageQueryKey);
+            debug("no last page key found for query: {}", pageQueryKey);
         }
     }
 
@@ -272,21 +274,21 @@ public abstract class EntityRepository<K, T> {
 
     /** 直接获取数据，不会缓存 */
     public CompletableFuture<PageResult<T>> getAllForCheck(K queryCondition) {
-        debug("direct query (no cache) for all records with condition: %s", queryCondition);
+        debug("direct query (no cache) for all records with condition: {}", queryCondition);
         return this.manager.getList(1, Integer.MAX_VALUE, queryCondition).thenApply(result -> result);
     }
 
     public void clearEntityCache() {
         int size = this.entityCache.size();
         this.entityCache.clear();
-        debug("cleared entity cache, removed %s entities", String.valueOf(size));
+        debug("cleared entity cache, removed {} entities", String.valueOf(size));
     }
 
     public void clearPageCache() {
         int pageCount = this.pageCache.size();
         this.pageCache.clear();
         this.queryToPages.clear();
-        debug("cleared page cache, removed %s pages", String.valueOf(pageCount));
+        debug("cleared page cache, removed {} pages", String.valueOf(pageCount));
     }
 
     public void clearAllCache() {
@@ -296,7 +298,7 @@ public abstract class EntityRepository<K, T> {
         this.clearEntityCache();
         this.clearPageCache();
 
-        debug("cleared all cache, removed %s entities and %s pages", String.valueOf(entityCount), String.valueOf(pageCount));
+        debug("cleared all cache, removed {} entities and {} pages", String.valueOf(entityCount), String.valueOf(pageCount));
     }
 
 }

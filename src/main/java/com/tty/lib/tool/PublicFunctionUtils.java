@@ -26,10 +26,10 @@ public class PublicFunctionUtils {
             if (registration != null) {
                 consumer.accept(registration.getProvider());
             } else {
-                Log.warn("failed to load plugin: %s. because %s is null", pluginName, pluginName);
+                Log.warn("failed to load plugin: {}. because {} is null", pluginName, pluginName);
             }
         } else {
-            Log.warn("failed to load plugin: %s.", pluginName);
+            Log.warn("failed to load plugin: {}.", pluginName);
         }
     }
 
@@ -121,9 +121,9 @@ public class PublicFunctionUtils {
                 String enumName = caseSensitive ? cleanName.toLowerCase() : cleanName.toUpperCase();
                 T enumValue = Enum.valueOf(enumClass, enumName);
                 result.add(enumValue);
-                Log.debug("Successfully converted %s to enum.", cleanName);
+                Log.debug("Successfully converted {} to enum.", cleanName);
             } catch (IllegalArgumentException e) {
-                Log.error("Invalid enum value: %s for enum class %s", cleanName, enumClass.getSimpleName());
+                Log.error("Invalid enum value: {} for enum class {}", cleanName, enumClass.getSimpleName());
             }
         }
         return result;

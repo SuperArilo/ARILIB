@@ -80,7 +80,7 @@ public class PermissionUtils {
             }
         }
         if (initValue == 0 && firstErrorPermission != null) {
-            Log.error("player %s permission format error: ", player.getName(), firstErrorPermission);
+            Log.error("player {} permission format error: ", player.getName(), firstErrorPermission);
         }
         return initValue;
     }

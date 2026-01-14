@@ -34,7 +34,7 @@ public record SearchSafeLocation(JavaPlugin plugin) {
                 }
                 Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
                     if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
-                        Log.debug("random location x: %s, y: %s, z: %s, search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
+                        Log.debug("random location x: {}, y: {}, z: {}, search time: {}ms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
                         future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
                     } else {
                         future.complete(null);
