@@ -1,4 +1,4 @@
-package com.tty.lib.entity.cache;
+package com.tty.lib.entity;
 
 import java.util.Objects;
 

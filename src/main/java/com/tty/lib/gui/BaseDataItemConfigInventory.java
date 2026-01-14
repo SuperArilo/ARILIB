@@ -166,7 +166,6 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
             Log.error(e, "create ItemStack error. material %s", showMaterial);
             return null;
         }
-
     }
 
     /**

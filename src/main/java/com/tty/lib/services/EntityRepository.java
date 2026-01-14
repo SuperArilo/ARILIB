@@ -2,8 +2,9 @@ package com.tty.lib.services;
 
 import com.tty.lib.Log;
 import com.tty.lib.dto.PageResult;
-import com.tty.lib.entity.cache.PageKey;
+import com.tty.lib.entity.PageKey;
 import com.tty.lib.tool.BaseDataManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -32,10 +33,19 @@ public abstract class EntityRepository<K, T> {
         debug("EntityRepository initialized with manager: %s", manager.getClass().getSimpleName());
     }
 
-    /** 从实体中提取缓存键（用于单实体缓存） */
-    protected abstract K extractCacheKey(T entity);
+    /**
+     * 从实体中提取缓存键（用于单实体缓存）
+     * @param entity 具体实体
+     * @return 返回单独查询这个实体需要的key
+     */
+    protected @NotNull
+    abstract K extractCacheKey(T entity);
 
-    /** 从实体中提取分页查询键（用于分页缓存关联） */
+    /**
+     * 从实体中提取分页查询键（用于分页缓存关联）
+     * @param entity 具体实体
+     * @return 返回查询这个实体列表需要的key
+     */
     protected abstract K extractPageQueryKey(T entity);
 
     private void debug(String format, Object... args) {
@@ -169,7 +179,17 @@ public abstract class EntityRepository<K, T> {
      * 使相关分页缓存失效
      */
     private void invalidateRelatedPages(T entity) {
+        if (entity == null) {
+            debug("Cannot invalidate pages for null entity");
+            return;
+        }
+
         K pageQueryKey = this.extractPageQueryKey(entity);
+        if (pageQueryKey == null) {
+            debug("entity type does not require page cache invalidation");
+            return;
+        }
+
         debug("invalidating pages related to entity with query key: %s", pageQueryKey);
         this.invalidatePagesByQueryKey(pageQueryKey);
     }
@@ -240,6 +260,14 @@ public abstract class EntityRepository<K, T> {
         } else {
             debug("no last page key found for query: %s", pageQueryKey);
         }
+    }
+
+    public void setExecutionMode(boolean value) {
+        this.manager.setExecutionMode(value);
+    }
+
+    public boolean isAsync() {
+        return this.manager.isAsync;
     }
 
     /** 直接获取数据，不会缓存 */
