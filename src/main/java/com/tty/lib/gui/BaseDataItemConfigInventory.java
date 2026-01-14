@@ -37,12 +37,6 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
         super(plugin, baseDataInstance, player, type);
         this.baseDataInstance = baseDataInstance;
         this.pageSize = baseDataInstance.getDataItems().getSlot().size();
-
-        this.requestAndAccept(result -> {
-            this.lastPageResult = result;
-            this.data = result.getRecords();
-            this.renderDataItem();
-        });
     }
 
     /**
@@ -80,6 +74,15 @@ public abstract class BaseDataItemConfigInventory<T> extends BaseConfigInventory
                 return;
             }
 
+            this.lastPageResult = result;
+            this.data = result.getRecords();
+            this.renderDataItem();
+        });
+    }
+
+    @Override
+    protected void beforeOpen() {
+        this.requestAndAccept(result -> {
             this.lastPageResult = result;
             this.data = result.getRecords();
             this.renderDataItem();
