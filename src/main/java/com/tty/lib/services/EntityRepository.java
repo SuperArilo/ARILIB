@@ -81,7 +81,11 @@ public abstract class EntityRepository<K, T> {
         });
     }
 
-    /** 创建新实体 */
+    /**
+     * 创建新实体
+     * @param entity 新实体
+     * @return 新实体
+     */
     public CompletableFuture<T> create(T entity) {
         debug("Creating new entity: {}", entity);
         return this.manager.createInstance(entity).thenApply(createdEntity -> {
@@ -270,12 +274,6 @@ public abstract class EntityRepository<K, T> {
 
     public boolean isAsync() {
         return this.manager.isAsync;
-    }
-
-    /** 直接获取数据，不会缓存 */
-    public CompletableFuture<PageResult<T>> getAllForCheck(K queryCondition) {
-        debug("direct query (no cache) for all records with condition: {}", queryCondition);
-        return this.manager.getList(1, Integer.MAX_VALUE, queryCondition).thenApply(result -> result);
     }
 
     public void clearEntityCache() {
