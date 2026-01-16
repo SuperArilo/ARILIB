@@ -1,7 +1,7 @@
 package com.tty.lib.services.impl;
 
 import com.tty.lib.enum_type.LangTypeEnum;
-import com.tty.lib.services.placeholder.AsyncPlaceholder;
+import com.tty.lib.services.placeholder.Placeholder;
 import com.tty.lib.services.placeholder.PlaceholderDefinition;
 import com.tty.lib.services.placeholder.PlaceholderRegistry;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class PlaceholderRegistryImpl implements PlaceholderRegistry {
 
-    private final Map<String, AsyncPlaceholder> placeholders = new HashMap<>();
+    private final Map<String, Placeholder> placeholders = new HashMap<>();
 
     @Override
     public <E extends Enum<E> & LangTypeEnum> void register(PlaceholderDefinition<E> definition) {
@@ -24,7 +24,7 @@ public class PlaceholderRegistryImpl implements PlaceholderRegistry {
     }
 
     @Override
-    public Optional<AsyncPlaceholder> find(String key, OfflinePlayer context) {
+    public Optional<Placeholder> find(String key, OfflinePlayer context) {
         return Optional.ofNullable(this.placeholders.get(key));
     }
 

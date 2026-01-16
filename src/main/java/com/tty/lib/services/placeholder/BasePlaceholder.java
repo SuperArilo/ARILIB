@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -17,6 +18,8 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
     private final PlaceholderEngineImpl engine = new PlaceholderEngineImpl();
     private final ConfigInstance instance;
     private final E type;
+
+    private final Type typeTokenList = new TypeToken<List<String>>() {}.getType();
 
     public BasePlaceholder(ConfigInstance instance, E type) {
         this.instance = instance;
@@ -34,21 +37,35 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
     }
 
     public CompletableFuture<Component> renderAsync(String path, Player player) {
-        String value = instance.getValue(path, type, String.class, "null");
-        return this.engine.renderAsync(value, player);
+        return this.engine.renderAsync(instance.getValue(path, type, String.class, "null"), player);
     }
 
     public CompletableFuture<Component> renderAsync(String path, OfflinePlayer offlinePlayer) {
-        String value = instance.getValue(path, type, String.class, "null");
-        return this.engine.renderAsync(value, offlinePlayer);
+        return this.engine.renderAsync(instance.getValue(path, type, String.class, "null"), offlinePlayer);
     }
 
     public CompletableFuture<Component> renderListAsync(String path, Player player) {
-        return this.engine.renderListAsync(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), player);
+        return this.engine.renderListAsync(instance.getValue(path, type, typeTokenList, List.of()), player);
     }
 
     public CompletableFuture<Component> renderListAsync(String path, OfflinePlayer offlinePlayer) {
-        return this.engine.renderListAsync(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), offlinePlayer);
+        return this.engine.renderListAsync(instance.getValue(path, type, typeTokenList, List.of()), offlinePlayer);
+    }
+
+    public Component renderSync(String path, Player player) {
+        return this.engine.render(instance.getValue(path, type, String.class, "null"), player);
+    }
+
+    public Component renderSync(String path, OfflinePlayer offlinePlayer) {
+        return this.engine.render(instance.getValue(path, type, String.class, "null"), offlinePlayer);
+    }
+
+    public Component renderListSync(String path, Player player) {
+        return this.engine.renderList(instance.getValue(path, type, typeTokenList, List.of()), player);
+    }
+
+    public Component renderListSync(String path, OfflinePlayer offlinePlayer) {
+        return this.engine.renderList(instance.getValue(path, type, typeTokenList, List.of()), offlinePlayer);
     }
 
     protected void setRegister(PlaceholderRegistry registry) {

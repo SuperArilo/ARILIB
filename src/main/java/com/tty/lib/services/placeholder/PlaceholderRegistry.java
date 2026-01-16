@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface PlaceholderRegistry {
 
     <E extends Enum<E> & LangTypeEnum> void register(PlaceholderDefinition<E> definition);
-    Optional<AsyncPlaceholder> find(String key, OfflinePlayer context);
+    Optional<Placeholder> find(String key, OfflinePlayer context);
 
 }
 

@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface AsyncPlaceholder {
+public interface AsyncPlaceholder extends Placeholder {
 
     CompletableFuture<Component> resolve(OfflinePlayer context);
 
