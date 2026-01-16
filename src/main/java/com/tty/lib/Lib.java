@@ -10,6 +10,7 @@ import com.tty.lib.services.NBTDataService;
 import com.tty.lib.services.impl.ConfigDataServiceImpl;
 import com.tty.lib.services.impl.NBTDataServiceImpl;
 import com.tty.lib.tool.ConfigInstance;
+import com.tty.lib.tool.Placeholder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ public class Lib extends JavaPlugin {
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
     public static ConfigDataService CONFIG_DATA_SERVICE;
     public static NBTDataService NBT_DATA_SERVICE;
+    public static Placeholder Placeholder;
 
     @Override
     public void onLoad() {
@@ -49,6 +51,8 @@ public class Lib extends JavaPlugin {
             Commands registrar = i.registrar();
             registrar.register(new AriLib().toBrigadier());
         });
+
+        Placeholder = new Placeholder();
     }
 
     @Override

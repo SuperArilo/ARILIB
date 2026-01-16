@@ -3,7 +3,7 @@ package com.tty.lib.services.impl;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.ComponentListPage;
 import com.tty.lib.enum_type.FilePath;
-import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.lang.LangPage;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.tool.ComponentUtils;
 import net.kyori.adventure.text.Component;
@@ -23,7 +23,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = ComponentUtils.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangType.PAGE_TITLE.getType(), titleName));
+        TextComponent title = ComponentUtils.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
@@ -38,11 +38,11 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
 
         HashMap<String, Component> map = new HashMap<>();
-        map.put(LangType.PAGE_PREV_TEXT.getType(), prev);
-        map.put(LangType.PAGE_NEXT_TEXT.getType(), next);
-        map.put(LangType.CURRENT_PAGE.getType(), Component.text(currentPage));
-        map.put(LangType.TOTAL_PAGE.getType(), Component.text(totalPage));
-        map.put(LangType.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
+        map.put(LangPage.PAGE_PREV_TEXT.getType(), prev);
+        map.put(LangPage.PAGE_NEXT_TEXT.getType(), next);
+        map.put(LangPage.CURRENT_PAGE.getType(), Component.text(currentPage));
+        map.put(LangPage.TOTAL_PAGE.getType(), Component.text(totalPage));
+        map.put(LangPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
 
         TextComponent end = ComponentUtils.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 

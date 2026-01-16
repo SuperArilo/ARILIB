@@ -73,6 +73,10 @@ public class ComponentUtils {
         );
     }
 
+    public static Component setClickEventText(Component component, ClickEvent.Action action, String actionText) {
+        return component.clickEvent(ClickEvent.clickEvent(action, actionText));
+    }
+
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
         return text(content).clickEvent(ClickEvent.clickEvent(action, actionText));
     }

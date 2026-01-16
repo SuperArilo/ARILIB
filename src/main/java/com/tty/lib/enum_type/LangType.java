@@ -1,12 +1,6 @@
 package com.tty.lib.enum_type;
 
 public enum LangType implements LangTypeEnum {
-    TPA_SENDER("tpa_sender"),
-    TPAHERE_SENDER("tpahere_sender"),
-    TPA_BE_SENDER("tpa_be_sender"),
-    COSTED("costed"),
-    TIME("time"),
-    DEATH_LOCATION("death_location"),
     PERIOD("period"),
     SLEEP_PLAYERS("sleep_players"),
     SKIP_NIGHT_TICK_INCREMENT("skip_night_tick_increment"),
