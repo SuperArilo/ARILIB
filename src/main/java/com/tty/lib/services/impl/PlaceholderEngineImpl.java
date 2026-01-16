@@ -25,7 +25,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
     private PlaceholderRegistry registry;
 
     @Override
-    public CompletableFuture<Component> render(String template, OfflinePlayer context) {
+    public CompletableFuture<Component> renderAsync(String template, OfflinePlayer context) {
 
         Matcher matcher = PATTERN.matcher(template);
         Map<String, CompletableFuture<Component>> futures = new HashMap<>();
@@ -45,8 +45,8 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
     }
 
     @Override
-    public CompletableFuture<Component> renderList(List<String> list, OfflinePlayer context) {
-        List<CompletableFuture<Component>> futures = list.stream().map(line -> render(line, context)).toList();
+    public CompletableFuture<Component> renderListAsync(List<String> list, OfflinePlayer context) {
+        List<CompletableFuture<Component>> futures = list.stream().map(line -> renderAsync(line, context)).toList();
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenApply(v ->
                 Component.join(JoinConfiguration.separator(Component.newline()), futures.stream().map(CompletableFuture::join).toList())
         );

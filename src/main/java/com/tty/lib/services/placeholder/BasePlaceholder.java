@@ -35,20 +35,20 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
 
     public CompletableFuture<Component> renderAsync(String path, Player player) {
         String value = instance.getValue(path, type, String.class, "null");
-        return this.engine.render(value, player);
+        return this.engine.renderAsync(value, player);
     }
 
     public CompletableFuture<Component> renderAsync(String path, OfflinePlayer offlinePlayer) {
         String value = instance.getValue(path, type, String.class, "null");
-        return this.engine.render(value, offlinePlayer);
+        return this.engine.renderAsync(value, offlinePlayer);
     }
 
     public CompletableFuture<Component> renderListAsync(String path, Player player) {
-        return this.engine.renderList(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), player);
+        return this.engine.renderListAsync(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), player);
     }
 
     public CompletableFuture<Component> renderListAsync(String path, OfflinePlayer offlinePlayer) {
-        return this.engine.renderList(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), offlinePlayer);
+        return this.engine.renderListAsync(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), offlinePlayer);
     }
 
     protected void setRegister(PlaceholderRegistry registry) {
