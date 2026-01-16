@@ -33,21 +33,21 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
         return future;
     }
 
-    public CompletableFuture<Component> render(String path, Player player) {
+    public CompletableFuture<Component> renderAsync(String path, Player player) {
         String value = instance.getValue(path, type, String.class, "null");
         return this.engine.render(value, player);
     }
 
-    public CompletableFuture<Component> render(String path, OfflinePlayer offlinePlayer) {
+    public CompletableFuture<Component> renderAsync(String path, OfflinePlayer offlinePlayer) {
         String value = instance.getValue(path, type, String.class, "null");
         return this.engine.render(value, offlinePlayer);
     }
 
-    public CompletableFuture<Component> renderList(String path, Player player) {
+    public CompletableFuture<Component> renderListAsync(String path, Player player) {
         return this.engine.renderList(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), player);
     }
 
-    public CompletableFuture<Component> renderList(String path, OfflinePlayer offlinePlayer) {
+    public CompletableFuture<Component> renderListAsync(String path, OfflinePlayer offlinePlayer) {
         return this.engine.renderList(instance.getValue(path, type, new TypeToken<List<String>>(){}.getType(), List.of()), offlinePlayer);
     }
 
