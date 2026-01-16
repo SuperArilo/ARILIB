@@ -4,7 +4,7 @@ import com.tty.lib.enum_type.LangTypeEnum;
 import com.tty.lib.services.placeholder.AsyncPlaceholder;
 import com.tty.lib.services.placeholder.PlaceholderDefinition;
 
-public record PlaceholderDefinitionImpl<E extends Enum<E> & LangTypeEnum>(E key, AsyncPlaceholder placeholder) implements PlaceholderDefinition<E> {
+record PlaceholderDefinitionImpl<E extends Enum<E> & LangTypeEnum>(E key, AsyncPlaceholder placeholder) implements PlaceholderDefinition<E> {
 
     @Override
     public AsyncPlaceholder resolver() {
