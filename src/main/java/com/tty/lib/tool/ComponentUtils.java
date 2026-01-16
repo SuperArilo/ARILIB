@@ -65,6 +65,14 @@ public class ComponentUtils {
         );
     }
 
+    public static Title setPlayerTitle(@NotNull String title, @NotNull Component subTitle, long fadeIn, long stay, long fadeOut) {
+        return Title.title(
+                text(title),
+                subTitle,
+                Title.Times.times(Duration.ofMillis(fadeIn), Duration.ofMillis(stay), Duration.ofMillis(fadeOut))
+        );
+    }
+
     public static Title setPlayerTitle(@NotNull String title, @NotNull String subTitle, Map<String, Component> placeholders, long fadeIn, long stay, long fadeOut) {
         return Title.title(
                 text(title, placeholders),
