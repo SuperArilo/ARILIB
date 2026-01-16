@@ -26,14 +26,22 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
         this.type = type;
     }
 
-    protected CompletableFuture<Component> empty() {
+    protected Component empty() {
+        return Component.empty();
+    }
+
+    protected CompletableFuture<Component> emptyAsync() {
         return CompletableFuture.completedFuture(Component.empty());
     }
 
-    protected CompletableFuture<Component> set(String value) {
+    protected CompletableFuture<Component> setAsync(String value) {
         CompletableFuture<Component> future = new CompletableFuture<>();
         future.complete(ComponentUtils.text(value));
         return future;
+    }
+
+    protected Component set(String value) {
+        return ComponentUtils.text(value);
     }
 
     public CompletableFuture<Component> renderAsync(String path, Player player) {
@@ -68,7 +76,12 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
         return this.engine.renderList(instance.getValue(path, type, typeTokenList, List.of()), offlinePlayer);
     }
 
-    protected void setRegister(PlaceholderRegistry registry) {
-        this.engine.setRegistry(registry);
+    protected void setSyncRegister(PlaceholderRegistry<Component> registry) {
+        this.engine.setRegistrySync(registry);
     }
+
+    protected void setAsyncRegister(PlaceholderRegistry<CompletableFuture<Component>> registry) {
+        this.engine.setRegistryAsync(registry);
+    }
+
 }

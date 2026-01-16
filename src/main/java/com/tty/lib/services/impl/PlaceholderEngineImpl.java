@@ -1,10 +1,7 @@
 package com.tty.lib.services.impl;
 
-import com.tty.lib.Log;
-import com.tty.lib.services.placeholder.AsyncPlaceholder;
 import com.tty.lib.services.placeholder.PlaceholderEngine;
 import com.tty.lib.services.placeholder.PlaceholderRegistry;
-import com.tty.lib.services.placeholder.SyncPlaceholder;
 import com.tty.lib.tool.ComponentUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +20,11 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
 
     @Setter
     @Getter
-    private PlaceholderRegistry registry;
+    private PlaceholderRegistry<Component> registrySync;
+
+    @Setter
+    @Getter
+    private PlaceholderRegistry<CompletableFuture<Component>> registryAsync;
 
     @Override
     public Component render(String template, OfflinePlayer context) {
@@ -33,13 +34,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
 
         while (matcher.find()) {
             String key = matcher.group(1);
-            registry.find(key, context).ifPresent(resolver -> {
-                if (resolver instanceof SyncPlaceholder syncPlaceholder) {
-                    map.putIfAbsent(key, syncPlaceholder.resolve(context));
-                } else {
-                    Log.error("[ {} ] render component error.", this.getClass().getSimpleName());
-                }
-            });
+            registrySync.find(key, context).ifPresent(resolver -> map.putIfAbsent(key, resolver.resolve(context)));
         }
 
         return ComponentUtils.text(template, map);
@@ -65,13 +60,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
 
         while (matcher.find()) {
             String key = matcher.group(1);
-            registry.find(key, context).ifPresent(resolver -> {
-                if (resolver instanceof AsyncPlaceholder asyncPlaceholder) {
-                    futures.putIfAbsent(key, asyncPlaceholder.resolve(context));
-                } else {
-                    Log.error("[ {} ] render component error.", this.getClass().getSimpleName());
-                }
-            });
+            registryAsync.find(key, context).ifPresent(resolver -> futures.putIfAbsent(key, resolver.resolve(context)));
         }
 
         CompletableFuture<?>[] all = futures.values().toArray(new CompletableFuture[0]);
