@@ -4,8 +4,8 @@ public enum LangType implements LangTypeEnum {
     PERIOD_UNRESOLVED("period"),
     SOURCE_DISPLAY_NAME_UNRESOLVED("source_display_name"),
     CHAT_MESSAGE_UNRESOLVED("message"),
+    PLAYER_NAME_UNRESOLVED("player_name"),
 
-    PLAYER_NAME("player_name"),
     KILLER("killer"),
     VICTIM("victim"),
     KILLER_ITEM("killer_item"),
