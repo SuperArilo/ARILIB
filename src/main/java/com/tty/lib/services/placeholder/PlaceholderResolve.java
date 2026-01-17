@@ -23,7 +23,7 @@ public interface PlaceholderResolve {
     }
 
     static PlaceholderResolve ofPlayer(Function<Player, CompletableFuture<Component>> function) {
-        return of(function, offlinePlayer -> null);
+        return of(function, offlinePlayer -> CompletableFuture.completedFuture(Component.empty()));
     }
 
     static PlaceholderResolve ofOfflinePlayer(Function<OfflinePlayer, CompletableFuture<Component>> function) {
