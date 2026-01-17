@@ -17,7 +17,7 @@ public class Loader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("de.tr7zw", "item-nbt-api-plugin", "jar", "2.15.5"), "provided"));
 
         resolver.addRepository(new RemoteRepository.Builder("paper", "default", "https://repo.papermc.io/repository/maven-public/").build());
-        resolver.addRepository(new RemoteRepository.Builder("central", "default", MavenLibraryResolver.MAVEN_CENTRAL_DEFAULT_MIRROR).build());
+        resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://maven-central.storage-download.googleapis.com/maven2").build());
         resolver.addRepository(new RemoteRepository.Builder("codemc-repo", "default", "https://repo.codemc.io/repository/maven-public/").build());
 
         pluginClasspathBuilder.addLibrary(resolver);
