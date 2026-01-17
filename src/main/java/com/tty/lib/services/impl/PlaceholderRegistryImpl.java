@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class PlaceholderRegistryImpl<C> implements PlaceholderRegistry<C> {
+public class PlaceholderRegistryImpl implements PlaceholderRegistry {
 
-    private final Map<String, PlaceholderResolve<C>> placeholders = new HashMap<>();
+    private final Map<String, PlaceholderResolve> placeholders = new HashMap<>();
 
     @Override
-    public void register(PlaceholderDefinition<? extends LangTypeEnum, C> definition) {
+    public void register(PlaceholderDefinition<? extends LangTypeEnum> definition) {
         String key = definition.key().getType();
         if (this.placeholders.containsKey(key)) {
             throw new IllegalStateException("Duplicate placeholder: " + key);
@@ -24,7 +24,7 @@ public class PlaceholderRegistryImpl<C> implements PlaceholderRegistry<C> {
     }
 
     @Override
-    public Optional<PlaceholderResolve<C>> find(String key, OfflinePlayer context) {
+    public Optional<PlaceholderResolve> find(String key, OfflinePlayer context) {
         return Optional.ofNullable(this.placeholders.get(key));
     }
 

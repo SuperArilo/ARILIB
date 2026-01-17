@@ -1,16 +1,18 @@
 package com.tty.lib.services.placeholder;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface PlaceholderResolve<T> {
+public interface PlaceholderResolve {
 
-    T resolve(OfflinePlayer context);
+    CompletableFuture<Component> resolve(OfflinePlayer context);
 
-    static <T> PlaceholderResolve<T> of(Function<Player, T> playerFunc, Function<OfflinePlayer, T> offlineFunc) {
+    static PlaceholderResolve of(Function<Player, CompletableFuture<Component>> playerFunc, Function<OfflinePlayer, CompletableFuture<Component>> offlineFunc) {
         return context -> {
             if (context instanceof Player player) {
                 return playerFunc.apply(player);
@@ -20,11 +22,11 @@ public interface PlaceholderResolve<T> {
         };
     }
 
-    static <T> PlaceholderResolve<T> ofPlayer(Function<Player, T> function) {
+    static PlaceholderResolve ofPlayer(Function<Player, CompletableFuture<Component>> function) {
         return of(function, offlinePlayer -> null);
     }
 
-    static <T> PlaceholderResolve<T> ofOfflinePlayer(Function<OfflinePlayer, T> function) {
+    static PlaceholderResolve ofOfflinePlayer(Function<OfflinePlayer, CompletableFuture<Component>> function) {
         return function::apply;
     }
 

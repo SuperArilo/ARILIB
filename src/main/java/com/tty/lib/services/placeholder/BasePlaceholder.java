@@ -26,62 +26,34 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
         this.type = type;
     }
 
-    protected Component empty() {
-        return Component.empty();
-    }
-
-    protected CompletableFuture<Component> emptyAsync() {
+    protected CompletableFuture<Component> empty() {
         return CompletableFuture.completedFuture(Component.empty());
     }
 
-    protected CompletableFuture<Component> setAsync(String value) {
+    protected CompletableFuture<Component> set(String value) {
         CompletableFuture<Component> future = new CompletableFuture<>();
         future.complete(ComponentUtils.text(value));
         return future;
     }
 
-    protected Component set(String value) {
-        return ComponentUtils.text(value);
-    }
-
-    public CompletableFuture<Component> renderAsync(String path, Player player) {
-        return this.engine.renderAsync(instance.getValue(path, type, String.class, "null"), player);
-    }
-
-    public CompletableFuture<Component> renderAsync(String path, OfflinePlayer offlinePlayer) {
-        return this.engine.renderAsync(instance.getValue(path, type, String.class, "null"), offlinePlayer);
-    }
-
-    public CompletableFuture<Component> renderListAsync(String path, Player player) {
-        return this.engine.renderListAsync(instance.getValue(path, type, typeTokenList, List.of()), player);
-    }
-
-    public CompletableFuture<Component> renderListAsync(String path, OfflinePlayer offlinePlayer) {
-        return this.engine.renderListAsync(instance.getValue(path, type, typeTokenList, List.of()), offlinePlayer);
-    }
-
-    public Component renderSync(String path, Player player) {
+    public CompletableFuture<Component> render(String path, Player player) {
         return this.engine.render(instance.getValue(path, type, String.class, "null"), player);
     }
 
-    public Component renderSync(String path, OfflinePlayer offlinePlayer) {
+    public CompletableFuture<Component> render(String path, OfflinePlayer offlinePlayer) {
         return this.engine.render(instance.getValue(path, type, String.class, "null"), offlinePlayer);
     }
 
-    public Component renderListSync(String path, Player player) {
+    public CompletableFuture<Component> renderList(String path, Player player) {
         return this.engine.renderList(instance.getValue(path, type, typeTokenList, List.of()), player);
     }
 
-    public Component renderListSync(String path, OfflinePlayer offlinePlayer) {
+    public CompletableFuture<Component> renderList(String path, OfflinePlayer offlinePlayer) {
         return this.engine.renderList(instance.getValue(path, type, typeTokenList, List.of()), offlinePlayer);
     }
 
-    protected void setSyncRegister(PlaceholderRegistry<Component> registry) {
-        this.engine.setRegistrySync(registry);
-    }
-
-    protected void setAsyncRegister(PlaceholderRegistry<CompletableFuture<Component>> registry) {
-        this.engine.setRegistryAsync(registry);
+    protected void addRegister(PlaceholderRegistry registry) {
+        this.engine.setRegistry(registry);
     }
 
 }

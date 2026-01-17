@@ -2,12 +2,12 @@ package com.tty.lib.services.placeholder;
 
 import com.tty.lib.enum_type.LangTypeEnum;
 
-public interface PlaceholderDefinition<E, C> {
+public interface PlaceholderDefinition<E> {
 
     E key();
-    PlaceholderResolve<C> resolver();
+    PlaceholderResolve resolver();
 
-    static <E extends Enum<E> & LangTypeEnum, C> PlaceholderDefinition<E, C> of(E key, PlaceholderResolve<C> resolver) {
+    static <E extends Enum<E> & LangTypeEnum> PlaceholderDefinition<E> of(E key, PlaceholderResolve resolver) {
         return new PlaceholderDefinition<>() {
             @Override
             public E key() {
@@ -15,7 +15,7 @@ public interface PlaceholderDefinition<E, C> {
             }
 
             @Override
-            public PlaceholderResolve<C> resolver() {
+            public PlaceholderResolve resolver() {
                 return resolver;
             }
         };

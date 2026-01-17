@@ -20,47 +20,17 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
 
     @Setter
     @Getter
-    private PlaceholderRegistry<Component> registrySync;
-
-    @Setter
-    @Getter
-    private PlaceholderRegistry<CompletableFuture<Component>> registryAsync;
+    private PlaceholderRegistry registry;
 
     @Override
-    public Component render(String template, OfflinePlayer context) {
-
-        Matcher matcher = PATTERN.matcher(template);
-        Map<String, Component> map = new HashMap<>();
-
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            registrySync.find(key, context).ifPresent(resolver -> map.putIfAbsent(key, resolver.resolve(context)));
-        }
-
-        return ComponentUtils.text(template, map);
-    }
-
-    @Override
-    public Component renderList(List<String> templates, OfflinePlayer context) {
-
-        List<Component> components = new ArrayList<>();
-
-        for (String line : templates) {
-            components.add(render(line, context));
-        }
-
-        return Component.join(JoinConfiguration.separator(Component.newline()), components);
-    }
-
-    @Override
-    public CompletableFuture<Component> renderAsync(String template, OfflinePlayer context) {
+    public CompletableFuture<Component> render(String template, OfflinePlayer context) {
 
         Matcher matcher = PATTERN.matcher(template);
         Map<String, CompletableFuture<Component>> futures = new HashMap<>();
 
         while (matcher.find()) {
             String key = matcher.group(1);
-            registryAsync.find(key, context).ifPresent(resolver -> futures.putIfAbsent(key, resolver.resolve(context)));
+            registry.find(key, context).ifPresent(resolver -> futures.putIfAbsent(key, resolver.resolve(context)));
         }
 
         CompletableFuture<?>[] all = futures.values().toArray(new CompletableFuture[0]);
@@ -73,8 +43,8 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
     }
 
     @Override
-    public CompletableFuture<Component> renderListAsync(List<String> list, OfflinePlayer context) {
-        List<CompletableFuture<Component>> futures = list.stream().map(line -> renderAsync(line, context)).toList();
+    public CompletableFuture<Component> renderList(List<String> list, OfflinePlayer context) {
+        List<CompletableFuture<Component>> futures = list.stream().map(line -> render(line, context)).toList();
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenApply(v ->
                 Component.join(JoinConfiguration.separator(Component.newline()), futures.stream().map(CompletableFuture::join).toList())
         );

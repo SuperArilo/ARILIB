@@ -5,10 +5,10 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;
 
-public interface PlaceholderRegistry<C> {
+public interface PlaceholderRegistry {
 
-    void register(PlaceholderDefinition<? extends LangTypeEnum, C> definition);
-    Optional<PlaceholderResolve<C>> find(String key, OfflinePlayer context);
+    void register(PlaceholderDefinition<? extends LangTypeEnum> definition);
+    Optional<PlaceholderResolve> find(String key, OfflinePlayer context);
 
 }
 
