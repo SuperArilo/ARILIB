@@ -15,7 +15,6 @@ public enum LangType implements LangTypeEnum {
     MOB("mob"),
     MOB_CURRENT_HEALTH("mob_current_health"),
     MOB_MAX_HEALTH("mob_max_health"),
-    MAINTENANCE_KICK_DEALY("maintenance_kick_delay"),
     ENCHANT_NAME("enchant_name"),
     ENCHANT_LEVEL("enchant_level");
 

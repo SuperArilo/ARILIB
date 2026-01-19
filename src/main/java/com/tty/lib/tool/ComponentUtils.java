@@ -12,6 +12,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,11 +33,11 @@ public class ComponentUtils {
         return build(null, content, placeholders);
     }
 
-    public static TextComponent text(String content, Player player) {
+    public static TextComponent text(String content, OfflinePlayer player) {
         return build(player, content, null);
     }
 
-    public static TextComponent text(String content, Player player, Map<String, Component> placeholders) {
+    public static TextComponent text(String content, OfflinePlayer player, Map<String, Component> placeholders) {
         return build(player, content, placeholders);
     }
 
@@ -109,7 +110,7 @@ public class ComponentUtils {
     }
 
     @SuppressWarnings("PatternValidation")
-    private static TextComponent build(Player player, String template, Map<String, Component> placeholders) {
+    private static TextComponent build(OfflinePlayer player, String template, Map<String, Component> placeholders) {
         Objects.requireNonNull(template, "template cannot be null");
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             template = PlaceholderAPI.setPlaceholders(player, template);

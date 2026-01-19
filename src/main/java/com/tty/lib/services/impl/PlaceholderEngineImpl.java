@@ -38,7 +38,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
         return CompletableFuture.allOf(all).thenApply(v -> {
             Map<String, Component> map = new HashMap<>();
             futures.forEach((k, f) ->map.put(k, f.join()));
-            return ComponentUtils.text(template, map);
+            return ComponentUtils.text(template, context, map);
         });
     }
 
