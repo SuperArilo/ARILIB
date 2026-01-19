@@ -1,7 +1,9 @@
 package com.tty.lib.services;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.tty.lib.Log;
 import com.tty.lib.dto.PageResult;
+import com.tty.lib.dto.QueryKey;
 import com.tty.lib.entity.PageKey;
 import com.tty.lib.tool.BaseDataManager;
 import org.jetbrains.annotations.NotNull;
@@ -10,87 +12,77 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 统一实体缓存 + 分页缓存管理
- * @param <K> 复合 Key 类型
- * @param <T> 实体类型
- */
-public abstract class EntityRepository<K, T> {
+public abstract class EntityRepository<T> {
 
-    protected final BaseDataManager<K, T> manager;
+    protected final BaseDataManager<T> manager;
 
-    /** 单实体缓存：K -> T */
-    private final Map<K, T> entityCache = new ConcurrentHashMap<>();
+    private final Map<QueryKey<T>, T> entityCache = new ConcurrentHashMap<>();
 
-    /** 分页缓存：PageKey -> PageResult<T> */
-    private final Map<PageKey<K>, PageResult<T>> pageCache = new ConcurrentHashMap<>();
+    private final Map<PageKey<QueryKey<T>>, PageResult<T>> pageCache = new ConcurrentHashMap<>();
 
-    /** 查询条件到分页的映射：查询条件 -> PageKey集合 */
-    private final Map<K, Set<PageKey<K>>> queryToPages = new ConcurrentHashMap<>();
+    private final Map<QueryKey<T>, Set<PageKey<QueryKey<T>>>> queryToPages = new ConcurrentHashMap<>();
 
-    public EntityRepository(BaseDataManager<K, T> manager) {
+    public EntityRepository(BaseDataManager<T> manager) {
         this.manager = manager;
         debug("EntityRepository initialized with manager: {}", manager.getClass().getSimpleName());
     }
 
     /**
-     * 从实体中提取缓存键（用于单实体缓存）
-     * @param entity 具体实体
-     * @return 返回单独查询这个实体需要的key
+     * 从实体中提取缓存键（返回LambdaQueryWrapper，内部会包装为QueryKey）
      */
-    protected @NotNull
-    abstract K extractCacheKey(T entity);
+    protected abstract @NotNull LambdaQueryWrapper<T> extractCacheKey(T entity);
 
     /**
-     * 从实体中提取分页查询键（用于分页缓存关联）
-     * @param entity 具体实体
-     * @return 返回查询这个实体列表需要的key
+     * 从实体中提取分页查询键
      */
-    protected abstract K extractPageQueryKey(T entity);
+    protected abstract LambdaQueryWrapper<T> extractPageQueryKey(T entity);
+
+    /**
+     * 将LambdaQueryWrapper包装为QueryKey
+     */
+    protected QueryKey<T> wrapQueryKey(LambdaQueryWrapper<T> wrapper) {
+        return QueryKey.of(wrapper);
+    }
 
     protected final void debug(String format, Object... args) {
         Object[] merged = new Object[args.length + 1];
         merged[0] = getClass().getSimpleName();
         System.arraycopy(args, 0, merged, 1, args.length);
-
         Log.debug("[{}] " + format, merged);
     }
 
-    public CompletableFuture<T> get(K key) {
-        T cached = this.entityCache.get(key);
+    public CompletableFuture<T> get(LambdaQueryWrapper<T> key) {
+        QueryKey<T> queryKey = this.wrapQueryKey(key);
+        T cached = this.entityCache.get(queryKey);
         if (cached != null) {
-            debug("Entity cache hit for key: {}", key);
+            debug("Entity cache hit for key: {}", queryKey);
             return CompletableFuture.completedFuture(cached);
         }
 
-        debug("Entity cache miss for key: {}, querying from DB", key);
+        debug("Entity cache miss for key: {}, querying from DB", queryKey);
 
         if (this.manager == null) {
-            debug("Manager is null, returning null for key: {}", key);
+            debug("Manager is null, returning null for key: {}", queryKey);
             return CompletableFuture.completedFuture(null);
         }
 
         return this.manager.getInstance(key).thenApply(entity -> {
             if (entity != null) {
-                this.entityCache.put(key, entity);
-                debug("Entity cached for key: {}", key);
+                this.entityCache.put(queryKey, entity);
+                debug("Entity cached for key: {}", queryKey);
             } else {
-                debug("Entity not found for key: {}", key);
+                debug("Entity not found for key: {}", queryKey);
             }
             return entity;
         });
     }
 
-    /**
-     * 创建新实体
-     * @param entity 新实体
-     * @return 新实体
-     */
     public CompletableFuture<T> create(T entity) {
         debug("Creating new entity: {}", entity);
         return this.manager.createInstance(entity).thenApply(createdEntity -> {
             if (createdEntity != null) {
-                K cacheKey = this.extractCacheKey(createdEntity);
+                LambdaQueryWrapper<T> cacheKeyWrapper = this.extractCacheKey(createdEntity);
+                QueryKey<T> cacheKey = this.wrapQueryKey(cacheKeyWrapper);
                 this.entityCache.put(cacheKey, createdEntity);
                 debug("New entity cached with key: {}", cacheKey);
                 this.handleCreateForAscendingOrder(createdEntity);
@@ -103,7 +95,8 @@ public abstract class EntityRepository<K, T> {
     }
 
     public CompletableFuture<Boolean> update(T entity) {
-        K cacheKey = this.extractCacheKey(entity);
+        LambdaQueryWrapper<T> cacheKeyWrapper = this.extractCacheKey(entity);
+        QueryKey<T> cacheKey = this.wrapQueryKey(cacheKeyWrapper);
         debug("updating entity with key: {}", cacheKey);
         return this.manager.modify(entity).thenApply(success -> {
             if (success) {
@@ -118,8 +111,10 @@ public abstract class EntityRepository<K, T> {
     }
 
     public CompletableFuture<Boolean> delete(T entity) {
-        K cacheKey = this.extractCacheKey(entity);
-        return this.manager.getInstance(cacheKey).thenCompose(e -> {
+        LambdaQueryWrapper<T> cacheKeyWrapper = this.extractCacheKey(entity);
+        QueryKey<T> cacheKey = this.wrapQueryKey(cacheKeyWrapper);
+
+        return this.manager.getInstance(cacheKeyWrapper).thenCompose(e -> {
             if (e == null) {
                 debug("entity not found for deletion, key: {}", cacheKey);
                 return CompletableFuture.completedFuture(false);
@@ -138,16 +133,18 @@ public abstract class EntityRepository<K, T> {
         });
     }
 
-    public CompletableFuture<PageResult<T>> getList(int pageNum, int pageSize, K queryCondition) {
-        PageKey<K> pageKey = new PageKey<>(pageNum, pageSize, queryCondition);
+    public CompletableFuture<PageResult<T>> getList(int pageNum, int pageSize,
+                                                    LambdaQueryWrapper<T> queryCondition) {
+        QueryKey<T> queryKey = this.wrapQueryKey(queryCondition);
+        PageKey<QueryKey<T>> pageKey = new PageKey<>(pageNum, pageSize, queryKey);
 
         PageResult<T> cached = this.pageCache.get(pageKey);
         if (cached != null) {
-            debug("page cache hit for pageKey: {}, page: {}, size: {}, condition: {}", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
+            debug("page cache hit for pageKey: {}", pageKey);
             return CompletableFuture.completedFuture(cached);
         }
 
-        debug("page cache miss for pageKey: {}, page: {}, size: {}, condition: {}, querying from DB", pageKey, String.valueOf(pageNum), String.valueOf(pageSize), queryCondition);
+        debug("page cache miss for pageKey: {}, querying from DB", pageKey);
 
         if (this.manager == null) {
             debug("manager is null, returning empty page result");
@@ -161,85 +158,82 @@ public abstract class EntityRepository<K, T> {
             }
 
             this.pageCache.put(pageKey, result);
-            debug("page cached for pageKey: {}, record count: {}", pageKey, String.valueOf(result.getRecords().size()));
+            debug("page cached for pageKey: {}, record count: {}", pageKey, result.getRecords().size());
 
-            this.queryToPages.computeIfAbsent(queryCondition, k -> ConcurrentHashMap.newKeySet()).add(pageKey);
-            debug("added pageKey mapping for query condition: {} -> {}", queryCondition, pageKey);
+            this.queryToPages.computeIfAbsent(queryKey, k -> ConcurrentHashMap.newKeySet()).add(pageKey);
+            debug("added pageKey mapping for query condition: {} -> {}", queryKey, pageKey);
 
             int entityCachedCount = 0;
             for (T entity : result.getRecords()) {
-                K entityKey = this.extractCacheKey(entity);
+                LambdaQueryWrapper<T> entityKeyWrapper = this.extractCacheKey(entity);
+                QueryKey<T> entityKey = this.wrapQueryKey(entityKeyWrapper);
                 this.entityCache.put(entityKey, entity);
                 entityCachedCount++;
             }
 
             if (entityCachedCount > 0) {
-                debug("cached {} entities from page result", String.valueOf(entityCachedCount));
+                debug("cached {} entities from page result", entityCachedCount);
             }
 
             return result;
         });
     }
 
-    /**
-     * 使相关分页缓存失效
-     */
     private void invalidateRelatedPages(T entity) {
         if (entity == null) {
             debug("Cannot invalidate pages for null entity");
             return;
         }
 
-        K pageQueryKey = this.extractPageQueryKey(entity);
-        if (pageQueryKey == null) {
+        LambdaQueryWrapper<T> pageQueryKeyWrapper = this.extractPageQueryKey(entity);
+        if (pageQueryKeyWrapper == null) {
             debug("entity type does not require page cache invalidation");
             return;
         }
 
-        debug("invalidating pages related to entity with query key: {}", pageQueryKey);
-        this.invalidatePagesByQueryKey(pageQueryKey);
+        QueryKey<T> queryKey = this.wrapQueryKey(pageQueryKeyWrapper);
+        debug("invalidating pages related to entity with query key: {}", queryKey);
+        this.invalidatePagesByQueryKey(queryKey);
     }
 
-    /** 根据查询键使相关分页缓存失效 */
-    private void invalidatePagesByQueryKey(K pageQueryKey) {
-        Set<PageKey<K>> relatedPages = this.queryToPages.get(pageQueryKey);
+    private void invalidatePagesByQueryKey(QueryKey<T> queryKey) {
+        Set<PageKey<QueryKey<T>>> relatedPages = this.queryToPages.get(queryKey);
         if (relatedPages == null || relatedPages.isEmpty()) {
-            debug("No related pages found for query key: {}", pageQueryKey);
+            debug("No related pages found for query key: {}", queryKey);
             return;
         }
 
         int invalidatedCount = 0;
-        // 失效所有相关分页缓存
-        for (PageKey<K> pageKey : relatedPages) {
+        for (PageKey<QueryKey<T>> pageKey : relatedPages) {
             this.pageCache.remove(pageKey);
             invalidatedCount++;
         }
         relatedPages.clear();
 
-        debug("invalidated {} pages for query key: {}", String.valueOf(invalidatedCount), pageQueryKey);
+        debug("invalidated {} pages for query key: {}", invalidatedCount, queryKey);
     }
 
-    /** 处理自增ID升序排列时的创建操作 */
     private void handleCreateForAscendingOrder(T newEntity) {
-        K pageQueryKey = this.extractPageQueryKey(newEntity);
-        Set<PageKey<K>> relatedPages = this.queryToPages.get(pageQueryKey);
+        LambdaQueryWrapper<T> pageQueryKeyWrapper = this.extractPageQueryKey(newEntity);
+        if (pageQueryKeyWrapper == null) return;
+
+        QueryKey<T> queryKey = this.wrapQueryKey(pageQueryKeyWrapper);
+        Set<PageKey<QueryKey<T>>> relatedPages = this.queryToPages.get(queryKey);
 
         if (relatedPages == null || relatedPages.isEmpty()) {
-            debug("no cached pages found for new entity, query key: {}", pageQueryKey);
+            debug("no cached pages found for new entity, query key: {}", queryKey);
             return;
         }
 
-        // 查找最大的页码
         int maxPageNum = 0;
-        for (PageKey<K> pageKey : relatedPages) {
+        for (PageKey<QueryKey<T>> pageKey : relatedPages) {
             if (pageKey.pageNum() > maxPageNum) {
                 maxPageNum = pageKey.pageNum();
             }
         }
 
-        // 查找最后一页
-        PageKey<K> lastPageKey = null;
-        for (PageKey<K> pageKey : relatedPages) {
+        PageKey<QueryKey<T>> lastPageKey = null;
+        for (PageKey<QueryKey<T>> pageKey : relatedPages) {
             if (pageKey.pageNum() == maxPageNum) {
                 lastPageKey = pageKey;
                 break;
@@ -255,16 +249,18 @@ public abstract class EntityRepository<K, T> {
                 if (recordCount < pageSize) {
                     this.pageCache.remove(lastPageKey);
                     relatedPages.remove(lastPageKey);
-                    debug("last page not full ({}/{}), invalidated only last page: {}", String.valueOf(recordCount), String.valueOf(pageSize), lastPageKey);
+                    debug("last page not full ({}/{}), invalidated only last page: {}",
+                            recordCount, pageSize, lastPageKey);
                 } else {
-                    this.invalidatePagesByQueryKey(pageQueryKey);
-                    debug("last page is full ({}/{}), invalidated all pages for query: {}", String.valueOf(recordCount), String.valueOf(pageSize), pageQueryKey);
+                    this.invalidatePagesByQueryKey(queryKey);
+                    debug("last page is full ({}/{}), invalidated all pages for query: {}",
+                            recordCount, pageSize, queryKey);
                 }
             } else {
                 debug("last page cache entry not found for pageKey: {}", lastPageKey);
             }
         } else {
-            debug("no last page key found for query: {}", pageQueryKey);
+            debug("no last page key found for query: {}", queryKey);
         }
     }
 

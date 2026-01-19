@@ -1,6 +1,7 @@
 package com.tty.lib.tool;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.tty.lib.dto.PageResult;
 
 import java.util.concurrent.CompletableFuture;
@@ -8,10 +9,9 @@ import java.util.function.Supplier;
 
 /**
  * 基础sql接口类
- * @param <K> query key 类
  * @param <T> 实体类
  */
-public abstract class BaseDataManager<K, T> {
+public abstract class BaseDataManager<T> {
 
     /**
      * 是否异步
@@ -42,9 +42,9 @@ public abstract class BaseDataManager<K, T> {
         }
     }
 
-    public abstract CompletableFuture<PageResult<T>> getList(int pageNum, int pageSize, K key);
+    public abstract CompletableFuture<PageResult<T>> getList(int pageNum, int pageSize, LambdaQueryWrapper<T> key);
 
-    public abstract CompletableFuture<T> getInstance(K key);
+    public abstract CompletableFuture<T> getInstance(LambdaQueryWrapper<T> key);
 
     public abstract CompletableFuture<T> createInstance(T instance);
 
