@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class PlaceholderEngineImpl implements PlaceholderEngine {
 
-    private final Pattern PATTERN = Pattern.compile("<([a-z0-9_]+)>");
+    private static final Pattern PATTERN = Pattern.compile("<([a-z0-9_]+)>");
 
     @Setter
     @Getter
@@ -30,24 +30,57 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
 
         while (matcher.find()) {
             String key = matcher.group(1);
-            registry.find(key, context).ifPresent(resolver -> futures.putIfAbsent(key, resolver.resolve(context)));
+            if (futures.containsKey(key)) continue;
+            registry.find(key, context).ifPresent(resolver -> futures.put(key, resolver.resolve(context)));
+        }
+
+        if (futures.isEmpty()) {
+            return CompletableFuture.completedFuture(ComponentUtils.text(template, context, Collections.emptyMap()));
         }
 
         CompletableFuture<?>[] all = futures.values().toArray(new CompletableFuture[0]);
 
         return CompletableFuture.allOf(all).thenApply(v -> {
-            Map<String, Component> map = new HashMap<>();
-            futures.forEach((k, f) ->map.put(k, f.join()));
-            return ComponentUtils.text(template, context, map);
+            Map<String, Component> resolved = new HashMap<>(futures.size());
+            futures.forEach((k, f) -> resolved.put(k, f.join()));
+            return ComponentUtils.text(template, context, resolved);
         });
     }
 
     @Override
     public CompletableFuture<Component> renderList(List<String> list, OfflinePlayer context) {
-        List<CompletableFuture<Component>> futures = list.stream().map(line -> render(line, context)).toList();
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenApply(v ->
-                Component.join(JoinConfiguration.separator(Component.newline()), futures.stream().map(CompletableFuture::join).toList())
-        );
-    }
 
+        Set<String> keys = new HashSet<>();
+        for (String line : list) {
+            Matcher matcher = PATTERN.matcher(line);
+            while (matcher.find()) {
+                keys.add(matcher.group(1));
+            }
+        }
+
+        Map<String, CompletableFuture<Component>> futures = new HashMap<>(keys.size());
+        for (String key : keys) {
+            registry.find(key, context).ifPresent(resolver -> futures.put(key, resolver.resolve(context)));
+        }
+
+        if (futures.isEmpty()) {
+            List<Component> components = new ArrayList<>(list.size());
+            for (String line : list) {
+                components.add(ComponentUtils.text(line, context, Collections.emptyMap()));
+            }
+            return CompletableFuture.completedFuture(Component.join(JoinConfiguration.separator(Component.newline()), components));
+        }
+
+        CompletableFuture<?>[] all = futures.values().toArray(new CompletableFuture[0]);
+
+        return CompletableFuture.allOf(all).thenApply(v -> {
+            Map<String, Component> resolved = new HashMap<>(futures.size());
+            futures.forEach((k, f) -> resolved.put(k, f.join()));
+            List<Component> components = new ArrayList<>(list.size());
+            for (String line : list) {
+                components.add(ComponentUtils.text(line, context, resolved));
+            }
+            return Component.join(JoinConfiguration.separator(Component.newline()), components);
+        });
+    }
 }
