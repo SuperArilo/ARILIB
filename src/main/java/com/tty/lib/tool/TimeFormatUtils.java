@@ -30,7 +30,7 @@ public class TimeFormatUtils {
         long millis = unit.toMillis(duration);
 
         if (millis == 0) {
-            return "0秒";
+            return "0";
         }
 
         long days = TimeUnit.MILLISECONDS.toDays(millis);
