@@ -14,6 +14,9 @@ public interface PlaceholderResolve {
 
     static PlaceholderResolve of(Function<Player, CompletableFuture<Component>> playerFunc, Function<OfflinePlayer, CompletableFuture<Component>> offlineFunc) {
         return context -> {
+            if (context == null) {
+                throw new IllegalArgumentException("context not allowed null");
+            }
             if (context instanceof Player player) {
                 return playerFunc.apply(player);
             } else {
