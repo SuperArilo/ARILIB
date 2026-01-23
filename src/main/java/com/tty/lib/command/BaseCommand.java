@@ -19,7 +19,7 @@ public abstract class BaseCommand {
     private final boolean allowConsole;
     private final Integer correctArgsLength;
 
-    private static final String[] PLUGIN_NAMES;
+    protected static final String[] PLUGIN_NAMES;
 
     static {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
