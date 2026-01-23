@@ -42,7 +42,7 @@ public abstract class BaseCommand {
 
     public abstract void execute(CommandSender sender, String[] args);
 
-    int preExecute(CommandContext<CommandSourceStack> ctx) {
+    protected int preExecute(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!this.allowConsole && !(sender instanceof Player)) {
