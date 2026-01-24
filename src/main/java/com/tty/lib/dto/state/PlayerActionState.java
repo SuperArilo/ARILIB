@@ -5,10 +5,7 @@ import com.tty.lib.Log;
 import com.tty.lib.tool.FormatUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -42,6 +39,7 @@ public class PlayerActionState extends State {
             CreatureSpawnEvent.SpawnReason.CUSTOM,
             entity -> {
                 if (entity instanceof AreaEffectCloud cloud) {
+                    cloud.setPersistent(false);
                     cloud.setRadius(0);
                     cloud.setInvulnerable(true);
                     cloud.setGravity(false);
@@ -55,16 +53,26 @@ public class PlayerActionState extends State {
 
     public void removeToolEntity(JavaPlugin plugin) {
         if (this.tool_entity == null) return;
-        Lib.Scheduler.runAtEntity(plugin,
-            this.tool_entity,
-            i-> {
-                this.getOwner().eject();
-                this.tool_entity.remove();
-                this.tool_entity = null;
-                this.setOver(true);
-                Log.debug("player {} ejected, remove tool entity", this.getOwner().getName());
-            },
-            () -> Log.error("remove tool_entity error."));
+        if (!Bukkit.getServer().isStopping()) {
+            Lib.Scheduler.runAtEntity(plugin,
+                    this.tool_entity,
+                    i-> this.cancelTaskEntity(),
+                    () -> Log.error("remove tool_entity error."));
+        } else {
+            this.cancelTaskEntity();
+        }
+
+    }
+
+    private void cancelTaskEntity() {
+        this.getOwner().eject();
+        if (!Bukkit.getServer().isStopping()) {
+            Log.debug("remove entity.");
+            this.tool_entity.remove();
+        }
+        this.tool_entity = null;
+        this.setOver(true);
+        Log.debug("player {} ejected, remove tool entity", this.getOwner().getName());
     }
 
 }
