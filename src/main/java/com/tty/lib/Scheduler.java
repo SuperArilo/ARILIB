@@ -18,7 +18,6 @@ public interface Scheduler {
     CancellableTask runAtRegion(Plugin plugin, Location loc, Consumer<CancellableTask> task);
     CancellableTask runAtRegionLater(Plugin plugin, Location loc, Consumer<CancellableTask> task, long later);
     CancellableTask runAtRegion(Plugin plugin, World world, int chunkX, int chunkZ, Consumer<CancellableTask> task);
-    CancellableTask runDelayed(Plugin plugin, Consumer<CancellableTask> taskConsumer, long delay);
     CancellableTask runAsyncDelayed(Plugin plugin, Consumer<CancellableTask> task, long delay);
     CancellableTask runLater(Plugin plugin, Consumer<CancellableTask> task, long delayTicks);
 }
