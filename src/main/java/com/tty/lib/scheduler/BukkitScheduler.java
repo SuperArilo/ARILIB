@@ -89,9 +89,7 @@ public class BukkitScheduler implements Scheduler {
 
     @Override
     public CancellableTask runAtRegion(Plugin plugin, Location loc, Consumer<CancellableTask> task) {
-        AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
-        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(atomicReference.get()))));
-        return atomicReference.get();
+        return this.run(plugin, task);
     }
 
     @Override
@@ -103,9 +101,7 @@ public class BukkitScheduler implements Scheduler {
 
     @Override
     public CancellableTask runAtRegion(Plugin plugin, World world, int chunkX, int chunkZ, Consumer<CancellableTask> task) {
-        AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
-        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(atomicReference.get()))));
-        return atomicReference.get();
+        return this.run(plugin, task);
     }
 
     @Override
