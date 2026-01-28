@@ -42,6 +42,7 @@ base:
     error: '&c✖ 保存失败，请联系管理员'
   task-occupied: '&6当前的任务已被其他人占用，请稍后重试'
   on-player:
+    self: '&6TA自己'
     not-exist: '&c✖ 玩家不存在'
     hand-no-item: '&c当前手上并没有物品'
     unable-player: '&c该玩家离线或者不存在！'
