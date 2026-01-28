@@ -1,12 +1,9 @@
 package com.tty.lib;
 
-import org.bukkit.Bukkit;
-
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class Log {
 
     private static volatile Logger LOGGER;
@@ -34,8 +31,7 @@ public final class Log {
 
     public static void init(Logger logger, boolean debug) {
         if (logger == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Log init failed: logger is null.");
-            return;
+            throw new IllegalArgumentException("Log init failed: logger is null.");
         }
         LOGGER = logger;
         DEBUG = debug;
