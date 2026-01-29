@@ -6,6 +6,7 @@ import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -41,6 +42,8 @@ public abstract class BaseCommand {
     public abstract String permission();
 
     public abstract void execute(CommandSender sender, String[] args);
+
+    protected abstract boolean isDisabledInGame(CommandSender sender, YamlConfiguration configuration);
 
     protected int preExecute(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();

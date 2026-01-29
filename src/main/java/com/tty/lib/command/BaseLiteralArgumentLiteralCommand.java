@@ -47,7 +47,7 @@ public abstract class BaseLiteralArgumentLiteralCommand extends BaseCommand impl
     }
 
     @Override
-    public boolean isDisabledInGame(CommandSender sender, @NonNull YamlConfiguration configuration) {
+    protected boolean isDisabledInGame(CommandSender sender, @NonNull YamlConfiguration configuration) {
         boolean b = configuration.getBoolean("main.enable", true);
         if (!b) {
             sender.sendMessage(LibConfigUtils.t("base.command.disabled"));

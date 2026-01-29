@@ -62,9 +62,9 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
         builder.executes(this::preExecute);
         if (this.isSuggests) {
             builder.suggests((ctx, b) -> {
-                String input = ctx.getInput().trim();
+                String input = ctx.getInput().trim().replaceFirst("/", "");
                 for (String name : BaseCommand.PLUGIN_NAMES) {
-                    if (input.startsWith("/" + name + " ")) {
+                    if (input.startsWith(name + " ")) {
                         input = input.substring(name.length() + 1).trim();
                         break;
                     }
@@ -84,7 +84,7 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
     }
 
     @Override
-    public boolean isDisabledInGame(CommandSender sender, YamlConfiguration configuration) {
+    protected boolean isDisabledInGame(CommandSender sender, YamlConfiguration configuration) {
         boolean b = configuration.getBoolean("main.enable", true);
         if (!b) {
             sender.sendMessage(LibConfigUtils.t("base.command.disabled"));
