@@ -3,7 +3,6 @@ package com.tty.lib.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
-import com.tty.lib.Log;
 import com.tty.lib.annotations.ArgumentCommand;
 import com.tty.lib.tool.LibConfigUtils;
 import com.tty.lib.tool.PermissionUtils;
