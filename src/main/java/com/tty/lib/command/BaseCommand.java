@@ -14,20 +14,10 @@ import org.bukkit.plugin.Plugin;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public abstract class BaseCommand {
 
-    private final boolean allowConsole;
-    private final int tokenLength;
-
     protected static final String[] PLUGIN_NAMES;
-
-    public BaseCommand() {
-        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
-        this.allowConsole = meta.allowConsole();
-        this.tokenLength = meta.tokenLength();
-    }
 
     static {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
@@ -56,16 +46,18 @@ public abstract class BaseCommand {
     protected abstract boolean isDisabledInGame(CommandSender sender, YamlConfiguration configuration);
 
     protected int preExecute(CommandContext<CommandSourceStack> ctx) {
+
+        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
         CommandSender sender = ctx.getSource().getSender();
 
-        if (!this.allowConsole && !(sender instanceof Player)) {
+        if (!meta.allowConsole() && !(sender instanceof Player)) {
             sender.sendMessage(LibConfigUtils.t("function.public.not-player"));
-            return SINGLE_SUCCESS;
+            return 0;
         }
 
         if (!PermissionUtils.hasPermission(sender, this.getPermission())) {
             sender.sendMessage(LibConfigUtils.t("base.permission.no-permission"));
-            return SINGLE_SUCCESS;
+            return 0;
         }
 
         String input = ctx.getInput().trim();
@@ -86,14 +78,14 @@ public abstract class BaseCommand {
             }
         }
 
-        if (args.length != this.tokenLength) {
+        if (args.length != meta.tokenLength()) {
             sender.sendMessage(LibConfigUtils.t("function.public.fail"));
-            return SINGLE_SUCCESS;
+            return 0;
         }
 
         this.execute(sender, args);
 
-        return SINGLE_SUCCESS;
+        return 1;
     }
 
 }
