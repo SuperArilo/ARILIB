@@ -1,15 +1,15 @@
 package com.tty.lib.command;
 
+import com.tty.lib.annotations.CommandMeta;
+import com.tty.lib.annotations.LiteralCommand;
 import com.tty.lib.command.sub.Reload;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+@CommandMeta(displayName = "arilib", allowConsole = true, tokenLength = 1)
+@LiteralCommand
 public class AriLib extends BaseLiteralArgumentLiteralCommand {
-
-    public AriLib() {
-        super(true, 1, true);
-    }
 
     @Override
     public List<SuperHandsomeCommand> thenCommands() {
@@ -17,17 +17,8 @@ public class AriLib extends BaseLiteralArgumentLiteralCommand {
     }
 
     @Override
-    public String name() {
-        return "arilib";
-    }
-
-    @Override
-    public String permission() {
-        return "";
-    }
-
-    @Override
     public void execute(CommandSender sender, String[] args) {
 
     }
+
 }

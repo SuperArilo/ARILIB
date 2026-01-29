@@ -1,6 +1,7 @@
 package com.tty.lib.command;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.tty.lib.annotations.CommandMeta;
 import com.tty.lib.tool.LibConfigUtils;
 import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -18,9 +19,15 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 public abstract class BaseCommand {
 
     private final boolean allowConsole;
-    private final Integer correctArgsLength;
+    private final int tokenLength;
 
     protected static final String[] PLUGIN_NAMES;
+
+    public BaseCommand() {
+        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
+        this.allowConsole = meta.allowConsole();
+        this.tokenLength = meta.tokenLength();
+    }
 
     static {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
@@ -30,16 +37,19 @@ public abstract class BaseCommand {
                 .toArray(String[]::new);
     }
 
-    protected BaseCommand(boolean allowConsole, Integer correctArgsLength) {
-        this.allowConsole = allowConsole;
-        this.correctArgsLength = correctArgsLength;
-    }
-
     public abstract List<SuperHandsomeCommand> thenCommands();
 
-    public abstract String name();
+    protected String getName() {
+        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
+        if (meta != null) return meta.displayName();
+        throw new IllegalStateException(this.getClass().getSimpleName() + " lost @CommandMeta");
+    }
 
-    public abstract String permission();
+    protected String getPermission() {
+        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
+        if (meta != null) return meta.permission();
+        return "";
+    }
 
     public abstract void execute(CommandSender sender, String[] args);
 
@@ -53,7 +63,7 @@ public abstract class BaseCommand {
             return SINGLE_SUCCESS;
         }
 
-        if (!PermissionUtils.hasPermission(sender, this.permission())) {
+        if (!PermissionUtils.hasPermission(sender, this.getPermission())) {
             sender.sendMessage(LibConfigUtils.t("base.permission.no-permission"));
             return SINGLE_SUCCESS;
         }
@@ -76,7 +86,7 @@ public abstract class BaseCommand {
             }
         }
 
-        if (this.correctArgsLength != null && args.length != this.correctArgsLength) {
+        if (args.length != this.tokenLength) {
             sender.sendMessage(LibConfigUtils.t("function.public.fail"));
             return SINGLE_SUCCESS;
         }

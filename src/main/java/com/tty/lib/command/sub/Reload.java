@@ -1,5 +1,7 @@
 package com.tty.lib.command.sub;
 
+import com.tty.lib.annotations.CommandMeta;
+import com.tty.lib.annotations.LiteralCommand;
 import com.tty.lib.command.BaseLiteralArgumentLiteralCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.dto.event.CustomPluginReloadEvent;
@@ -9,26 +11,13 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+@CommandMeta(displayName = "reload", permission = "arilib.command.reload", tokenLength = 1, allowConsole = true)
+@LiteralCommand(directExecute = true)
 public class Reload extends BaseLiteralArgumentLiteralCommand {
-
-
-    public Reload() {
-        super(true, 1, true);
-    }
 
     @Override
     public List<SuperHandsomeCommand> thenCommands() {
         return List.of();
-    }
-
-    @Override
-    public String name() {
-        return "reload";
-    }
-
-    @Override
-    public String permission() {
-        return "arilib.command.reload";
     }
 
     @Override
