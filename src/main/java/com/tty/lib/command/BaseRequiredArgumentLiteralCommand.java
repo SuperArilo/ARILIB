@@ -10,6 +10,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -17,15 +18,13 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand implements SuperHandsomeCommand {
 
-    private final ArgumentType<T> type;
+    public BaseRequiredArgumentLiteralCommand() {
 
-    public BaseRequiredArgumentLiteralCommand(ArgumentType<T> type) {
-        this.type = type;
     }
 
     @Override
     public CommandNode<CommandSourceStack> toBrigadier() {
-        RequiredArgumentBuilder<CommandSourceStack, T> builder = Commands.argument(this.getName(), this.type);
+        RequiredArgumentBuilder<CommandSourceStack, T> builder = Commands.argument(this.getName(), this.argumentType());
         builder.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.getPermission()));
         builder.executes(this::preExecute);
         ArgumentCommand annotation = this.getClass().getAnnotation(ArgumentCommand.class);
@@ -62,6 +61,8 @@ public abstract class BaseRequiredArgumentLiteralCommand<T> extends BaseCommand 
         }
         return b;
     }
+
+    protected abstract @NotNull ArgumentType<T> argumentType();
 
     public abstract CompletableFuture<Set<String>> tabSuggestions(CommandSender sender, String[] args);
 
