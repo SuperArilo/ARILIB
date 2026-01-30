@@ -1,8 +1,8 @@
 package com.tty.lib.listener;
 
 import com.tty.lib.Lib;
-import com.tty.lib.Log;
-import com.tty.lib.dto.event.CustomPluginReloadEvent;
+import com.tty.api.Log;
+import com.tty.api.event.CustomPluginReloadEvent;
 import com.tty.lib.tool.LibConfigUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

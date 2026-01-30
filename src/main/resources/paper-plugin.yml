@@ -8,7 +8,9 @@ folia-supported: true
 loader: com.tty.lib.Loader
 dependencies:
   server:
-    ari:
-      load: AFTER
+    Vault:
+      required: true
+    PlaceholderAPI:
       required: false
-      join-classpath: true
+    WorldGuard:
+      required: false

@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.lib.enum_type.LangTypeEnum;
+import com.tty.api.enumType.LangTypeEnum;
 import com.tty.lib.services.placeholder.PlaceholderResolve;
 import com.tty.lib.services.placeholder.PlaceholderDefinition;
 import com.tty.lib.services.placeholder.PlaceholderRegistry;

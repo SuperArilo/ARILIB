@@ -1,5 +1,7 @@
 package com.tty.lib.enum_type;
 
+import com.tty.api.enumType.FilePathEnum;
+
 public enum FilePath implements FilePathEnum {
 
     Lang("lang/[lang].yml");

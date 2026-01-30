@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.lib.Log;
+import com.tty.api.Log;
 import com.tty.lib.services.NBTDataService;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.NBTFileHandle;

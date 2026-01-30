@@ -1,7 +1,9 @@
 package com.tty.lib.command;
 
-import com.tty.lib.annotations.CommandMeta;
-import com.tty.lib.annotations.LiteralCommand;
+import com.tty.api.command.BaseLiteralArgumentLiteralCommand;
+import com.tty.api.command.SuperHandsomeCommand;
+import com.tty.api.annotations.CommandMeta;
+import com.tty.api.annotations.LiteralCommand;
 import com.tty.lib.command.sub.Reload;
 import org.bukkit.command.CommandSender;
 

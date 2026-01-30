@@ -1,10 +1,10 @@
 package com.tty.lib.command.sub;
 
-import com.tty.lib.annotations.CommandMeta;
-import com.tty.lib.annotations.LiteralCommand;
-import com.tty.lib.command.BaseLiteralArgumentLiteralCommand;
-import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.lib.dto.event.CustomPluginReloadEvent;
+import com.tty.api.annotations.CommandMeta;
+import com.tty.api.annotations.LiteralCommand;
+import com.tty.api.command.BaseLiteralArgumentLiteralCommand;
+import com.tty.api.command.SuperHandsomeCommand;
+import com.tty.api.event.CustomPluginReloadEvent;
 import com.tty.lib.tool.LibConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

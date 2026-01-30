@@ -1,6 +1,6 @@
 package com.tty.lib.services.placeholder;
 
-import com.tty.lib.enum_type.LangTypeEnum;
+import com.tty.api.enumType.LangTypeEnum;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;

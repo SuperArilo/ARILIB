@@ -1,18 +1,20 @@
 package com.tty.lib;
 
+import com.tty.api.Log;
+import com.tty.api.PublicFunctionUtils;
+import com.tty.api.Scheduler;
+import com.tty.api.service.ComponentService;
 import com.tty.lib.command.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
-import com.tty.lib.scheduler.BukkitScheduler;
-import com.tty.lib.scheduler.FoliaScheduler;
-import com.tty.lib.services.ConfigDataService;
-import com.tty.lib.services.NBTDataService;
-import com.tty.lib.services.impl.ConfigDataServiceImpl;
-import com.tty.lib.services.impl.NBTDataServiceImpl;
-import com.tty.lib.tool.ConfigInstance;
+import com.tty.lib.services.*;
+import com.tty.lib.services.impl.*;
+import com.tty.api.ConfigInstance;
 import com.tty.lib.tool.Placeholder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,19 +29,22 @@ public class Lib extends JavaPlugin {
 
     public static Lib instance;
     public static Boolean DEBUG = false;
-    public static final Scheduler Scheduler = ServerPlatform.isFolia() ? new FoliaScheduler():new BukkitScheduler();
+    public static final Scheduler SCHEDULER = Scheduler.create();
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
+    public static ComponentService COMPONENT_SERVICE;
+    public static EconomyService ECONOMY_SERVICE;
+    public static PermissionService PERMISSION_SERVICE;
     public static ConfigDataService CONFIG_DATA_SERVICE;
     public static NBTDataService NBT_DATA_SERVICE;
-    public static Placeholder Placeholder;
+    public static FireworkService FIREWORK_SERVICE;
+    public static TeleportingService TELEPORTING_SERVICE;
+    public static final Placeholder PLACEHOLDER = new Placeholder();
 
     @Override
     public void onLoad() {
         instance = this;
         reloadAllConfig();
         Log.init(this.getLogger(), DEBUG);
-
-        this.registerServices();
     }
 
     @Override
@@ -52,7 +57,7 @@ public class Lib extends JavaPlugin {
             registrar.register(new AriLib().toBrigadier());
         });
 
-        Placeholder = new Placeholder();
+        this.registerServices();
     }
 
     @Override
@@ -63,10 +68,20 @@ public class Lib extends JavaPlugin {
 
     private void registerServices () {
         ServicesManager servicesManager = Bukkit.getServicesManager();
+        PublicFunctionUtils.loadPlugin("Vault", Economy.class, i -> ECONOMY_SERVICE = new EconomyServiceImpl(i));
+        PublicFunctionUtils.loadPlugin("Vault", Permission.class, i -> PERMISSION_SERVICE = new PermissionServiceImpl(i));
+        COMPONENT_SERVICE = new ComponentServiceImpl();
         CONFIG_DATA_SERVICE = new ConfigDataServiceImpl();
         NBT_DATA_SERVICE = new NBTDataServiceImpl();
+        FIREWORK_SERVICE = new FireworkServiceImpl();
+        TELEPORTING_SERVICE = new TeleportingServiceImpl();
+        servicesManager.register(ComponentService.class, COMPONENT_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(EconomyService.class, ECONOMY_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(PermissionService.class, PERMISSION_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(NBTDataService.class, NBT_DATA_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(FireworkService.class, FIREWORK_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(TeleportingService.class, TELEPORTING_SERVICE, this, ServicePriority.Normal);
     }
 
     public static void reloadAllConfig() {

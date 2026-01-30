@@ -1,6 +1,6 @@
-package com.tty.lib.enum_type.lang;
+package com.tty.lib.enum_type;
 
-import com.tty.lib.enum_type.LangTypeEnum;
+import com.tty.api.enumType.LangTypeEnum;
 
 public enum LangPage implements LangTypeEnum {
     PAGE_TITLE("page_title"),

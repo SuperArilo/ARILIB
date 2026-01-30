@@ -14,6 +14,12 @@ public class Loader implements PluginLoader {
     public void classloader(PluginClasspathBuilder pluginClasspathBuilder) {
 
         MavenLibraryResolver resolver = new MavenLibraryResolver();
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer", "HikariCP", "jar", "5.1.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.sql2o", "sql2o", "jar", "1.9.1"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.mysql", "mysql-connector-j", "jar", "9.5.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-core", "jar", "3.5.15"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-extension", "jar", "3.5.15"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-jsqlparser", "jar", "3.5.15"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("de.tr7zw", "item-nbt-api-plugin", "jar", "2.15.5"), "provided"));
 
         resolver.addRepository(new RemoteRepository.Builder("paper", "default", "https://repo.papermc.io/repository/maven-public/").build());

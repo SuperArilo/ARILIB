@@ -1,8 +1,8 @@
 package com.tty.lib.services.impl;
 
+import com.tty.lib.Lib;
 import com.tty.lib.services.placeholder.PlaceholderEngine;
 import com.tty.lib.services.placeholder.PlaceholderRegistry;
-import com.tty.lib.tool.ComponentUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -35,7 +35,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
         }
 
         if (futures.isEmpty()) {
-            return CompletableFuture.completedFuture(ComponentUtils.text(template, context, Collections.emptyMap()));
+            return CompletableFuture.completedFuture(Lib.COMPONENT_SERVICE.text(template, context, Collections.emptyMap()));
         }
 
         CompletableFuture<?>[] all = futures.values().toArray(new CompletableFuture[0]);
@@ -43,7 +43,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
         return CompletableFuture.allOf(all).thenApply(v -> {
             Map<String, Component> resolved = new HashMap<>(futures.size());
             futures.forEach((k, f) -> resolved.put(k, f.join()));
-            return ComponentUtils.text(template, context, resolved);
+            return Lib.COMPONENT_SERVICE.text(template, context, resolved);
         });
     }
 
@@ -66,7 +66,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
         if (futures.isEmpty()) {
             List<Component> components = new ArrayList<>(list.size());
             for (String line : list) {
-                components.add(ComponentUtils.text(line, context, Collections.emptyMap()));
+                components.add(Lib.COMPONENT_SERVICE.text(line, context, Collections.emptyMap()));
             }
             return CompletableFuture.completedFuture(Component.join(JoinConfiguration.separator(Component.newline()), components));
         }
@@ -78,7 +78,7 @@ public class PlaceholderEngineImpl implements PlaceholderEngine {
             futures.forEach((k, f) -> resolved.put(k, f.join()));
             List<Component> components = new ArrayList<>(list.size());
             for (String line : list) {
-                components.add(ComponentUtils.text(line, context, resolved));
+                components.add(Lib.COMPONENT_SERVICE.text(line, context, resolved));
             }
             return Component.join(JoinConfiguration.separator(Component.newline()), components);
         });

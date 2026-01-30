@@ -1,9 +1,9 @@
 package com.tty.lib.services;
 
-import com.tty.lib.Log;
-import com.tty.lib.dto.state.State;
+import com.tty.api.Log;
+import com.tty.api.state.State;
 import com.tty.lib.Lib;
-import com.tty.lib.task.CancellableTask;
+import com.tty.api.task.CancellableTask;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,9 +44,9 @@ public abstract class StateService<T extends State> {
 
     private CancellableTask createTask(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         if (isAsync) {
-            return Lib.Scheduler.runAsyncAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
+            return Lib.SCHEDULER.runAsyncAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
         } else {
-            return Lib.Scheduler.runAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
+            return Lib.SCHEDULER.runAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
         }
     }
 

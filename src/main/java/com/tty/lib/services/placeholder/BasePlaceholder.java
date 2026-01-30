@@ -1,10 +1,10 @@
 package com.tty.lib.services.placeholder;
 
 import com.google.common.reflect.TypeToken;
-import com.tty.lib.enum_type.FilePathEnum;
+import com.tty.api.enumType.FilePathEnum;
+import com.tty.lib.Lib;
 import com.tty.lib.services.impl.PlaceholderEngineImpl;
-import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.ConfigInstance;
+import com.tty.api.ConfigInstance;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class BasePlaceholder<E extends Enum<E> & FilePathEnum> {
 
     protected CompletableFuture<Component> set(String value) {
         CompletableFuture<Component> future = new CompletableFuture<>();
-        future.complete(ComponentUtils.text(value));
+        future.complete(Lib.COMPONENT_SERVICE.text(value));
         return future;
     }
 
