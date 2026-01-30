@@ -4,7 +4,7 @@ import com.tty.api.Log;
 import com.tty.api.PublicFunctionUtils;
 import com.tty.api.Scheduler;
 import com.tty.api.service.ComponentService;
-import com.tty.lib.command.AriLib;
+import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.services.*;
