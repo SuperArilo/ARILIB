@@ -1,61 +1,16 @@
 package com.tty.lib.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.tty.api.annotations.command.CommandMeta;
 import com.tty.api.annotations.command.LiteralCommand;
-import com.tty.api.command.AbstractSubCommand;
-import com.tty.api.command.ArgumentCommand;
 import com.tty.api.command.SuperHandsomeCommand;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.LibConfigUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 
-public abstract class LiteralArgumentCommand extends AbstractSubCommand implements ArgumentCommand {
-
-    @Override
-    public int preExecute(CommandContext<CommandSourceStack> ctx) {
-
-        CommandMeta meta = this.getClass().getAnnotation(CommandMeta.class);
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (!meta.allowConsole() && !(sender instanceof Player)) {
-            sender.sendMessage(LibConfigUtils.t("function.public.not-player"));
-            return 0;
-        }
-
-        String input = ctx.getInput().trim();
-
-        for (String name : PLUGIN_NAMES) {
-            if (input.startsWith(name + " ")) {
-                input = input.substring(name.length()).trim();
-                break;
-            }
-        }
-
-        String[] args = input.isEmpty() ? new String[0] : input.split(" ");
-
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("\"") && arg.endsWith("\"") && arg.length() >= 2) {
-                args[i] = arg.substring(1, arg.length() - 1);
-            }
-        }
-
-        if (args.length != meta.tokenLength()) {
-            sender.sendMessage(LibConfigUtils.t("function.public.fail"));
-            return 0;
-        }
-
-        this.execute(sender, args);
-
-        return 1;
-    }
+public abstract class LiteralArgumentCommand extends PreCommand {
 
     @Override
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
