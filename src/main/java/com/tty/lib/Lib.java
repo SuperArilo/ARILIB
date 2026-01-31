@@ -1,15 +1,12 @@
 package com.tty.lib;
 
-import com.tty.api.Log;
-import com.tty.api.PublicFunctionUtils;
-import com.tty.api.Scheduler;
+import com.tty.api.*;
 import com.tty.api.service.ComponentService;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.services.*;
 import com.tty.lib.services.impl.*;
-import com.tty.api.ConfigInstance;
 import com.tty.lib.tool.Placeholder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -28,6 +25,7 @@ import java.io.File;
 public class Lib extends JavaPlugin {
 
     public static Lib instance;
+    public static final Log log = Log.create();
     public static Boolean DEBUG = false;
     public static final Scheduler SCHEDULER = Scheduler.create();
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
@@ -44,7 +42,7 @@ public class Lib extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.init(this.getLogger(), DEBUG);
+        log.setDebug(DEBUG);
     }
 
     @Override
@@ -102,7 +100,7 @@ public class Lib extends JavaPlugin {
                 try {
                     Lib.instance.saveResource(path, true);
                 } catch (Exception e) {
-                    Log.error("can not find file path {} .", path);
+                    Lib.log.error("can not find file path {} .", path);
                 }
             }
             C_INSTANCE.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));

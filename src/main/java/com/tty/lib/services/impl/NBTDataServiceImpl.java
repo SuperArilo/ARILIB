@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.api.Log;
+import com.tty.lib.Lib;
 import com.tty.lib.services.NBTDataService;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.NBTFileHandle;
@@ -17,7 +17,7 @@ public class NBTDataServiceImpl implements NBTDataService {
         try {
            return NBT.getFileHandle(playerDataFile);
         } catch (IOException e) {
-            Log.error(e, "load file data {} error. ", playerUUID);
+            Lib.log.error(e, "load file data {} error. ", playerUUID);
             return null;
         }
     }

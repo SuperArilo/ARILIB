@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.api.Log;
+import com.tty.lib.Lib;
 import com.tty.lib.services.PermissionService;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;
@@ -52,7 +52,7 @@ public record PermissionServiceImpl(Permission PERMISSION) implements Permission
             }
         }
         if (initValue == 0 && firstErrorPermission != null) {
-            Log.error("player {} permission format error: ", player.getName(), firstErrorPermission);
+            Lib.log.error("player {} permission format error: ", player.getName(), firstErrorPermission);
         }
         return initValue;
     }
