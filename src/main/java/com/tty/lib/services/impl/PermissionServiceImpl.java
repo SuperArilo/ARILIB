@@ -1,7 +1,7 @@
 package com.tty.lib.services.impl;
 
 import com.tty.lib.Lib;
-import com.tty.lib.services.PermissionService;
+import com.tty.api.service.PermissionService;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -1,11 +1,10 @@
 package com.tty.lib;
 
 import com.tty.api.*;
-import com.tty.api.service.ComponentService;
+import com.tty.api.service.*;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
-import com.tty.lib.services.*;
 import com.tty.lib.services.impl.*;
 import com.tty.lib.tool.Placeholder;
 import io.papermc.paper.command.brigadier.Commands;

@@ -1,7 +1,7 @@
 package com.tty.lib.services.impl;
 
 import com.tty.lib.Lib;
-import com.tty.lib.services.NBTDataService;
+import com.tty.api.service.NBTDataService;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.NBTFileHandle;
 import org.bukkit.Bukkit;

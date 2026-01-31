@@ -2,7 +2,7 @@ package com.tty.lib.services.impl;
 
 import com.tty.api.PublicFunctionUtils;
 import com.tty.lib.Lib;
-import com.tty.lib.services.FireworkService;
+import com.tty.api.service.FireworkService;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;

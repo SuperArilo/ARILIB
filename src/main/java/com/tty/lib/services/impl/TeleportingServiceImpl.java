@@ -2,7 +2,7 @@ package com.tty.lib.services.impl;
 
 import com.tty.api.ServerPlatform;
 import com.tty.lib.Lib;
-import com.tty.lib.services.TeleportingService;
+import com.tty.api.service.TeleportingService;
 import com.tty.lib.tool.LibConfigUtils;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;

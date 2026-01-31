@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.lib.services.EconomyService;
+import com.tty.api.service.EconomyService;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
