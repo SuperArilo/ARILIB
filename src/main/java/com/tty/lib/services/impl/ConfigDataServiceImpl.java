@@ -2,6 +2,7 @@ package com.tty.lib.services.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tty.api.utils.ComponentUtils;
 import com.tty.lib.Lib;
 import com.tty.api.dto.ComponentListPage;
 import com.tty.lib.enum_type.FilePath;
@@ -34,17 +35,17 @@ public class ConfigDataServiceImpl implements ConfigDataService {
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = Lib.COMPONENT_SERVICE.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
+        TextComponent title = ComponentUtils.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
         if (prevAction != null) {
-            prev = Lib.COMPONENT_SERVICE.setClickEventText(Lib.C_INSTANCE.getValue("base.page.prev", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, prevAction);
+            prev = ComponentUtils.setClickEventText(Lib.C_INSTANCE.getValue("base.page.prev", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, prevAction);
         }
 
         TextComponent next = null;
         if (nextAction != null) {
-            next = Lib.COMPONENT_SERVICE.setClickEventText(Lib.C_INSTANCE.getValue("base.page.next", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, nextAction);
+            next = ComponentUtils.setClickEventText(Lib.C_INSTANCE.getValue("base.page.next", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, nextAction);
         }
 
 
@@ -55,7 +56,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         map.put(LangPage.TOTAL_PAGE.getType(), Component.text(totalPage));
         map.put(LangPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
 
-        TextComponent end = Lib.COMPONENT_SERVICE.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
+        TextComponent end = ComponentUtils.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 
         page.setFooter(end);
         return page;

@@ -10,7 +10,7 @@ import com.tty.api.service.placeholder.PlaceholderRegistry;
 public class Placeholder extends BasePlaceholder<FilePath> {
 
     public Placeholder() {
-        super(Lib.C_INSTANCE, FilePath.Lang, Lib.COMPONENT_SERVICE);
+        super(Lib.C_INSTANCE, FilePath.Lang);
     }
 
     public void init() {

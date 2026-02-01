@@ -2,6 +2,7 @@ package com.tty.lib;
 
 import com.tty.api.*;
 import com.tty.api.service.*;
+import com.tty.api.utils.PublicFunctionUtils;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
@@ -28,7 +29,6 @@ public class Lib extends JavaPlugin {
     public static Boolean DEBUG = false;
     public static final Scheduler SCHEDULER = Scheduler.create();
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
-    public static ComponentService COMPONENT_SERVICE;
     public static EconomyService ECONOMY_SERVICE;
     public static PermissionService PERMISSION_SERVICE;
     public static ConfigDataService CONFIG_DATA_SERVICE;
@@ -67,12 +67,10 @@ public class Lib extends JavaPlugin {
         ServicesManager servicesManager = Bukkit.getServicesManager();
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, i -> ECONOMY_SERVICE = new EconomyServiceImpl(i));
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, i -> PERMISSION_SERVICE = new PermissionServiceImpl(i));
-        COMPONENT_SERVICE = new ComponentServiceImpl();
         CONFIG_DATA_SERVICE = new ConfigDataServiceImpl();
         NBT_DATA_SERVICE = new NBTDataServiceImpl();
         FIREWORK_SERVICE = new FireworkServiceImpl();
         TELEPORTING_SERVICE = new TeleportingServiceImpl();
-        servicesManager.register(ComponentService.class, COMPONENT_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(EconomyService.class, ECONOMY_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(PermissionService.class, PERMISSION_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);

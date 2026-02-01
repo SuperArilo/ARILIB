@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.api.PublicFunctionUtils;
+import com.tty.api.utils.PublicFunctionUtils;
 import com.tty.lib.Lib;
 import com.tty.api.service.FireworkService;
 import org.bukkit.Color;
