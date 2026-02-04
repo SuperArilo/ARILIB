@@ -14,35 +14,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 拉取代码
+      - name: PULL SOURCE CODE
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 设置 JDK 环境 ${{ env.JAVA_VERSION }}
+      - name: SETTING JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: 设置 Maven
+      - name: SETTING Maven
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: ${{ env.MAVEN_VERSION }}
 
-      - name: 构建 Maven
+      - name: CLONE API
+        uses: actions/checkout@v4
+        with:
+          repository: YourOrg/ARILIB-API
+          ref: main
+          path: ARILIB-API
+
+      - name: INSTALL API
+        run: |
+          cd ARILIB-API
+          mvn clean install -DskipTests
+
+      - name: BUILD ARILIB
         run: |
           mvn clean package -DskipTests
 
-      - name: 查找构建结果 jar
+      - name: COLLECT PRODUCTS
         run: |
           mkdir -p build-artifacts
-          find . -name "*.jar" -path "*/target/*" ! -name "*-sources.jar" ! -name "*-javadoc.jar" ! -name "original-*.jar" | while read jar; do
-            cp "$jar" build-artifacts/
-          done
+          find . -name "*.jar" -path "*/target/*" \
+            ! -name "*-sources.jar" \
+            ! -name "*-javadoc.jar" \
+            ! -name "original-*.jar" | while read jar; do
+              cp "$jar" build-artifacts/
+            done
 
-      - name: 上传构建结果 jar
+      - name: UPLOAD
         uses: actions/upload-artifact@v4
         with:
           name: jar-files
@@ -55,14 +70,13 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
 
     steps:
-      - name: 下载构建结果
+      - name: DOWNLOAD
         uses: actions/download-artifact@v4
         with:
           name: jar-files
           path: build-artifacts
 
-      - name: 创建 release
-        id: create_release
+      - name: CREATE RELEASE
         uses: softprops/action-gh-release@v1
         with:
           files: build-artifacts/*.jar
