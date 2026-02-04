@@ -1,13 +1,13 @@
 package com.tty.lib.command;
 
-import com.tty.api.command.BaseRequiredCommand;
+import com.tty.api.command.BaseRequiredArgumentCommand;
 import com.tty.lib.Lib;
 import com.tty.lib.tool.LibConfigUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class RequiredArgumentCommand<T> extends BaseRequiredCommand<T> {
+public abstract class RequiredArgumentCommand<T> extends BaseRequiredArgumentCommand<T> {
 
     @Override
     protected boolean havePermission(CommandSender sender, String permission) {

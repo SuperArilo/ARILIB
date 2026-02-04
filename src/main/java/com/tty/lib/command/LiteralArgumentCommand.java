@@ -4,11 +4,11 @@ import com.tty.lib.Lib;
 import com.tty.lib.tool.LibConfigUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
-import com.tty.api.command.BaseLiteralCommand;
+import com.tty.api.command.BaseLiteralArgumentCommand;
 import org.jetbrains.annotations.NotNull;
 
 
-public abstract class LiteralArgumentCommand extends BaseLiteralCommand {
+public abstract class LiteralArgumentCommand extends BaseLiteralArgumentCommand {
 
     @Override
     protected boolean havePermission(CommandSender sender, String permission) {
