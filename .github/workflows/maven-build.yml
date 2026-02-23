@@ -34,7 +34,7 @@ jobs:
       - name: CLONE API
         uses: actions/checkout@v4
         with:
-          repository: YourOrg/ARILIB-API
+          repository: https://github.com/SuperArilo/ARILIB-API
           ref: main
           path: ARILIB-API
 
