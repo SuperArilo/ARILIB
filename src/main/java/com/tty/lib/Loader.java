@@ -21,6 +21,7 @@ public class Loader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-extension", "jar", "3.5.15"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-jsqlparser", "jar", "3.5.15"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("de.tr7zw", "item-nbt-api-plugin", "jar", "2.15.5"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine", "caffeine", "jar", "3.2.3"), "provided"));
 
         resolver.addRepository(new RemoteRepository.Builder("paper", "default", "https://repo.papermc.io/repository/maven-public/").build());
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://maven-central.storage-download.googleapis.com/maven2").build());
