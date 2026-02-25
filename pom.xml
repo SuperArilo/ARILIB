@@ -37,11 +37,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
@@ -51,16 +46,10 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>true</createDependencyReducedPom>
-                            <minimizeJar>false</minimizeJar>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <minimizeJar>true</minimizeJar>
+                            <outputFile>${outputDirectory}/${project.artifactId}.jar</outputFile>
                             <filters>
-                                <filter>
-                                    <artifact>com.tty:arilib</artifact>
-                                    <excludes>
-                                        <exclude>com/tty/api/**</exclude>
-                                    </excludes>
-                                </filter>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
@@ -71,20 +60,16 @@
                                         <exclude>module-info.class</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>com.tty:api</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
                             </filters>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
-                <configuration>
-                    <outputDirectory>
-                        ${outputDirectory}
-                    </outputDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>
