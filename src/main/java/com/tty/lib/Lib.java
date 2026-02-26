@@ -18,8 +18,6 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public class Lib extends JavaPlugin {
 
     public static Lib instance;
