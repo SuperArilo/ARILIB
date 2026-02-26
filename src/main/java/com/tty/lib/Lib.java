@@ -13,8 +13,6 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
@@ -28,7 +26,7 @@ public class Lib extends JavaPlugin {
     public static final Log log = Log.create();
     public static Boolean DEBUG = false;
     public static final Scheduler SCHEDULER = Scheduler.create();
-    public static final ConfigInstance C_INSTANCE = new ConfigInstance();
+    public static ConfigInstance C_INSTANCE;
     public static EconomyService ECONOMY_SERVICE;
     public static PermissionService PERMISSION_SERVICE;
     public static ConfigDataService CONFIG_DATA_SERVICE;
@@ -83,24 +81,6 @@ public class Lib extends JavaPlugin {
         Lib.instance.saveDefaultConfig();
         Lib.instance.reloadConfig();
         DEBUG = Lib.instance.getConfig().getBoolean("debug.enable", false);
-        C_INSTANCE.clearConfigs();
-        FileConfiguration instanceConfig = Lib.instance.getConfig();
-        for (FilePath filePath : FilePath.values()) {
-            String path = filePath.getPath();
-            if(filePath.equals(FilePath.Lang)) {
-                path = path.replace("[lang]", instanceConfig.getString("lang", "cn"));
-            }
-            File file = new File(Lib.instance.getDataFolder(), path);
-            if (!file.exists()) {
-                Lib.instance.saveResource(path, true);
-            } else if (instanceConfig.getBoolean("debug.overwrite-file", false)) {
-                try {
-                    Lib.instance.saveResource(path, true);
-                } catch (Exception e) {
-                    Lib.log.error("can not find file path {} .", path);
-                }
-            }
-            C_INSTANCE.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));
-        }
+        C_INSTANCE = new ConfigInstance(Lib.instance, FilePath.values());
     }
 }

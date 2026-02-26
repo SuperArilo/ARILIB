@@ -16,4 +16,9 @@ public enum FilePath implements FilePathEnum {
     public String getPath() {
         return this.path;
     }
+
+    @Override
+    public String getNickName() {
+        return "";
+    }
 }
