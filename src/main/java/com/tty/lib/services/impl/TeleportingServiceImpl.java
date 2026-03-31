@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.function.Consumer;
 
-@SuppressWarnings("UnstableApiUsage")
 public class TeleportingServiceImpl implements TeleportingService {
 
     protected boolean status = true;
