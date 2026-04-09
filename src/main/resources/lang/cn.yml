@@ -23,6 +23,7 @@ base:
   no_re: '&c否'
   free: '&a免费'
   no-record: '&c无记录'
+  none: '&7无'
   on-edit:
     cancel: '&e已取消操作！'
     timeout-cancel: '&7编辑超时，已自动取消！'
