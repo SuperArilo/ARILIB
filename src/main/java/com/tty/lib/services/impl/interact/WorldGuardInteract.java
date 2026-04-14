@@ -1,7 +1,6 @@
 package com.tty.lib.services.impl.interact;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -19,16 +18,18 @@ public class WorldGuardInteract implements InteractService {
     private final RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
 
     @Override
+    public String pluginName() {
+        return "WorldGuard";
+    }
+
+    @Override
     public boolean canBuild(Location location) {
-        com.sk89q.worldedit.util.Location adapt = BukkitAdapter.adapt(location);
-        return query.testState(adapt, null, Flags.BUILD);
+        return query.testState(BukkitAdapter.adapt(location), null, Flags.BUILD);
     }
 
     @Override
     public boolean canBuild(Location location, Player player) {
-        com.sk89q.worldedit.util.Location adapt = BukkitAdapter.adapt(location);
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        return query.testState(adapt, localPlayer, Flags.BUILD);
+        return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
     }
 
     @Override
@@ -51,17 +52,15 @@ public class WorldGuardInteract implements InteractService {
 
     @Override
     public boolean canInteract(Location location) {
-        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(location));
-        if (regions.size() == 0) return true;
         com.sk89q.worldedit.util.Location adapt = BukkitAdapter.adapt(location);
+        ApplicableRegionSet regions = query.getApplicableRegions(adapt);
+        if (regions.size() == 0) return true;
         return this.query.testState(adapt, null, Flags.BUILD);
     }
 
     @Override
     public boolean canInteract(Location location, Player player) {
-        com.sk89q.worldedit.util.Location adapt = BukkitAdapter.adapt(location);
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        return this.query.testState(adapt, localPlayer, Flags.BUILD);
+        return this.query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
     }
 
 }

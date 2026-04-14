@@ -61,6 +61,7 @@ function:
   teleport:
     success: '&a✔ 传送成功！'
     error: '&c传送状态错误，无法完成传送'
+    no-permission: '&c由于限制，你当前没有权限传送到此处'
 enchantment:
   protection: "保护"
   fire_protection: "火焰保护"
