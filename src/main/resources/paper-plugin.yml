@@ -10,7 +10,16 @@ dependencies:
   server:
     Vault:
       required: true
+      load: BEFORE
     PlaceholderAPI:
       required: false
+      load: BEFORE
     WorldGuard:
       required: false
+      load: BEFORE
+    Residence:
+      required: false
+      load: BEFORE
+    Dominion:
+      required: false
+      load: BEFORE

@@ -31,6 +31,7 @@ public class Lib extends JavaPlugin {
     public static NBTDataService NBT_DATA_SERVICE;
     public static FireworkService FIREWORK_SERVICE;
     public static TeleportingService TELEPORTING_SERVICE;
+    public static InteractService INTERACT_SERVICE;
     public static final Placeholder PLACEHOLDER = new Placeholder();
 
     @Override
@@ -67,12 +68,14 @@ public class Lib extends JavaPlugin {
         NBT_DATA_SERVICE = new NBTDataServiceImpl();
         FIREWORK_SERVICE = new FireworkServiceImpl();
         TELEPORTING_SERVICE = new TeleportingServiceImpl();
+        INTERACT_SERVICE = new InteractServiceImpl();
         servicesManager.register(EconomyService.class, ECONOMY_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(PermissionService.class, PERMISSION_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(NBTDataService.class, NBT_DATA_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(FireworkService.class, FIREWORK_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(TeleportingService.class, TELEPORTING_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(InteractService.class, INTERACT_SERVICE, this, ServicePriority.Normal);
     }
 
     public static void reloadAllConfig() {
