@@ -1,9 +1,9 @@
 package com.tty.lib;
 
-import com.tty.api.*;
+import com.tty.api.BaseJavaPlugin;
+import com.tty.api.dto.TempRegisterService;
 import com.tty.api.enumType.FilePathEnum;
 import com.tty.api.service.*;
-import com.tty.api.utils.PublicFunctionUtils;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
 import com.tty.lib.listener.OnPluginReloadListener;
@@ -14,9 +14,12 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class Lib extends BaseJavaPlugin {
 
@@ -40,15 +43,13 @@ public class Lib extends BaseJavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new OnPluginReloadListener(), this);
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, i -> {
             Commands registrar = i.registrar();
             registrar.register(new AriLib().toBrigadier());
         });
 
-        this.registerServices();
+        this.registerService();
     }
 
     @Override
@@ -58,14 +59,26 @@ public class Lib extends BaseJavaPlugin {
     }
 
     @Override
-    protected FilePathEnum[] fileList() {
+    protected List<TempRegisterService<?>> loadOtherPlugin() {
+        return List.of(
+                TempRegisterService.of("Vault", Economy.class, i -> ECONOMY_SERVICE = new EconomyServiceImpl(i)),
+                TempRegisterService.of("Vault", Permission.class, i -> PERMISSION_SERVICE = new PermissionServiceImpl(i))
+        );
+    }
+
+
+    @Override
+    protected @NotNull List<Listener> registerEvents() {
+        return List.of(new OnPluginReloadListener());
+    }
+
+    @Override
+    protected @NotNull FilePathEnum @NotNull [] fileList() {
         return FilePath.values();
     }
 
-    private void registerServices () {
+    private void registerService () {
         ServicesManager servicesManager = Bukkit.getServicesManager();
-        PublicFunctionUtils.loadPlugin("Vault", Economy.class, i -> ECONOMY_SERVICE = new EconomyServiceImpl(i));
-        PublicFunctionUtils.loadPlugin("Vault", Permission.class, i -> PERMISSION_SERVICE = new PermissionServiceImpl(i));
         CONFIG_DATA_SERVICE = new ConfigDataServiceImpl();
         NBT_DATA_SERVICE = new NBTDataServiceImpl();
         FIREWORK_SERVICE = new FireworkServiceImpl();
