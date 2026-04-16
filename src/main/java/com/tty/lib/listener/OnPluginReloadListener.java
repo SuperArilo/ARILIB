@@ -10,8 +10,7 @@ public class OnPluginReloadListener implements Listener {
 
     @EventHandler
     public void pluginReload(CustomPluginReloadEvent event) {
-        Lib.reloadAllConfig();
-        Lib.log.setDebug(Lib.DEBUG);
+        Lib.instance.doReloadAllFiles();
         event.getSender().sendMessage(LibConfigUtils.t("function.reload.success"));
     }
 

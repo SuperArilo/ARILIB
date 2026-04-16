@@ -48,7 +48,7 @@ public class TeleportingServiceImpl implements TeleportingService {
             this.aborted.run();
             return this;
         }
-        Lib.SCHEDULER.runAtRegion(Lib.instance, targetLocation, i -> {
+        Lib.instance.getScheduler().runAtRegion(Lib.instance, targetLocation, i -> {
             for (int y = 0;y <= targetLocation.getWorld().getMaxHeight();y++) {
                 if (targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
                     targetLocation.add(0, y, 0);

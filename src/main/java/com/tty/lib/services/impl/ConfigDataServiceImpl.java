@@ -29,23 +29,23 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
     @Override
     public String getValue(String keyPath) {
-        return Lib.C_INSTANCE.getValue(keyPath, FilePath.Lang);
+        return Lib.instance.getConfigInstance().getValue(keyPath, FilePath.Lang);
     }
 
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = ComponentUtils.text(Lib.C_INSTANCE.getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
+        TextComponent title = ComponentUtils.text(Lib.instance.getConfigInstance().getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
         if (prevAction != null) {
-            prev = ComponentUtils.setClickEventText(Lib.C_INSTANCE.getValue("base.page.prev", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, prevAction);
+            prev = ComponentUtils.setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.prev", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, prevAction);
         }
 
         TextComponent next = null;
         if (nextAction != null) {
-            next = ComponentUtils.setClickEventText(Lib.C_INSTANCE.getValue("base.page.next", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, nextAction);
+            next = ComponentUtils.setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.next", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, nextAction);
         }
 
 

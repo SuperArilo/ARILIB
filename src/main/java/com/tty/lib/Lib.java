@@ -1,6 +1,7 @@
 package com.tty.lib;
 
 import com.tty.api.*;
+import com.tty.api.enumType.FilePathEnum;
 import com.tty.api.service.*;
 import com.tty.api.utils.PublicFunctionUtils;
 import com.tty.lib.commands.AriLib;
@@ -16,15 +17,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class Lib extends JavaPlugin {
+public class Lib extends BaseJavaPlugin {
 
     public static Lib instance;
-    public static final Log log = Log.create();
-    public static Boolean DEBUG = false;
-    public static final Scheduler SCHEDULER = Scheduler.create();
-    public static ConfigInstance C_INSTANCE;
     public static EconomyService ECONOMY_SERVICE;
     public static PermissionService PERMISSION_SERVICE;
     public static ConfigDataService CONFIG_DATA_SERVICE;
@@ -32,17 +28,18 @@ public class Lib extends JavaPlugin {
     public static FireworkService FIREWORK_SERVICE;
     public static TeleportingService TELEPORTING_SERVICE;
     public static InteractService INTERACT_SERVICE;
-    public static final Placeholder PLACEHOLDER = new Placeholder();
+    public static Placeholder PLACEHOLDER;
 
     @Override
     public void onLoad() {
+        super.onLoad();
         instance = this;
-        reloadAllConfig();
-        log.setDebug(DEBUG);
+        PLACEHOLDER = new Placeholder();
     }
 
     @Override
     public void onEnable() {
+        super.onEnable();
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new OnPluginReloadListener(), this);
 
@@ -56,8 +53,13 @@ public class Lib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        C_INSTANCE.clearConfigs();
+        super.onDisable();
         Bukkit.getServicesManager().unregister(true);
+    }
+
+    @Override
+    protected FilePathEnum[] fileList() {
+        return FilePath.values();
     }
 
     private void registerServices () {
@@ -78,10 +80,4 @@ public class Lib extends JavaPlugin {
         servicesManager.register(InteractService.class, INTERACT_SERVICE, this, ServicePriority.Normal);
     }
 
-    public static void reloadAllConfig() {
-        Lib.instance.saveDefaultConfig();
-        Lib.instance.reloadConfig();
-        DEBUG = Lib.instance.getConfig().getBoolean("debug.enable", false);
-        C_INSTANCE = new ConfigInstance(Lib.instance, FilePath.values());
-    }
 }

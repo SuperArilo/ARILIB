@@ -13,7 +13,7 @@ public class LibConfigUtils {
      * @return 返回构建完成的 Component
      */
     public static TextComponent t(String key) {
-        return ComponentUtils.text(Lib.C_INSTANCE.getValue(key, FilePath.Lang));
+        return ComponentUtils.text(Lib.instance.getConfigInstance().getValue(key, FilePath.Lang));
     }
 
 

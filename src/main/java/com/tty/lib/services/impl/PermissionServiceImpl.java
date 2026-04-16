@@ -52,7 +52,7 @@ public record PermissionServiceImpl(Permission PERMISSION) implements Permission
             }
         }
         if (initValue == 0 && firstErrorPermission != null) {
-            Lib.log.error("player {} permission format error: ", player.getName(), firstErrorPermission);
+            Lib.instance.getLog().error("player {} permission format error: ", player.getName(), firstErrorPermission);
         }
         return initValue;
     }

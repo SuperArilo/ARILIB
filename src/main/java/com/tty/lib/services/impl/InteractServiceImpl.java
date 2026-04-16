@@ -30,7 +30,7 @@ public class InteractServiceImpl implements InteractService {
             InteractService hook = (InteractService) clazz.getDeclaredConstructor().newInstance();
             this.delegates.add(hook);
         } catch (Throwable e) {
-            Lib.log.warn("failed to load hook: " + clazzName);
+            Lib.instance.getLog().warn("failed to load hook: " + clazzName);
         }
     }
 
@@ -43,7 +43,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canBuild(Location location) {
         for (InteractService hook : this.delegates) {
             if (!hook.canBuild(location)) {
-                Lib.log.debug("{}: can not to build.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to build.", hook.pluginName());
                 return false;
             }
         }
@@ -54,7 +54,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canBuild(Location location, Player player) {
         for (InteractService hook : this.delegates) {
             if (!hook.canBuild(location, player)) {
-                Lib.log.debug("{}: can not to build.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to build.", hook.pluginName());
                 return false;
             }
         }
@@ -65,7 +65,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canTeleport(Location location) {
         for (InteractService hook : this.delegates) {
             if (!hook.canTeleport(location)) {
-                Lib.log.debug("{}: can not to teleport.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to teleport.", hook.pluginName());
                 return false;
             }
         }
@@ -76,7 +76,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canTeleport(Location location, Player player) {
         for (InteractService hook : this.delegates) {
             if (!hook.canTeleport(location, player)) {
-                Lib.log.debug("{}: can not to teleport.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to teleport.", hook.pluginName());
                 return false;
             }
         }
@@ -87,7 +87,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canInteract(Location location) {
         for (InteractService hook : this.delegates) {
             if (!hook.canInteract(location)) {
-                Lib.log.debug("{}: can not to interact.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to interact.", hook.pluginName());
                 return false;
             }
         }
@@ -98,7 +98,7 @@ public class InteractServiceImpl implements InteractService {
     public boolean canInteract(Location location, Player player) {
         for (InteractService hook : this.delegates) {
             if (!hook.canInteract(location, player)) {
-                Lib.log.debug("{}: can not to interact.", hook.pluginName());
+                Lib.instance.getLog().debug("{}: can not to interact.", hook.pluginName());
                 return false;
             }
         }

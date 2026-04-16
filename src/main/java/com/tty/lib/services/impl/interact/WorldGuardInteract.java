@@ -38,7 +38,7 @@ public class WorldGuardInteract implements InteractService {
         ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(location));
         for (ProtectedRegion region : regions) {
             if (region.getFlag(Flags.ENTRY) == StateFlag.State.DENY) {
-                Lib.log.debug("location: x: {}, y: {}, z: {} in WorldGuard not allow.", location.getX(), location.getY(), location.getZ());
+                Lib.instance.getLog().debug("location: x: {}, y: {}, z: {} in WorldGuard not allow.", location.getX(), location.getY(), location.getZ());
                 status = false;
             }
         }

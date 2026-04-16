@@ -15,7 +15,7 @@ public record FireworkServiceImpl() implements FireworkService {
     public void spawnFireworks(Location center, int count) {
         for (int i = 0; i < count; i++) {
             int delay = Math.max(1, i * 2);
-            Lib.SCHEDULER.runAtRegionLater(Lib.instance, center, t -> spawnSingleFirework(center), delay);
+            Lib.instance.getScheduler().runAtRegionLater(Lib.instance, center, t -> spawnSingleFirework(center), delay);
         }
     }
 
