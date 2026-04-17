@@ -34,16 +34,13 @@ public class Lib extends BaseJavaPlugin {
     public static Placeholder PLACEHOLDER;
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    protected void loading() {
         instance = this;
         PLACEHOLDER = new Placeholder();
     }
 
     @Override
-    public void onEnable() {
-        super.onEnable();
-
+    protected void enabling() {
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, i -> {
             Commands registrar = i.registrar();
             registrar.register(new AriLib().toBrigadier());
@@ -53,8 +50,7 @@ public class Lib extends BaseJavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-        super.onDisable();
+    protected void disabling() {
         Bukkit.getServicesManager().unregister(true);
     }
 
@@ -65,7 +61,6 @@ public class Lib extends BaseJavaPlugin {
                 TempRegisterService.of("Vault", Permission.class, i -> PERMISSION_SERVICE = new PermissionServiceImpl(i))
         );
     }
-
 
     @Override
     protected @NotNull List<Listener> registerEvents() {
