@@ -1,4 +1,4 @@
-name: Build-Jar
+name: Build-ARILIB
 
 on:
   push:
@@ -26,36 +26,37 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: SETTING Maven
+      - name: SETTING MAVEN
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: ${{ env.MAVEN_VERSION }}
 
-      - name: CLONE API
+      - name: GET TAG NAME
+        id: tag
+        run: echo "TAG=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: SET VERSION FROM TAG
+        run: mvn versions:set -DnewVersion=${{ steps.tag.outputs.TAG }} -DgenerateBackupPoms=false
+
+      - name:
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/SuperArilo/ARILIB-API
-          ref: main
-          path: ARILIB-API
+          repository: SuperArilo/ARILIB-API
+          path: arilib-api
 
       - name: INSTALL API
         run: |
-          cd ARILIB-API
+          cd arilib-api
           mvn clean install -DskipTests
+          cd ..
 
-      - name: BUILD ARILIB
-        run: |
-          mvn clean package -DskipTests
+      - name: BUILD
+        run: mvn clean package -DskipTests
 
       - name: COLLECT PRODUCTS
         run: |
           mkdir -p build-artifacts
-          find . -name "*.jar" -path "*/target/*" \
-            ! -name "*-sources.jar" \
-            ! -name "*-javadoc.jar" \
-            ! -name "original-*.jar" | while read jar; do
-              cp "$jar" build-artifacts/
-            done
+          cp target/arilib*.jar build-artifacts/arilib.jar
 
       - name: UPLOAD
         uses: actions/upload-artifact@v4
@@ -77,7 +78,8 @@ jobs:
           path: build-artifacts
 
       - name: CREATE RELEASE
-        uses: softprops/action-gh-release@v1
+        id: create_release
+        uses: softprops/action-gh-release@v2
         with:
           files: build-artifacts/*.jar
           generate_release_notes: true

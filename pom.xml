@@ -3,12 +3,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.tty</groupId>
     <artifactId>arilib</artifactId>
-    <version>1.0</version>
+    <version>dev-snapshot</version>
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>21</java.version>
+        <paper.mc.version>1.21.3</paper.mc.version>
+        <folia.mc.version>1.21.4</folia.mc.version>
+        <version.suffix>-R0.1-SNAPSHOT</version.suffix>
+    </properties>
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -47,8 +55,8 @@
                         </goals>
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <minimizeJar>true</minimizeJar>
-                            <outputFile>${outputDirectory}/${project.artifactId}.jar</outputFile>
+                            <minimizeJar>false</minimizeJar>
+                            <outputFile>${outputDirectory}/${project.artifactId}-${project.version}.jar</outputFile>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -60,12 +68,6 @@
                                         <exclude>module-info.class</exclude>
                                     </excludes>
                                 </filter>
-                                <filter>
-                                    <artifact>com.tty:api</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
                             </filters>
                         </configuration>
                     </execution>
@@ -73,15 +75,6 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>21</java.version>
-        <paper.mc.version>1.21.3</paper.mc.version>
-        <folia.mc.version>1.21.4</folia.mc.version>
-        <version.suffix>-R0.1-SNAPSHOT</version.suffix>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -111,6 +104,7 @@
             <groupId>com.tty</groupId>
             <artifactId>api</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
