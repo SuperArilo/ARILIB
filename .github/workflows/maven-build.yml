@@ -51,7 +51,7 @@ jobs:
           cd ..
 
       - name: BUILD
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests -DoutputDirectory=target
 
       - name: COLLECT PRODUCTS
         run: |
