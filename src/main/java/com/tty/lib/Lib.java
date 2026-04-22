@@ -1,6 +1,6 @@
 package com.tty.lib;
 
-import com.tty.api.BaseJavaPlugin;
+import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.dto.TempRegisterService;
 import com.tty.api.enumType.FilePathEnum;
 import com.tty.api.service.*;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Lib extends BaseJavaPlugin {
+public class Lib extends AbstractJavaPlugin {
 
     public static Lib instance;
     public static EconomyService ECONOMY_SERVICE;
