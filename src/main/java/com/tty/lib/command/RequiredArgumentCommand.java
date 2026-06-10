@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RequiredArgumentCommand<T> extends BaseRequiredArgumentCommand<T> {
 
+    protected RequiredArgumentCommand() {
+        super(Lib.instance);
+    }
+
     @Override
     protected boolean havePermission(CommandSender sender, String permission) {
         return Lib.PERMISSION_SERVICE.hasPermission(sender, permission);
