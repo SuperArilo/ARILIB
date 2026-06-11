@@ -29,7 +29,7 @@ base:
     cancel: '&e已取消操作！'
     timeout-cancel: '&7编辑超时，已自动取消！'
     title: '&f请输入新内容'
-    sub-title: '&6cancel &7取消'
+    sub-title: '&7输入 &6cancel &7取消'
     input-error: '&c输入有错误，请检查！'
     rename:
       name-error: '&c名称不满足'
