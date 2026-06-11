@@ -13,7 +13,7 @@ base:
     no-permission: '&4你当前没有权限来执行此命令'
   page-change:
     none-prev: '&c这已经是第一页了哦'
-    none-next: '&c这已经是最后一页了哦'
+    none-next: '&c没有查询到更多的数据'
   page:
     prev: "&f[&b上一页&f]"
     next: "&f[&b下一页&f]"
