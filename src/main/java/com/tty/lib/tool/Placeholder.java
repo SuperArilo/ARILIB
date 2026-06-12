@@ -1,7 +1,6 @@
 package com.tty.lib.tool;
 
 import com.tty.api.AbstractJavaPlugin;
-import com.tty.api.ConfigInstance;
 import com.tty.api.service.impl.PlaceholderRegistryImpl;
 import com.tty.api.service.placeholder.BasePlaceholder;
 import com.tty.api.service.placeholder.PlaceholderRegistry;
