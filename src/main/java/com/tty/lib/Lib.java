@@ -36,7 +36,7 @@ public class Lib extends AbstractJavaPlugin {
     @Override
     protected void loading() {
         instance = this;
-        PLACEHOLDER = new Placeholder(this.getConfigInstance());
+        PLACEHOLDER = new Placeholder(this);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.tty.lib.tool;
 
+import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.ConfigInstance;
 import com.tty.api.service.impl.PlaceholderRegistryImpl;
 import com.tty.api.service.placeholder.BasePlaceholder;
@@ -9,8 +10,8 @@ import com.tty.lib.enum_type.FilePath;
 
 public class Placeholder extends BasePlaceholder<FilePath> {
 
-    public Placeholder(ConfigInstance instance) {
-        super(instance, FilePath.Lang);
+    public Placeholder(AbstractJavaPlugin plugin) {
+        super(plugin, FilePath.Lang);
     }
 
     public void init() {
