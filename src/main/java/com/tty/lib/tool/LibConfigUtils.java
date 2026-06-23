@@ -1,6 +1,5 @@
 package com.tty.lib.tool;
 
-import com.tty.api.utils.ComponentUtils;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FilePath;
 import net.kyori.adventure.text.TextComponent;
@@ -13,8 +12,7 @@ public class LibConfigUtils {
      * @return 返回构建完成的 Component
      */
     public static TextComponent t(String key) {
-        return ComponentUtils.text(Lib.instance.getConfigInstance().getValue(key, FilePath.Lang));
+        return Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue(key, FilePath.Lang));
     }
-
 
 }
