@@ -1,11 +1,11 @@
 base:
   time-format:
-    year: ' year'
-    month: ' month'
-    day: ' day'
-    hour: ' hour'
-    minute: " minute"
-    second: " second"
+    year: 'year'
+    month: 'month'
+    day: 'day'
+    hour: 'hour'
+    minute: "minute"
+    second: "second"
   command:
     disabled: "&cThis command has been disabled!"
     self-not-allowed: "&cYou cannot use this command on yourself!"
