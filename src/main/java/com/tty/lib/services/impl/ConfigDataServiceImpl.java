@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.tty.lib.Lib;
 import com.tty.api.dto.ComponentListPage;
 import com.tty.lib.enum_type.FilePath;
-import com.tty.lib.enum_type.LangPage;
+import com.tty.lib.enum_type.PlaceholderPage;
 import com.tty.api.service.ConfigDataService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -34,7 +34,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue("base.page.line-start", FilePath.Lang), Map.of(LangPage.PAGE_TITLE.getType(), titleName));
+        TextComponent title = Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue("base.page.line-start", FilePath.Lang), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
@@ -49,11 +49,11 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
 
         HashMap<String, Component> map = new HashMap<>();
-        map.put(LangPage.PAGE_PREV_TEXT.getType(), prev);
-        map.put(LangPage.PAGE_NEXT_TEXT.getType(), next);
-        map.put(LangPage.CURRENT_PAGE.getType(), Component.text(currentPage));
-        map.put(LangPage.TOTAL_PAGE.getType(), Component.text(totalPage));
-        map.put(LangPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
+        map.put(PlaceholderPage.PAGE_PREV_TEXT.getType(), prev);
+        map.put(PlaceholderPage.PAGE_NEXT_TEXT.getType(), next);
+        map.put(PlaceholderPage.CURRENT_PAGE.getType(), Component.text(currentPage));
+        map.put(PlaceholderPage.TOTAL_PAGE.getType(), Component.text(totalPage));
+        map.put(PlaceholderPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
 
         TextComponent end = Lib.instance.getComponentTool().text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 

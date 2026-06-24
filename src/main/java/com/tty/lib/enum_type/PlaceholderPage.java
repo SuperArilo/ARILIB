@@ -1,8 +1,8 @@
 package com.tty.lib.enum_type;
 
-import com.tty.api.enumType.LangTypeEnum;
+import com.tty.api.enumType.PlaceholderTypeEnum;
 
-public enum LangPage implements LangTypeEnum {
+public enum PlaceholderPage implements PlaceholderTypeEnum {
     PAGE_TITLE("page_title"),
     PAGE_PREV_TEXT("page_prev_text"),
     PAGE_NEXT_TEXT("page_next_text"),
@@ -12,7 +12,7 @@ public enum LangPage implements LangTypeEnum {
 
     private final String type;
 
-    LangPage(String type) {
+    PlaceholderPage(String type) {
         this.type = type;
     }
 
