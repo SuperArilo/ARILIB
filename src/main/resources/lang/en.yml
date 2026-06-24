@@ -1,0 +1,113 @@
+base:
+  time-format:
+    year: ' year'
+    month: ' month'
+    day: ' day'
+    hour: ' hour'
+    minute: " minute"
+    second: " second"
+  command:
+    disabled: "&cThis command has been disabled!"
+    self-not-allowed: "&cYou cannot use this command on yourself!"
+  permission:
+    no-permission: '&4You do not have permission to use this command'
+  page-change:
+    none-prev: '&cYou are already on the first page'
+    none-next: '&cNo more data available'
+  page:
+    prev: "&f[&bPrevious Page&f]"
+    next: "&f[&bNext Page&f]"
+    line-start: "&a----- <page_title> -----"
+    line-end: "&a----<page_prev_text><page_next_text>&a----&6<current_page>&f/&9<total_page>&a--&7Total: &6<total_data_records>"
+  on-error: '&cAn error occurred while processing your request. Please contact an administrator.'
+  yes_re: '&aYes'
+  no_re: '&cNo'
+  free: '&aFree'
+  no-record: '&cNo records found'
+  none: '&7None'
+  on-edit:
+    cancel: '&eOperation cancelled!'
+    timeout-cancel: '&7Edit timed out – automatically cancelled!'
+    title: '&fPlease enter new content'
+    sub-title: '&7Type &6cancel &7to abort'
+    input-error: '&cInvalid input – please check and try again!'
+    rename:
+      name-error: '&cInvalid name'
+      name-too-long: '&cName is too long'
+    permission:
+      permission-error: '&cInvalid permission node'
+    cost:
+      format-error: '&cNot a valid number'
+  save:
+    done: '&a✔ Saved successfully'
+    ing: '&e⏳ Saving...'
+    error: '&c✖ Save failed – please contact an administrator'
+  task-occupied: '&6This task is currently being used by another player. Please try again later.'
+  on-player:
+    self: '&6Themselves'
+    not-exist: '&c✖ Player does not exist'
+    hand-no-item: '&cYou are not holding any item in your main hand'
+    unable-player: '&cThat player is offline or does not exist!'
+    data-changed: '&aYour data has been updated. Please rejoin the server!'
+function:
+  reload:
+    doing: '&eReloading plugin...'
+    success: '&a✔ Plugin reloaded successfully!'
+  public:
+    agree: '&a✔ [Accept]'
+    center: '&for'
+    refuse: '&c✖ [Decline]'
+    not-player: '&cThis command can only be used in-game!'
+    fail: '&cInvalid command syntax or missing arguments!'
+  teleport:
+    success: '&a✔ Teleport successful!'
+    break: '&c✖ Teleport interrupted or cancelled'
+    error: '&cTeleport state error – unable to complete'
+    unable-player: '&cThat player is offline or does not exist!'
+    has-teleport: '&eYou already have an ongoing teleport'
+    not-safe-location: '&eDetected unsafe location – position has been adjusted'
+    no-permission: '&cYou do not have permission to teleport here'
+enchantment:
+  protection: "Protection"
+  fire_protection: "Fire Protection"
+  feather_falling: "Feather Falling"
+  blast_protection: "Blast Protection"
+  projectile_protection: "Projectile Protection"
+  respiration: "Respiration"
+  aqua_affinity: "Aqua Affinity"
+  thorns: "Thorns"
+  depth_strider: "Depth Strider"
+  frost_walker: "Frost Walker"
+  binding_curse: "Curse of Binding"
+  sharpness: "Sharpness"
+  smite: "Smite"
+  bane_of_arthropods: "Bane of Arthropods"
+  knockback: "Knockback"
+  fire_aspect: "Fire Aspect"
+  looting: "Looting"
+  sweeping_edge: "Sweeping Edge"
+  efficiency: "Efficiency"
+  silk_touch: "Silk Touch"
+  unbreaking: "Unbreaking"
+  fortune: "Fortune"
+  power: "Power"
+  punch: "Punch"
+  flame: "Flame"
+  infinity: "Infinity"
+  luck_of_the_sea: "Luck of the Sea"
+  lure: "Lure"
+  lunge: "Lunge"
+  loyalty: "Loyalty"
+  impaling: "Impaling"
+  riptide: "Riptide"
+  channeling: "Channeling"
+  multishot: "Multishot"
+  quick_charge: "Quick Charge"
+  piercing: "Piercing"
+  density: "Density"
+  breach: "Breach"
+  wind_burst: "Wind Burst"
+  mending: "Mending"
+  vanishing_curse: "Curse of Vanishing"
+  soul_speed: "Soul Speed"
+  swift_sneak: "Swift Sneak"
