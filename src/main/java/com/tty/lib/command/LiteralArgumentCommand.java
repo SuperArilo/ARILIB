@@ -30,8 +30,8 @@ public abstract class LiteralArgumentCommand extends BaseLiteralArgumentCommand 
     }
 
     @Override
-    protected boolean isDisabledInGame() {
-        return false;
+    protected boolean isEnableInGame() {
+        return true;
     }
 
     @Override

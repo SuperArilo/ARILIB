@@ -29,8 +29,8 @@ public abstract class RequiredArgumentCommand<T> extends BaseRequiredArgumentCom
     }
 
     @Override
-    protected boolean isDisabledInGame() {
-        return false;
+    protected boolean isEnableInGame() {
+        return true;
     }
 
     @Override
