@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tty.lib.Lib;
 import com.tty.api.dto.ComponentListPage;
-import com.tty.lib.enum_type.FilePath;
+import com.tty.lib.enum_type.LangFile;
 import com.tty.lib.enum_type.PlaceholderPage;
 import com.tty.api.service.ConfigDataService;
 import net.kyori.adventure.text.Component;
@@ -28,23 +28,23 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
     @Override
     public String getValue(String keyPath) {
-        return Lib.instance.getConfigInstance().getValue(keyPath, FilePath.Lang);
+        return Lib.instance.getConfigInstance().getValue(keyPath, LangFile.LANG);
     }
 
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue("base.page.line-start", FilePath.Lang), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
+        TextComponent title = Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue("base.page.line-start", LangFile.LANG), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
         if (prevAction != null) {
-            prev = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.prev", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, prevAction);
+            prev = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.prev", LangFile.LANG), ClickEvent.Action.RUN_COMMAND, prevAction);
         }
 
         TextComponent next = null;
         if (nextAction != null) {
-            next = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.next", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, nextAction);
+            next = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.next", LangFile.LANG), ClickEvent.Action.RUN_COMMAND, nextAction);
         }
 
 

@@ -6,6 +6,7 @@ import com.tty.api.enumType.FilePathEnum;
 import com.tty.api.service.*;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.enum_type.FilePath;
+import com.tty.lib.enum_type.LangFile;
 import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.services.impl.*;
 import com.tty.lib.tool.Placeholder;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -70,6 +72,11 @@ public class Lib extends AbstractJavaPlugin {
     @Override
     protected @NotNull FilePathEnum @NotNull [] fileList() {
         return FilePath.values();
+    }
+
+    @Override
+    protected @Nullable FilePathEnum @Nullable [] langFiles() {
+        return LangFile.values();
     }
 
     private void registerService () {

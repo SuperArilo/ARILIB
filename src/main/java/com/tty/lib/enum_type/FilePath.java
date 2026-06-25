@@ -4,7 +4,7 @@ import com.tty.api.enumType.FilePathEnum;
 
 public enum FilePath implements FilePathEnum {
 
-    Lang("lang/[lang].yml");
+    ;
 
     private final String path;
 
@@ -17,8 +17,4 @@ public enum FilePath implements FilePathEnum {
         return this.path;
     }
 
-    @Override
-    public String getNickName() {
-        return "";
-    }
 }
