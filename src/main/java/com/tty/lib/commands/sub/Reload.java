@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command;
 import com.tty.api.annotations.command.CommandMeta;
 import com.tty.api.annotations.command.LiteralCommand;
 import com.tty.api.command.SuperHandsomeCommand;
-import com.tty.api.event.CustomPluginReloadEvent;
+import com.tty.api.event.WhenPluginExecuteReloadCommandEvent;
 import com.tty.lib.Lib;
 import com.tty.lib.command.LiteralArgumentCommand;
 import com.tty.lib.tool.LibConfigUtils;
@@ -25,7 +25,7 @@ public class Reload extends LiteralArgumentCommand {
     @Override
     public int execute(CommandSender sender, String[] args) {
         sender.sendMessage(LibConfigUtils.t("function.reload.doing"));
-        Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(Lib.instance, sender));
+        Bukkit.getPluginManager().callEvent(new WhenPluginExecuteReloadCommandEvent(Lib.instance, sender));
         return Command.SINGLE_SUCCESS;
     }
 }
