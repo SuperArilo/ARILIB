@@ -2,11 +2,10 @@ package com.tty.lib;
 
 import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.dto.TempRegisterService;
-import com.tty.api.enumType.FilePathEnum;
+import com.tty.api.configuration.BaseConfiguration;
 import com.tty.api.service.*;
 import com.tty.lib.commands.AriLib;
-import com.tty.lib.enum_type.FilePath;
-import com.tty.lib.enum_type.LangFile;
+import com.tty.lib.configuration.lang.LangConfig;
 import com.tty.lib.listener.OnPluginReloadListener;
 import com.tty.lib.services.impl.*;
 import com.tty.lib.tool.Placeholder;
@@ -38,11 +37,11 @@ public class Lib extends AbstractJavaPlugin {
     @Override
     protected void loading() {
         instance = this;
-        PLACEHOLDER = new Placeholder(this);
     }
 
     @Override
     protected void enabling() {
+        PLACEHOLDER = new Placeholder(this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, i -> {
             Commands registrar = i.registrar();
             registrar.register(new AriLib().toBrigadier());
@@ -70,13 +69,8 @@ public class Lib extends AbstractJavaPlugin {
     }
 
     @Override
-    protected @NotNull FilePathEnum @NotNull [] fileList() {
-        return FilePath.values();
-    }
-
-    @Override
-    protected @Nullable FilePathEnum @Nullable [] langFiles() {
-        return LangFile.values();
+    protected @Nullable List<BaseConfiguration> configurations() {
+        return List.of(new LangConfig());
     }
 
     private void registerService () {

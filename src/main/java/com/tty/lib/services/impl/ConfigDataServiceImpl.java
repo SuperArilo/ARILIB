@@ -2,11 +2,11 @@ package com.tty.lib.services.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tty.lib.Lib;
 import com.tty.api.dto.ComponentListPage;
-import com.tty.lib.enum_type.LangFile;
-import com.tty.lib.enum_type.PlaceholderPage;
 import com.tty.api.service.ConfigDataService;
+import com.tty.lib.Lib;
+import com.tty.lib.configuration.lang.LangConfig;
+import com.tty.lib.enum_type.PlaceholderPage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -28,23 +28,26 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
     @Override
     public String getValue(String keyPath) {
-        return Lib.instance.getConfigInstance().getValue(keyPath, LangFile.LANG);
+        return Lib.instance.getConfigurationManager().get(LangConfig.class).getValue(keyPath, String.class, "null");
     }
 
     @Override
     public ComponentListPage createComponentDataPage(Component titleName, String prevAction, String nextAction, Integer currentPage, Integer totalPage, Integer totalRecords) {
+
+        LangConfig langConfig = Lib.instance.getConfigurationManager().get(LangConfig.class);
+
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = Lib.instance.getComponentTool().text(Lib.instance.getConfigInstance().getValue("base.page.line-start", LangFile.LANG), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
+        TextComponent title = Lib.instance.getComponentTool().text(langConfig.getValue("base.page.line-start", String.class, "null"), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         TextComponent prev = null;
         if (prevAction != null) {
-            prev = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.prev", LangFile.LANG), ClickEvent.Action.RUN_COMMAND, prevAction);
+            prev = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.Action.RUN_COMMAND, prevAction);
         }
 
         TextComponent next = null;
         if (nextAction != null) {
-            next = Lib.instance.getComponentTool().setClickEventText(Lib.instance.getConfigInstance().getValue("base.page.next", LangFile.LANG), ClickEvent.Action.RUN_COMMAND, nextAction);
+            next = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.Action.RUN_COMMAND, nextAction);
         }
 
 
