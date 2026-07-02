@@ -9,41 +9,41 @@ public record EconomyServiceImpl(Economy economy) implements EconomyService {
 
     @Override
     public EconomyResponse depositPlayer(Player player, double cost) {
-        if (!isNull()) return economy.depositPlayer(player, cost);
+        if (!this.isNull()) return this.economy.depositPlayer(player, cost);
         return null;
     }
 
     @Override
     public EconomyResponse withdrawPlayer(Player player, double cost) {
-        if(!isNull()) return economy.withdrawPlayer(player, cost);
+        if(!this.isNull()) return this.economy.withdrawPlayer(player, cost);
         return null;
     }
 
     @Override
     public Double getBalance(Player player) {
-        if (!isNull()) return economy.getBalance(player);
+        if (!this.isNull()) return this.economy.getBalance(player);
         return 0.0;
     }
 
     @Override
     public boolean hasEnoughBalance(Player player, double cost) {
-        if(isNull()) return true;
-        return getBalance(player) >= cost;
+        if(this.isNull()) return true;
+        return this.getBalance(player) >= cost;
     }
 
     @Override
     public String getNamePlural() {
-        return economy.currencyNamePlural();
+        return this.economy.currencyNamePlural();
     }
 
     @Override
     public String getNameSingular() {
-        return economy.currencyNameSingular();
+        return this.economy.currencyNameSingular();
     }
 
     @Override
     public boolean isNull() {
-        return economy == null;
+        return this.economy == null;
     }
 
 }
