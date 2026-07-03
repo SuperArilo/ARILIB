@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.api.ServerPlatform;
+import com.tty.api.Scheduler;
 import com.tty.lib.Lib;
 import com.tty.api.service.TeleportingService;
 import com.tty.lib.tool.LibConfigUtils;
@@ -48,7 +48,7 @@ public class TeleportingServiceImpl implements TeleportingService {
             this.aborted.run();
             return this;
         }
-        Lib.instance.getScheduler().runAtRegion(Lib.instance, targetLocation, i -> {
+        Lib.instance.getScheduler().runAtRegion(targetLocation, i -> {
             for (int y = 0;y <= targetLocation.getWorld().getMaxHeight();y++) {
                 if (targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
                     targetLocation.add(0, y, 0);
@@ -59,7 +59,7 @@ public class TeleportingServiceImpl implements TeleportingService {
                             PlayerTeleportEvent.TeleportCause.PLUGIN)
                     .thenAccept(p -> {
                         if (p) {
-                            if (ServerPlatform.isFolia() && entity instanceof Player player) {
+                            if (Scheduler.isFolia() && entity instanceof Player player) {
                                 Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
                             }
                             entity.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
