@@ -4,6 +4,7 @@ import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.dto.TempRegisterService;
 import com.tty.api.configuration.BaseConfiguration;
 import com.tty.api.service.*;
+import com.tty.api.state.StateService;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.configuration.lang.LangConfig;
 import com.tty.lib.listener.OnPluginReloadListener;
@@ -71,6 +72,11 @@ public class Lib extends AbstractJavaPlugin {
     @Override
     protected @Nullable List<BaseConfiguration> configurations() {
         return List.of(new LangConfig());
+    }
+
+    @Override
+    protected @Nullable List<StateService<?>> services() {
+        return List.of();
     }
 
     private void registerService () {
