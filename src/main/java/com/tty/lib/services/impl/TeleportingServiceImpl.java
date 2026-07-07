@@ -58,7 +58,7 @@ public class TeleportingServiceImpl implements TeleportingService {
             entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(p -> {
                 if (p) {
                     if (Scheduler.isFolia() && entity instanceof Player player) {
-                        Lib.instance.getScheduler().run(t -> Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)));
+                        Lib.instance.getScheduler().runAtEntity(player, t -> Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)), null);
                     }
                     entity.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                 }
