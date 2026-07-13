@@ -1,6 +1,5 @@
 package com.tty.lib.commands;
 
-import com.mojang.brigadier.Command;
 import com.tty.api.command.SuperHandsomeCommand;
 import com.tty.api.annotations.command.CommandMeta;
 import com.tty.api.annotations.command.LiteralCommand;
@@ -9,6 +8,7 @@ import com.tty.lib.commands.sub.Reload;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @CommandMeta(displayName = "arilib", allowConsole = true, tokenLength = 1)
 @LiteralCommand
@@ -20,8 +20,8 @@ public class AriLib extends LiteralArgumentCommand {
     }
 
     @Override
-    public int execute(CommandSender sender, String[] args) {
-        return Command.SINGLE_SUCCESS;
+    public CompletableFuture<Void> execute(CommandSender sender, String[] args) {
+        return CompletableFuture.completedFuture(null);
     }
 
 }

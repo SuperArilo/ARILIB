@@ -38,5 +38,10 @@ public abstract class LiteralArgumentCommand extends BaseLiteralArgumentCommand 
     protected @NotNull Component disableInGame() {
         return LibConfigUtils.t("base.command.disabled");
     }
-    
+
+    @Override
+    protected @NotNull Component taskAlreadyExits() {
+        return LibConfigUtils.t("base.task.already-exits");
+    }
+
 }

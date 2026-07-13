@@ -38,4 +38,9 @@ public abstract class RequiredArgumentCommand<T> extends BaseRequiredArgumentCom
         return LibConfigUtils.t("base.command.disabled");
     }
 
+    @Override
+    protected @NotNull Component taskAlreadyExits() {
+        return LibConfigUtils.t("base.task.already-exits");
+    }
+
 }
