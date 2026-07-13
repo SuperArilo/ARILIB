@@ -42,12 +42,12 @@ public class ConfigDataServiceImpl implements ConfigDataService {
 
         TextComponent prev = null;
         if (prevAction != null) {
-            prev = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.Action.RUN_COMMAND, prevAction);
+            prev = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.runCommand(prevAction));
         }
 
         TextComponent next = null;
         if (nextAction != null) {
-            next = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.Action.RUN_COMMAND, nextAction);
+            next = Lib.instance.getComponentTool().setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.runCommand(nextAction));
         }
 
 
