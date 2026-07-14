@@ -4,6 +4,7 @@ import com.tty.api.command.SuperHandsomeCommand;
 import com.tty.api.annotations.command.CommandMeta;
 import com.tty.api.annotations.command.LiteralCommand;
 import com.tty.lib.command.LiteralArgumentCommand;
+import com.tty.lib.commands.sub.About;
 import com.tty.lib.commands.sub.Reload;
 import org.bukkit.command.CommandSender;
 
@@ -15,7 +16,10 @@ public class AriLib extends LiteralArgumentCommand {
 
     @Override
     public List<SuperHandsomeCommand> thenCommands() {
-        return List.of(new Reload());
+        return List.of(
+                new About(),
+                new Reload()
+        );
     }
 
     @Override
