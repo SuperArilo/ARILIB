@@ -55,16 +55,16 @@ public class TeleportingServiceImpl implements TeleportingService {
                     break;
                 }
             }
-            entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(p -> {
-                if (p) {
+            Lib.instance.getScheduler().runAtEntity(entity, t -> entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
+                if (status) {
                     if (Scheduler.isFolia() && entity instanceof Player player) {
-                        Lib.instance.getScheduler().runAtEntity(player, t -> Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)), null);
+                        Lib.instance.getScheduler().run(c -> Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)));
                     }
                     entity.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                 }
                 this.after.run();
-                entity.sendMessage(LibConfigUtils.t(p ? "function.teleport.success":"function.teleport.error"));
-            });
+                entity.sendMessage(LibConfigUtils.t(status ? "function.teleport.success":"function.teleport.error"));
+            }), null);
         });
         return this;
     }
