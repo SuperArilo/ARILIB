@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @CommandMeta(displayName = "reload", permission = "arilib.command.reload", tokenLength = 1, allowConsole = true)
 @LiteralCommand(directExecute = true)
@@ -23,9 +22,8 @@ public class Reload extends LiteralArgumentCommand {
     }
 
     @Override
-    public CompletableFuture<Void> execute(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         sender.sendMessage(LibConfigUtils.t("function.reload.doing"));
         Lib.instance.getScheduler().run(i -> Bukkit.getPluginManager().callEvent(new WhenPluginExecuteReloadCommandEvent(Lib.instance, sender)));
-        return CompletableFuture.completedFuture(null);
     }
 }
