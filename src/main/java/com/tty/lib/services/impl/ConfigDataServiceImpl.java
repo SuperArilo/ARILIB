@@ -6,7 +6,7 @@ import com.tty.api.dto.ComponentListPage;
 import com.tty.api.service.ConfigDataService;
 import com.tty.lib.Lib;
 import com.tty.lib.configuration.lang.LangConfig;
-import com.tty.lib.enum_type.PlaceholderPage;
+import com.tty.lib.enumType.PlaceholderPage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;

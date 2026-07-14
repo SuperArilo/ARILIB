@@ -3,7 +3,7 @@ package com.tty.lib.configuration.lang;
 import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.configuration.LangConfiguration;
 import com.tty.lib.Lib;
-import com.tty.lib.enum_type.LangFile;
+import com.tty.lib.enumType.LangFile;
 
 public class LangConfig extends LangConfiguration {
 

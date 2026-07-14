@@ -1,4 +1,4 @@
-package com.tty.lib.enum_type;
+package com.tty.lib.enumType;
 
 import com.tty.api.enumType.PlaceholderTypeEnum;
 
