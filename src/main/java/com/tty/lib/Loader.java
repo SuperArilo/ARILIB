@@ -24,6 +24,7 @@ public class Loader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine", "caffeine", "jar", "3.2.3"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp", "jar", "5.4.0"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp-jvm", "jar", "5.4.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.maven", "maven-artifact", "jar", "3.9.6"), "provided"));
 
         resolver.addRepository(new RemoteRepository.Builder("paper", "default", "https://repo.papermc.io/repository/maven-public/").build());
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://maven-central.storage-download.googleapis.com/maven2").build());
