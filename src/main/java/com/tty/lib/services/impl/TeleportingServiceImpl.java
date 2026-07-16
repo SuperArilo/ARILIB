@@ -1,6 +1,6 @@
 package com.tty.lib.services.impl;
 
-import com.tty.api.Scheduler;
+import com.tty.api.scheduler.Scheduler;
 import com.tty.lib.Lib;
 import com.tty.api.service.TeleportingService;
 import com.tty.lib.tool.LibConfigUtils;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 public class TeleportingServiceImpl implements TeleportingService {
 
-    protected boolean status = true;
+    protected volatile boolean status = true;
 
     protected Consumer<TeleportingService> before;
     protected Runnable after = () -> {};
