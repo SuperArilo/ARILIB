@@ -14,14 +14,13 @@ public class Loader implements PluginLoader {
     public void classloader(PluginClasspathBuilder pluginClasspathBuilder) {
 
         MavenLibraryResolver resolver = new MavenLibraryResolver();
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer", "HikariCP", "jar", "5.1.0"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.sql2o", "sql2o", "jar", "1.9.1"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.mysql", "mysql-connector-j", "jar", "9.5.0"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-core", "jar", "3.5.15"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-extension", "jar", "3.5.15"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-jsqlparser", "jar", "3.5.15"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer", "HikariCP", "jar", "7.1.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.mysql", "mysql-connector-j", "jar", "9.7.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-core", "jar", "3.5.17"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-extension", "jar", "3.5.17"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-jsqlparser", "jar", "3.5.17"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("de.tr7zw", "item-nbt-api-plugin", "jar", "2.15.5"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine", "caffeine", "jar", "3.2.3"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine", "caffeine", "jar", "3.2.4"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp", "jar", "5.4.0"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp-jvm", "jar", "5.4.0"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.maven", "maven-artifact", "jar", "3.9.6"), "provided"));
