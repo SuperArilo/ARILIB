@@ -75,7 +75,7 @@ public class TeleportingServiceImpl implements TeleportingService {
 
             entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
                 if (status) {
-                    entity.playSound(Sound.sound(ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
+                    Lib.instance.getScheduler().runAtEntity(player, t -> player.playSound(Sound.sound(ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f)), null);
                 }
                 this.after.run();
                 entity.sendMessage(LibConfigUtils.t(status ? "function.teleport.success":"function.teleport.error"));
