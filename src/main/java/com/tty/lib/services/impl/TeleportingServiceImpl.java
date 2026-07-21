@@ -1,11 +1,10 @@
 package com.tty.lib.services.impl;
 
 import com.tty.api.scheduler.Scheduler;
-import com.tty.lib.Lib;
 import com.tty.api.service.TeleportingService;
+import com.tty.lib.Lib;
 import com.tty.lib.tool.LibConfigUtils;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
@@ -13,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.function.Consumer;
+
+import static org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH;
 
 public class TeleportingServiceImpl implements TeleportingService {
 
@@ -41,13 +42,15 @@ public class TeleportingServiceImpl implements TeleportingService {
 
     @Override
     public TeleportingService teleport(Entity entity, Location beforeLocation, Location targetLocation) {
-        if (this.before != null) {
-            this.before.accept(this);
-        }
-        if (!this.status) {
+        if (!this.status || !(entity instanceof Player player)) {
             this.aborted.run();
             return this;
         }
+
+        if (this.before != null) {
+            this.before.accept(this);
+        }
+
         Lib.instance.getScheduler().runAtRegion(targetLocation, i -> {
             for (int y = 0;y <= targetLocation.getWorld().getMaxHeight();y++) {
                 if (targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
@@ -55,16 +58,28 @@ public class TeleportingServiceImpl implements TeleportingService {
                     break;
                 }
             }
-            Lib.instance.getScheduler().runAtEntity(entity, t -> entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
+
+            boolean isFolia = Scheduler.isFolia();
+            boolean cancelled = false;
+
+            if (isFolia) {
+                PlayerTeleportEvent event = new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                cancelled = !event.callEvent();
+            }
+
+            if (cancelled) {
+                this.after.run();
+                entity.sendMessage(LibConfigUtils.t("function.teleport.error"));
+                return;
+            }
+
+            entity.teleportAsync(targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
                 if (status) {
-                    if (Scheduler.isFolia() && entity instanceof Player player) {
-                        Lib.instance.getScheduler().run(c -> Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(player, beforeLocation, targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)));
-                    }
-                    entity.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
+                    entity.playSound(Sound.sound(ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                 }
                 this.after.run();
                 entity.sendMessage(LibConfigUtils.t(status ? "function.teleport.success":"function.teleport.error"));
-            }), null);
+            });
         });
         return this;
     }
