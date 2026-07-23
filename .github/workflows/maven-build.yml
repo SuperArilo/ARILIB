@@ -44,7 +44,11 @@ jobs:
           cd ..
 
       - name: SET VERSION FROM TAG
-        run: mvn versions:set -DnewVersion=${{ steps.tag.outputs.TAG }} -DgenerateBackupPoms=false
+        id: version
+        run: |
+          TAG=${GITHUB_REF_NAME#v}
+          echo "VERSION=$TAG" >> $GITHUB_OUTPUT
+          mvn versions:set -DnewVersion=$TAG -DgenerateBackupPoms=false
 
       - name: BUILD
         run: mvn clean package -DskipTests -DoutputDirectory=target
@@ -52,7 +56,7 @@ jobs:
       - name: COLLECT PRODUCTS
         run: |
           mkdir -p build-artifacts
-          VERSION=${{ steps.tag.outputs.TAG }}
+          VERSION=${{ steps.version.outputs.VERSION }}
           cp target/arilib-*.jar build-artifacts/arilib-${VERSION}.jar
 
       - name: UPLOAD
