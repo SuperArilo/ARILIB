@@ -1,8 +1,8 @@
 package com.tty.lib;
 
 import com.tty.api.AbstractJavaPlugin;
-import com.tty.api.dto.TempRegisterService;
 import com.tty.api.configuration.BaseConfiguration;
+import com.tty.api.dto.TempRegisterService;
 import com.tty.api.service.*;
 import com.tty.api.state.StateService;
 import com.tty.lib.commands.AriLib;
@@ -12,6 +12,7 @@ import com.tty.lib.services.impl.*;
 import com.tty.lib.tool.Placeholder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -76,6 +77,11 @@ public class Lib extends AbstractJavaPlugin {
 
     @Override
     protected @Nullable List<StateService<?>> services() {
+        return List.of();
+    }
+
+    @Override
+    protected @Nullable List<PlaceholderExpansion> expansions() {
         return List.of();
     }
 
