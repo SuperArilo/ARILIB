@@ -24,3 +24,6 @@ dependencies:
     Dominion:
       required: false
       load: BEFORE
+    PvPManager:
+      required: false
+      load: BEFORE

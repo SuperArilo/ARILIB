@@ -34,6 +34,7 @@ public class Lib extends AbstractJavaPlugin {
     public static FireworkService FIREWORK_SERVICE;
     public static TeleportingService TELEPORTING_SERVICE;
     public static InteractService INTERACT_SERVICE;
+    public static AttackService ATTACK_SERVICE;
     public static Placeholder PLACEHOLDER;
 
     @Override
@@ -92,6 +93,7 @@ public class Lib extends AbstractJavaPlugin {
         FIREWORK_SERVICE = new FireworkServiceImpl();
         TELEPORTING_SERVICE = new TeleportingServiceImpl();
         INTERACT_SERVICE = new InteractServiceImpl();
+        ATTACK_SERVICE = new AttackServiceImpl();
         servicesManager.register(EconomyService.class, ECONOMY_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(PermissionService.class, PERMISSION_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);
@@ -99,6 +101,7 @@ public class Lib extends AbstractJavaPlugin {
         servicesManager.register(FireworkService.class, FIREWORK_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(TeleportingService.class, TELEPORTING_SERVICE, this, ServicePriority.Normal);
         servicesManager.register(InteractService.class, INTERACT_SERVICE, this, ServicePriority.Normal);
+        servicesManager.register(AttackService.class, ATTACK_SERVICE, this, ServicePriority.Normal);
     }
 
 }
