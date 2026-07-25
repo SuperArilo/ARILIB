@@ -2,7 +2,9 @@ package com.tty.lib.services.impl;
 
 import com.tty.api.service.InteractService;
 import com.tty.lib.Lib;
-import org.bukkit.Bukkit;
+import com.tty.lib.services.impl.interact.DominionInteract;
+import com.tty.lib.services.impl.interact.ResidenceInteract;
+import com.tty.lib.services.impl.interact.WorldGuardInteract;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -14,24 +16,9 @@ public class InteractServiceImpl implements InteractService {
     private final List<InteractService> delegates = new ArrayList<>();
 
     public InteractServiceImpl() {
-        this.loadHooks();
-    }
-
-    private void loadHooks() {
-        load("WorldGuard", "WorldGuardInteract");
-        load("Residence", "ResidenceInteract");
-        load("Dominion", "DominionInteract");
-    }
-
-    private void load(String plugin, String clazzName) {
-        if (!Bukkit.getPluginManager().isPluginEnabled(plugin)) return;
-        try {
-            Class<?> clazz = Class.forName("com.tty.lib.services.impl.interact." + clazzName);
-            InteractService hook = (InteractService) clazz.getDeclaredConstructor().newInstance();
-            this.delegates.add(hook);
-        } catch (Throwable e) {
-            Lib.instance.getLog().warn("failed to load hook: " + clazzName);
-        }
+        this.loadOtherPlugin(Lib.instance, "WorldGuard", WorldGuardInteract.class, this.delegates::add);
+        this.loadOtherPlugin(Lib.instance, "Residence", ResidenceInteract.class, this.delegates::add);
+        this.loadOtherPlugin(Lib.instance, "Dominion", DominionInteract.class, this.delegates::add);
     }
 
     @Override
@@ -104,4 +91,5 @@ public class InteractServiceImpl implements InteractService {
         }
         return true;
     }
+
 }
