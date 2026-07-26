@@ -4,6 +4,7 @@ import com.tty.api.service.AttackService;
 import com.tty.lib.Lib;
 import com.tty.lib.services.impl.pvp.PvpManagerInteract;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,16 @@ public class AttackServiceImpl implements AttackService {
     }
 
     @Override
-    public void changePlayerPvpStatus(Player player, boolean pvpStatus) {
+    public void changePvpStatus(Player player, boolean pvpStatus) {
         for (AttackService service : this.services) {
-            service.changePlayerPvpStatus(player, pvpStatus);
+            service.changePvpStatus(player, pvpStatus);
+        }
+    }
+
+    @Override
+    public void cancelPvpTag(@NotNull Player player) {
+        for (AttackService service : this.services) {
+            service.cancelPvpTag(player);
         }
     }
 
