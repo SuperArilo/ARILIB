@@ -6,15 +6,22 @@ public enum FilePath implements FilePathEnum {
 
     ;
 
-    private final String path;
+    private final String fullPathInJar;
+    private final String fullFileName;
 
-    FilePath(String path) {
-        this.path = path;
+    FilePath(String fullPathInJar, String fullFileName) {
+        this.fullPathInJar = fullPathInJar;
+        this.fullFileName = fullFileName;
     }
 
     @Override
-    public String getPath() {
-        return this.path;
+    public String getFullPathInJar() {
+        return this.fullPathInJar;
+    }
+
+    @Override
+    public String getFullFileName() {
+        return this.fullFileName;
     }
 
 }
