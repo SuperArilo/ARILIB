@@ -4,7 +4,6 @@ import com.tty.api.ComponentTool;
 import com.tty.lib.Lib;
 import com.tty.lib.configuration.lang.LangConfig;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,7 +14,7 @@ public class LibConfigUtils {
      * @param key 在 lang 中对应的 key 路径
      * @return 返回构建完成的 Component
      */
-    public static TextComponent t(String key) {
+    public static Component t(String key) {
         return ComponentTool.text(Lib.instance.getConfigurationManager().get(LangConfig.class).getValue(key, String.class, "null"));
     }
 

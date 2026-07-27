@@ -9,7 +9,6 @@ import com.tty.lib.Lib;
 import com.tty.lib.configuration.lang.LangConfig;
 import com.tty.lib.enumType.PlaceholderPage;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,15 +37,15 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         LangConfig langConfig = Lib.instance.getConfigurationManager().get(LangConfig.class);
 
         ComponentListPage page = new ComponentListPage();
-        TextComponent title = ComponentTool.text(langConfig.getValue("base.page.line-start", String.class, "null"), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
+        Component title = ComponentTool.text(langConfig.getValue("base.page.line-start", String.class, "null"), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
-        TextComponent prev = null;
+        Component prev = null;
         if (prevAction != null) {
             prev = ComponentTool.setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.runCommand(prevAction));
         }
 
-        TextComponent next = null;
+        Component next = null;
         if (nextAction != null) {
             next = ComponentTool.setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.runCommand(nextAction));
         }
@@ -59,7 +58,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         map.put(PlaceholderPage.TOTAL_PAGE.getType(), Component.text(totalPage));
         map.put(PlaceholderPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
 
-        TextComponent end = ComponentTool.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
+        Component end = ComponentTool.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 
         page.setFooter(end);
         return page;
