@@ -21,10 +21,10 @@ public class AttackServiceImpl implements AttackService {
     public boolean isInPvp(Player player) {
         for (AttackService service : this.services) {
             if (!service.isInPvp(player)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
