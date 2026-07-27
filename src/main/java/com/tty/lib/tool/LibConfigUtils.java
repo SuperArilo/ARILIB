@@ -1,6 +1,5 @@
 package com.tty.lib.tool;
 
-import com.tty.api.ComponentTool;
 import com.tty.lib.Lib;
 import com.tty.lib.configuration.lang.LangConfig;
 import net.kyori.adventure.text.Component;
@@ -15,11 +14,11 @@ public class LibConfigUtils {
      * @return 返回构建完成的 Component
      */
     public static Component t(String key) {
-        return ComponentTool.text(Lib.instance.getConfigurationManager().get(LangConfig.class).getValue(key, String.class, "null"));
+        return Lib.instance.getEngine().directRender(Lib.instance.getConfigurationManager().get(LangConfig.class).getValue(key, String.class, "null"));
     }
 
     public static CompletableFuture<Component> tList(String key) {
-        return Lib.PLACEHOLDER.renderList(key, null);
+        return Lib.instance.getEngine().renderList(Lib.instance.getConfigurationManager().get(LangConfig.class).getStringList(key), null);
     }
 
 }

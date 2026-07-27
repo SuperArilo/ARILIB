@@ -2,7 +2,6 @@ package com.tty.lib.listener;
 
 import com.tty.api.event.WhenPluginConfigReloadCompleteEvent;
 import com.tty.lib.Lib;
-import com.tty.lib.configuration.lang.LangConfig;
 import com.tty.lib.tool.LibConfigUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,6 @@ public class OnPluginReloadListener implements Listener {
     @EventHandler
     public void configReload(WhenPluginConfigReloadCompleteEvent event) {
         if (!event.getPlugin().equals(Lib.instance)) return;
-        Lib.PLACEHOLDER.setInstance(Lib.instance.getConfigurationManager().get(LangConfig.class));
         CommandSender sender = event.getSender();
         if (sender != null) {
             sender.sendMessage(LibConfigUtils.t("function.reload.success"));

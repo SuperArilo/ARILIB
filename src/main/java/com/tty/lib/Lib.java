@@ -4,6 +4,7 @@ import com.tty.api.AbstractJavaPlugin;
 import com.tty.api.configuration.BaseConfiguration;
 import com.tty.api.dto.TempRegisterService;
 import com.tty.api.service.*;
+import com.tty.api.service.placeholder.PlaceholderRegistry;
 import com.tty.api.state.StateService;
 import com.tty.lib.commands.AriLib;
 import com.tty.lib.configuration.lang.LangConfig;
@@ -35,7 +36,6 @@ public class Lib extends AbstractJavaPlugin {
     public static TeleportingService TELEPORTING_SERVICE;
     public static InteractService INTERACT_SERVICE;
     public static AttackService ATTACK_SERVICE;
-    public static Placeholder PLACEHOLDER;
 
     @Override
     protected void loading() {
@@ -44,7 +44,6 @@ public class Lib extends AbstractJavaPlugin {
 
     @Override
     protected void enabling() {
-        PLACEHOLDER = new Placeholder(this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, i -> {
             Commands registrar = i.registrar();
             registrar.register(new AriLib().toBrigadier());
@@ -84,6 +83,11 @@ public class Lib extends AbstractJavaPlugin {
     @Override
     protected @Nullable List<PlaceholderExpansion> expansions() {
         return List.of();
+    }
+
+    @Override
+    protected @Nullable PlaceholderRegistry placeholders() {
+        return Placeholder.register();
     }
 
     private void registerService () {

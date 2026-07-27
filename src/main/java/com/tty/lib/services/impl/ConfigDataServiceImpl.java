@@ -2,7 +2,6 @@ package com.tty.lib.services.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tty.api.ComponentTool;
 import com.tty.api.dto.ComponentListPage;
 import com.tty.api.service.ConfigDataService;
 import com.tty.lib.Lib;
@@ -37,17 +36,17 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         LangConfig langConfig = Lib.instance.getConfigurationManager().get(LangConfig.class);
 
         ComponentListPage page = new ComponentListPage();
-        Component title = ComponentTool.text(langConfig.getValue("base.page.line-start", String.class, "null"), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
+        Component title = Lib.instance.getEngine().directRender(langConfig.getValue("base.page.line-start", String.class, "null"), Map.of(PlaceholderPage.PAGE_TITLE.getType(), titleName));
         page.setTitle(title);
 
         Component prev = null;
         if (prevAction != null) {
-            prev = ComponentTool.setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.runCommand(prevAction));
+            prev = Lib.instance.getEngine().setClickEventText(langConfig.getValue("base.page.prev", String.class, "null"), ClickEvent.runCommand(prevAction));
         }
 
         Component next = null;
         if (nextAction != null) {
-            next = ComponentTool.setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.runCommand(nextAction));
+            next = Lib.instance.getEngine().setClickEventText(langConfig.getValue("base.page.next", String.class, "null"), ClickEvent.runCommand(nextAction));
         }
 
 
@@ -58,7 +57,7 @@ public class ConfigDataServiceImpl implements ConfigDataService {
         map.put(PlaceholderPage.TOTAL_PAGE.getType(), Component.text(totalPage));
         map.put(PlaceholderPage.TOTAL_DATA_RECORDS.getType(), Component.text(totalRecords));
 
-        Component end = ComponentTool.text(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
+        Component end = Lib.instance.getEngine().directRender(Lib.CONFIG_DATA_SERVICE.getValue("base.page.line-end"), map);
 
         page.setFooter(end);
         return page;
