@@ -71,6 +71,7 @@ commit_parsers = [
     { message = "^.*: delete", group = "Removed" },
     { message = "^.*: fix", group = "Fixed" },
 
+    { message = "^Merge ", skip = true },
     { message = "^.*", group = "Changed" },
 ]
 
