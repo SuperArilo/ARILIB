@@ -136,6 +136,11 @@ jobs:
             PREV_API=$(git -C arilib-api rev-list --max-parents=0 "$CUR_API" | tail -1)
           fi
 
+          API_VERSION=$(git -C arilib-api show "${CUR_API}:pom.xml" 2>/dev/null | sed -n 's|.*<version>\([^<]*\)</version>.*|\1|p' | head -1 || true)
+          if [ -z "$API_VERSION" ]; then
+            API_VERSION=$(sed -n 's|.*<api.version>\([^<]*\)</api.version>.*|\1|p' pom.xml | head -1)
+          fi
+
           if [ -n "$PREV_TAG" ]; then
             echo "arilib_args=--strip all ${PREV_TAG}..${TAG}" >> "$GITHUB_OUTPUT"
           else
@@ -143,6 +148,7 @@ jobs:
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+          echo "api_version=${API_VERSION}" >> "$GITHUB_OUTPUT"
           echo "api_range=${PREV_API}..${CUR_API}" >> "$GITHUB_OUTPUT"
           echo "api_changed=$([ "$PREV_API" != "$CUR_API" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           echo "ARILIB range=${PREV_TAG:-<first release>}..${TAG} / API range=${PREV_API}..${CUR_API}"
@@ -159,8 +165,8 @@ jobs:
         if: steps.ranges.outputs.api_changed == 'true'
         uses: orhun/git-cliff-action@v4
         with:
-          config: cliff-api.toml
-          args: --repository=arilib-api ${{ steps.ranges.outputs.api_range }}
+          config: cliff.toml
+          args: --strip all --repository=arilib-api ${{ steps.ranges.outputs.api_range }}
         env:
           OUTPUT: API_CHANGES.md
 
@@ -170,24 +176,24 @@ jobs:
           VERSION="${{ steps.ranges.outputs.version }}"
           TAG="${GITHUB_REF_NAME}"
           PREV_TAG="${{ steps.ranges.outputs.prev_tag }}"
+          API_VERSION="${{ steps.ranges.outputs.api_version }}"
 
-          sed -i "0,/^## \[/s|^## \[[^]]*\]|## [${VERSION}]|" ARILIB_CHANGES.md
+          ARILIB_BODY=$(sed '/./,$!d' ARILIB_CHANGES.md)
+          API_BODY=""
+          if [ -s API_CHANGES.md ]; then
+            API_BODY=$(sed '/./,$!d' API_CHANGES.md)
+          fi
 
           {
-            cat ARILIB_CHANGES.md
-            if [ -s API_CHANGES.md ]; then
-              echo
-              cat API_CHANGES.md
+            printf '## ARILIB %s - %s\n\n%s\n' "$VERSION" "$(date -u +%F)" "$ARILIB_BODY"
+            if [ -n "$API_BODY" ]; then
+              printf '\n## ARILIB-API%s\n\n%s\n' "${API_VERSION:+ $API_VERSION}" "$API_BODY"
             fi
-            echo
             if [ -n "$PREV_TAG" ]; then
-              printf '[%s]: https://github.com/%s/compare/%s..%s\n' \
-                "$VERSION" "$GITHUB_REPOSITORY" "$PREV_TAG" "$TAG"
+              printf '\n[完整改动对比](https://github.com/%s/compare/%s..%s)\n' \
+                "$GITHUB_REPOSITORY" "$PREV_TAG" "$TAG"
             fi
           } > RELEASE_BODY.md
-
-          echo '---------- RELEASE BODY ----------'
-          cat RELEASE_BODY.md
 
       - name: CHECK PRE-RELEASE STATUS
         id: check_prerelease
