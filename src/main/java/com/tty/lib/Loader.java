@@ -21,8 +21,8 @@ public class Loader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.baomidou", "mybatis-plus-jsqlparser", "jar", "3.5.17"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("de.tr7zw", "item-nbt-api-plugin", "jar", "2.15.5"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine", "caffeine", "jar", "3.2.4"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp", "jar", "5.4.0"), "provided"));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp-jvm", "jar", "5.4.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp", "jar", "5.5.0"), "provided"));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.squareup.okhttp3", "okhttp-jvm", "jar", "5.5.0"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.maven", "maven-artifact", "jar", "3.9.6"), "provided"));
         resolver.addDependency(new Dependency(new DefaultArtifact("fr.skytasul", "glowingentities", "jar", "2.0.0"), "provided"));
 
