@@ -8,6 +8,7 @@ on:
 env:
   JAVA_VERSION: '21'
   MAVEN_VERSION: '3.9.5'
+  API_REPOSITORY: 'SuperArilo/ARILIB-API'
 
 jobs:
   build:
@@ -34,12 +35,13 @@ jobs:
       - name: CLONE API
         uses: actions/checkout@v4
         with:
-          repository: SuperArilo/ARILIB-API
+          repository: ${{ env.API_REPOSITORY }}
           path: arilib-api
 
       - name: INSTALL API
         run: |
           cd arilib-api
+          echo "ARILIB_API_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
           mvn clean install -DskipTests
           cd ..
 
@@ -58,6 +60,7 @@ jobs:
           mkdir -p build-artifacts
           VERSION=${{ steps.version.outputs.VERSION }}
           cp target/arilib-*.jar build-artifacts/arilib-${VERSION}.jar
+          echo "$ARILIB_API_SHA" > build-artifacts/arilib-api.sha
 
       - name: UPLOAD
         uses: actions/upload-artifact@v4
@@ -69,7 +72,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: CHECKOUT CODE
@@ -83,26 +86,114 @@ jobs:
           name: jar-files
           path: build-artifacts
 
-      - name: GENERATE CHANGELOG
+      - name: CLONE API FOR CHANGELOG
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.API_REPOSITORY }}
+          path: arilib-api
+          fetch-depth: 0
+
+      - name: RESOLVE COMMIT RANGES
+        id: ranges
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          PREV_TAG=""
+          PREV_DATE=""
+          REL_JSON=$(curl -fsSL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases?per_page=20" 2>/dev/null || true)
+          if [ -n "$REL_JSON" ]; then
+            PREV_INFO=$(printf '%s' "$REL_JSON" | CURRENT_TAG="$TAG" python3 -c 'import json,os,sys; cur=os.environ["CURRENT_TAG"]; rels=[r for r in json.load(sys.stdin) if not r.get("draft") and r.get("tag_name")!=cur]; r=rels[0] if rels else None; print("" if r is None else r["tag_name"]+" "+(r.get("published_at") or ""))' || true)
+            PREV_TAG=${PREV_INFO%% *}
+            PREV_DATE=${PREV_INFO#* }
+          fi
+
+          if [ -z "$PREV_TAG" ] || ! git rev-parse -q --verify "refs/tags/${PREV_TAG}" >/dev/null 2>&1; then
+            PREV_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${TAG}^" 2>/dev/null || true)
+            PREV_DATE=""
+          fi
+          if [ -z "$PREV_DATE" ] && [ -n "$PREV_TAG" ]; then
+            PREV_DATE=$(git log -1 --format=%cI "$PREV_TAG")
+          fi
+
+          CUR_API=""
+          if [ -f build-artifacts/arilib-api.sha ]; then
+            CUR_API=$(cat build-artifacts/arilib-api.sha)
+          fi
+          if [ -z "$CUR_API" ] || ! git -C arilib-api cat-file -e "${CUR_API}^{commit}" 2>/dev/null; then
+            CUR_API=$(git -C arilib-api rev-parse HEAD)
+          fi
+
+          PREV_API=""
+          if [ -n "$PREV_TAG" ]; then
+            PREV_API=$(git -C arilib-api rev-list -1 --before="$PREV_DATE" "$CUR_API" || true)
+          fi
+          if [ -z "$PREV_API" ]; then
+            PREV_API=$(git -C arilib-api rev-list --max-parents=0 "$CUR_API" | tail -1)
+          fi
+
+          if [ -n "$PREV_TAG" ]; then
+            echo "arilib_args=--strip all ${PREV_TAG}..${TAG}" >> "$GITHUB_OUTPUT"
+          else
+            echo "arilib_args=--strip all" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+          echo "api_range=${PREV_API}..${CUR_API}" >> "$GITHUB_OUTPUT"
+          echo "api_changed=$([ "$PREV_API" != "$CUR_API" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "ARILIB range=${PREV_TAG:-<first release>}..${TAG} / API range=${PREV_API}..${CUR_API}"
+
+      - name: GENERATE CHANGELOG (ARILIB)
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --latest --strip header
+          args: ${{ steps.ranges.outputs.arilib_args }}
         env:
-          OUTPUT: CHANGES.md
+          OUTPUT: ARILIB_CHANGES.md
 
-      - name: READ CHANGELOG CONTENT
-        id: read_changelog
+      - name: GENERATE CHANGELOG (ARILIB-API)
+        if: steps.ranges.outputs.api_changed == 'true'
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff-api.toml
+          args: --repository=arilib-api ${{ steps.ranges.outputs.api_range }}
+        env:
+          OUTPUT: API_CHANGES.md
+
+      - name: BUILD RELEASE BODY
         run: |
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          cat CHANGES.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          VERSION="${{ steps.ranges.outputs.version }}"
+          TAG="${GITHUB_REF_NAME}"
+          PREV_TAG="${{ steps.ranges.outputs.prev_tag }}"
+
+          sed -i "0,/^## \[/s|^## \[[^]]*\]|## [${VERSION}]|" ARILIB_CHANGES.md
+
+          {
+            cat ARILIB_CHANGES.md
+            if [ -s API_CHANGES.md ]; then
+              echo
+              cat API_CHANGES.md
+            fi
+            echo
+            if [ -n "$PREV_TAG" ]; then
+              printf '[%s]: https://github.com/%s/compare/%s..%s\n' \
+                "$VERSION" "$GITHUB_REPOSITORY" "$PREV_TAG" "$TAG"
+            fi
+          } > RELEASE_BODY.md
+
+          echo '---------- RELEASE BODY ----------'
+          cat RELEASE_BODY.md
 
       - name: CHECK PRE-RELEASE STATUS
         id: check_prerelease
         run: |
           TAG="${{ github.ref_name }}"
-          if [[ "$TAG" =~ -(alpha|beta|rc|pre)(\.[0-9]+)?$ ]]; then
+          if [[ "$TAG" =~ -(alpha|beta|rc|pre)([.-][0-9]+)?$ ]]; then
             echo "value=true" >> $GITHUB_OUTPUT
           else
             echo "value=false" >> $GITHUB_OUTPUT
@@ -112,7 +203,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: build-artifacts/*.jar
-          body: ${{ steps.read_changelog.outputs.body }}
+          body_path: RELEASE_BODY.md
           prerelease: ${{ steps.check_prerelease.outputs.value == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
